@@ -26,9 +26,9 @@ changelog= 2014/04/22 v.0.1
 # tags are comma separated with spaces allowed
 tags=geojson, leaflet, 
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/riccardoklinger/qgis2leaf/wiki
+tracker=https://github.com/riccardoklinger/qgis2leaf/issues
+repository=https://github.com/riccardoklinger/qgis2leaf
 icon=icon.png
 # experimental flag
 experimental=True
