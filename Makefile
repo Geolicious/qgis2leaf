@@ -35,7 +35,7 @@ PLUGINNAME = qgis2leaf
 
 PY_FILES = qgis2leaf.py qgis2leafdialog.py __init__.py
 
-EXTRAS = icon.png metadata.txt
+EXTRAS = logo.png metadata.txt
 
 UI_FILES = ui_qgis2leaf.py
 

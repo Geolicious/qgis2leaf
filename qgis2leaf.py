@@ -54,7 +54,7 @@ class qgis2leaf:
 	def initGui(self):
     	# Create action that will start plugin configuration
 		self.action = QAction(
-			QIcon(":/plugins/qgis2leaf/icon.png"),
+			QIcon(":/plugins/qgis2leaf/logo.png"),
 			u"Exports a QGIS Project to a working leaflet webmap", self.iface.mainWindow())
 		# connect the action to the run method
 		self.action.triggered.connect(self.run)

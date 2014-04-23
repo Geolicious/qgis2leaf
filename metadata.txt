@@ -29,7 +29,7 @@ tags=geojson, leaflet,
 homepage=https://github.com/riccardoklinger/qgis2leaf/wiki
 tracker=https://github.com/riccardoklinger/qgis2leaf/issues
 repository=https://github.com/riccardoklinger/qgis2leaf
-icon=icon.png
+icon=logo.png
 # experimental flag
 experimental=True
 
