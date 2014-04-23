@@ -1,15 +1,20 @@
 ## Synopsis
 
-This plufgin should provide an easy way to distribute your qgis work as a leaflet webmap. 
+This plugin provide an easy way to distribute and show your qgis work as a leaflet webmap. 
 
 ## Usage
 
-At the current stage your project will only held point, line or polygon shapefiles with EPSG:4326. It will be shown with standard markers and will be stored as js files in the folder structure.
-until now you just have to provide a project folder name
+Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2.
 
 ## Installation
 
-download the source and place it in the "/.qgis2/python/plugins/qgis2leaf" folder (Windows: "C:\Users\{username}\.qgis\python\plugins\qgis2leaf"
+Download the source and place it in the "/.qgis2/python/plugins/qgis2leaf" folder (Windows: "C:\Users\{username}\.qgis\python\plugins\qgis2leaf" )
+Import the plugin using the normal add plugin method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins')
+
+## Version_changes
+
+2014-04-22: initial commit
+2014-04-23: added disambiguation of layer types to avoid break of loop. 
 
 ## Tests
 
@@ -18,7 +23,7 @@ It was tested on Linux Mint.
 
 ## Contributors
 
-Currently we are working on this porject as part of the blog digital-geography.com and geolicious.de
+Currently we are working on this project as part of the blog [digital-geography.com](http://www.digital-geography.com 'digital-geography') and [geolicious.](http://www.geolicious.de 'geolicious')
 
 ## License
 

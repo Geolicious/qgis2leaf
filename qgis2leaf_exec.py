@@ -58,7 +58,7 @@ def qgis2leaf_exec(outputProjectFileName):
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Roads Webmap</title>
+	<title>QGIS2leaf webmap</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 </head>
@@ -72,21 +72,24 @@ def qgis2leaf_exec(outputProjectFileName):
 	canvas = qgis.utils.iface.mapCanvas()
 	allLayers = canvas.layers()
 	for i in allLayers: 
-		print i.name()
-		qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + str(i.name()) + '.js', 'utf-8', i.crs(), 'GeoJson')
-		#now change the data structure to work with leaflet:
-		with open(dataStore + os.sep + str(i.name()) + '.js', "r+") as f2:
-			old = f2.read() # read everything in the file
-			f2.seek(0) # rewind
-			f2.write("var " + str(i.name()) + " = " + old) # write the new line before
-			f2.close
-			print i.name()
-		#now add the js files as data input for our map
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
-			new_src = """<script src='""" + dataStore + os.sep + str(i.name()) + """.js' ></script>"""
-			# store everything in the file
-			f3.write(new_src)
-			f3.close()
+		if i.type() != 0 :
+			print(i.name() + " skipped as it is not a vector layer")  
+		if i.type() == 0 :
+			
+			qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + str(i.name()) + '.js', 'utf-8', i.crs(), 'GeoJson')
+			#now change the data structure to work with leaflet:
+			with open(dataStore + os.sep + str(i.name()) + '.js', "r+") as f2:
+				old = f2.read() # read everything in the file
+				f2.seek(0) # rewind
+				f2.write("var " + str(i.name()) + " = " + old) # write the new line before
+				f2.close
+				
+			#now add the js files as data input for our map
+			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
+				new_src = """<script src='""" + dataStore + os.sep + str(i.name()) + """.js' ></script>"""
+				# store everything in the file
+				f3.write(new_src)
+				f3.close()
 	#here come the basemap our geojsons will  looped after that
 	middle = """
 	<script>
