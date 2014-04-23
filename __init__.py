@@ -21,11 +21,11 @@
  This script initializes the plugin, making it known to QGIS.
 """
 def name():
-    return "PCA"
+    return "QGIS2leaf"
 
 
 def description():
-    return "Principal Component Analysis for rasters"
+    return "QGIS to leaflet export for several layers"
 
 
 def version():
@@ -40,10 +40,10 @@ def qgisMinimumVersion():
     return "2.0"
 
 def author():
-    return "Stavros Georgousis"
+    return "Riccardo Klinger"
 
 def email():
-    return "grgeosteve@gmail.com"
+    return "riccardo.klinger@ggeolicious.de"
     
 def classFactory(iface):
     # load qgis2leaf class from file qgis2leaf
