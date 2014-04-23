@@ -114,11 +114,36 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 			f4.write(basemapText)
 			f4.close()
 	for i in allLayers: 
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
-			new_obj = """var """ + i.name() + """JSON = new L.geoJson(""" + i.name() + """).addTo(map);"""
-			# store everything in the file
-			f5.write(new_obj)
-			f5.close()
+		if i.type() != 0 :
+			print(i.name() + " skipped as it is not a vector layer")  
+		if i.type() == 0 :
+			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
+				fields = i.pendingFields() 
+				field_names = [field.name() for field in fields]
+				tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
+				row = ""
+				for field in field_names:
+					row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+				tableend = """</table>'"""
+				table = tablestart + row +tableend
+				print table
+				new_pop = """
+				function pop_""" + i.name() + """(feature, layer) {
+					var popupContent = """ + table + """;
+					layer.bindPopup(popupContent);}"""
+				
+				new_obj = """
+				var """ + i.name() + """JSON = new L.geoJson(""" + i.name() + """,{
+					onEachFeature: pop_""" + i.name() + """,
+					pointToLayer: function (feature, latlng) {
+						return L.marker(latlng);
+						}
+					}).addTo(map);"""
+				print new_obj
+				# store everything in the file
+				f5.write(new_pop)
+				f5.write(new_obj)
+				f5.close()
 	# let's close the file
 	end = """</script>
 	</body>
