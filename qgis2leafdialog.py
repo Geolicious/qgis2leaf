@@ -50,6 +50,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		# Connect signals
 		#self.ui.cancelButton.clicked.connect(self.close)
 		self.ui.cancelButton.clicked.connect(self.close)
+		attrFields = ['OSM Standard', 'OSM Black & White', 'Stamen Toner']
+		self.ui.comboBox.addItems(attrFields)
 
 		#self.ui.pushButton.clicked.connect(self.showOpenDialog)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
@@ -72,5 +74,6 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.lineEdit_2.setText(self.outFileName)
 		
 	def export2leaf(self):
-		qgis2leaf_exec(self.outFileName)
+		self.basemapName = self.ui.comboBox.currentText()
+		qgis2leaf_exec(self.outFileName, self.basemapName)
 		self.close()

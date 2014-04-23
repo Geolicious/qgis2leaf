@@ -30,7 +30,7 @@ import shutil #for reverse removing directories
 import urllib # to get files from the web
 
 
-def qgis2leaf_exec(outputProjectFileName):
+def qgis2leaf_exec(outputProjectFileName, basemapName):
 	# supply path to where is your qgis installed
 	QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -95,10 +95,23 @@ def qgis2leaf_exec(outputProjectFileName):
 	<script>
 		var map = L.map('map', { zoomControl:true }).setView([0,0], 2);
 		map.attributionControl.addAttribution("designed by <a href='http://www.geolicious.de' target='_blank'>Geolicious</a>; <a href='http://creativecommons.org/publicdomain/mark/1.0/' target='_blank'>markers license:</a>, basemap (Data CC-By-SA) by <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"); //ein paar Referenzen sollten in die Karte"
-		L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png').addTo(map);  //Grundkarte wird hinzugefügt
+	"""
+	print basemapName
+	if basemapName == 'OSM Standard':
+		basemapText = """
+		L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+		"""
+	if basemapName == 'OSM Black & White':
+		basemapText = """
+		L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png').addTo(map);
+		"""
+	if basemapName == 'Stamen Toner':
+		basemapText = """
+		L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png').addTo(map);
 		"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
 			f4.write(middle)
+			f4.write(basemapText)
 			f4.close()
 	for i in allLayers: 
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
