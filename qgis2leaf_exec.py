@@ -32,7 +32,7 @@ import urllib # to get files from the web
 
 def qgis2leaf_exec(outputProjectFileName, basemapName):
 	# supply path to where is your qgis installed
-	QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
+	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
 	# load providers
 	QgsApplication.initQgis()
@@ -71,12 +71,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 	# let's create the js files in the data folder of input vector files:
 	canvas = qgis.utils.iface.mapCanvas()
 	allLayers = canvas.layers()
+	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
 		if i.type() != 0 :
 			print(i.name() + " skipped as it is not a vector layer")  
 		if i.type() == 0 :
 			
-			qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + str(i.name()) + '.js', 'utf-8', i.crs(), 'GeoJson')
+			qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + str(i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
 			#now change the data structure to work with leaflet:
 			with open(dataStore + os.sep + str(i.name()) + '.js', "r+") as f2:
 				old = f2.read() # read everything in the file

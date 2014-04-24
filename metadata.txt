@@ -12,7 +12,7 @@
 name=qgis2leaf
 qgisMinimumVersion=2.0
 description=Exports a QGIS Project to a working leaflet webmap
-version=0.1
+version=0.2
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
@@ -22,9 +22,10 @@ email=riccardo.klinger@geolicious.de
 
 # Uncomment the following line and add your changelog entries:
 changelog= 2014/04/22 v.0.1
+2014/04/23 v.0.2: basemap choice, popups in leafletmap
 
 # tags are comma separated with spaces allowed
-tags=geojson, leaflet, 
+tags=geojson, leaflet, webmap, js, html, 
 
 homepage=https://github.com/riccardoklinger/qgis2leaf/wiki
 tracker=https://github.com/riccardoklinger/qgis2leaf/issues
