@@ -30,7 +30,7 @@ import shutil #for reverse removing directories
 import urllib # to get files from the web
 
 
-def qgis2leaf_exec(outputProjectFileName, basemapName):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -63,7 +63,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 </head>
 <body>
-	<div id="map" style="align: center;width: 500px; height: 500px"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
+	<div id="map" style="align: center;width:""" + width + """px; height: """ + height + """px"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
   """
 		f.write(base)
@@ -87,7 +87,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 				
 			#now add the js files as data input for our map
 			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
-				new_src = """<script src='""" + 'data' + os.sep + str(i.name()) + """.js' ></script>"""
+				new_src = """
+	<script src='""" + 'data' + os.sep + str(i.name()) + """.js' ></script>
+	"""
 				# store everything in the file
 				f3.write(new_src)
 				f3.close()
@@ -129,26 +131,29 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 				table = tablestart + row +tableend
 				print table
 				new_pop = """
-				function pop_""" + i.name() + """(feature, layer) {
-					var popupContent = """ + table + """;
-					layer.bindPopup(popupContent);}"""
+		function pop_""" + i.name() + """(feature, layer) {
+			var popupContent = """ + table + """;
+			layer.bindPopup(popupContent);
+		}
+				"""
 				
 				new_obj = """
-				var """ + i.name() + """JSON = new L.geoJson(""" + i.name() + """,{
-					onEachFeature: pop_""" + i.name() + """,
-					pointToLayer: function (feature, latlng) {
-						return L.marker(latlng);
-						}
-					}).addTo(map);"""
+		var """ + i.name() + """JSON = new L.geoJson(""" + i.name() + """,{
+			onEachFeature: pop_""" + i.name() + """,
+			pointToLayer: function (feature, latlng) {
+				return L.marker(latlng);
+				}
+			}).addTo(map);"""
 				print new_obj
 				# store everything in the file
 				f5.write(new_pop)
 				f5.write(new_obj)
 				f5.close()
 	# let's close the file
-	end = """</script>
-	</body>
-	</html>
+	end = """
+	</script>
+</body>
+</html>
 	"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(end)
