@@ -87,7 +87,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName):
 				
 			#now add the js files as data input for our map
 			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
-				new_src = """<script src='""" + dataStore + os.sep + str(i.name()) + """.js' ></script>"""
+				new_src = """<script src='""" + 'data' + os.sep + str(i.name()) + """.js' ></script>"""
 				# store everything in the file
 				f3.write(new_src)
 				f3.close()
