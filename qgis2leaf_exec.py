@@ -143,18 +143,43 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 			pointToLayer: function (feature, latlng) {
 				return L.marker(latlng);
 				}
-			}).addTo(map);"""
+			});
+		"""
 				print new_obj
 				# store everything in the file
 				f5.write(new_pop)
 				f5.write(new_obj)
+				f5.write(i.name() + """JSON.addTo(map);""")
 				f5.close()
+	# let's add layer control
+	controlStart = """
+	L.control.layers({},{"""
+	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
+		f6.write(controlStart)
+		f6.close()
+
+	for i in allLayers: 
+		if i.type() != 0 :
+			print(i.name() + " skipped as it is not a vector layer")  
+		if i.type() == 0 :
+			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
+				new_layer = '"' + i.name() + '"' + ": " + i.name() + """JSON,"""
+				f7.write(new_layer)
+				f7.close()
+
+	controlEnd = "}).addTo(map);"	
+	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f8:
+		f8.seek(-1, os.SEEK_END)
+		f8.truncate()
+		f8.write(controlEnd)
+		f8.close()
+	
 	# let's close the file
 	end = """
 	</script>
 </body>
 </html>
 	"""
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
-		f6.write(end)
-		f6.close()
+	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f9:
+		f9.write(end)
+		f9.close()
