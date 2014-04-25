@@ -48,12 +48,11 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.okButton.setDisabled(True)
 		
 		# Connect signals
-		#self.ui.cancelButton.clicked.connect(self.close)
 		self.ui.cancelButton.clicked.connect(self.close)
 		attrFields = ['OSM Standard', 'OSM Black & White', 'Stamen Toner']
 		self.ui.comboBox.addItems(attrFields)
-
-		#self.ui.pushButton.clicked.connect(self.showOpenDialog)
+		extFields = ['canvas extent', 'layer extent']
+		self.ui.comboBox_2.addItems(extFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)
 		
@@ -80,5 +79,6 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.basemapName = self.ui.comboBox.currentText()
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height)
+		self.extent = self.ui.comboBox_2.currentText()
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent)
 		self.close()

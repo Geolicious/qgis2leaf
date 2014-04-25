@@ -30,7 +30,7 @@ import shutil #for reverse removing directories
 import urllib # to get files from the web
 
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -93,11 +93,23 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 				# store everything in the file
 				f3.write(new_src)
 				f3.close()
+	#now determine the canvas bounding box
+	#####now with viewcontrol
+	if extent == 'canvas extent':
+		pt0	= canvas.extent()
+		crsSrc = qgis.utils.iface.mapCanvas().mapRenderer().destinationCrs()    # WGS 84
+		crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
+		xform = QgsCoordinateTransform(crsSrc, crsDest)
+		pt1 = xform.transform(pt0)
+		bbox_canvas = [pt1.yMinimum(), pt1.yMaximum(),pt1.xMinimum(), pt1.xMaximum()]
+		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
+	if extent == 'layer extent':
+		bounds = '[[-90,-180],[90,180]]'
 	#here come the basemap our geojsons will  looped after that
 	middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true }).setView([0,0], 2);
-		map.attributionControl.addAttribution("designed by <a href='http://www.geolicious.de' target='_blank'>Geolicious</a>; <a href='http://creativecommons.org/publicdomain/mark/1.0/' target='_blank'>markers license:</a>, basemap (Data CC-By-SA) by <a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a>"); //ein paar Referenzen sollten in die Karte"
+		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
+		var feature_group = new L.featureGroup([]);
 	"""
 	print basemapName
 	if basemapName == 'OSM Standard':
@@ -112,6 +124,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 		basemapText = """
 		L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png').addTo(map);
 		"""
+	
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
 			f4.write(middle)
 			f4.write(basemapText)
@@ -144,7 +157,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 				return L.marker(latlng);
 				}
 			});
-		"""
+		feature_group.addLayer(""" + i.name() + """JSON);"""
+		
 				print new_obj
 				# store everything in the file
 				f5.write(new_pop)
@@ -174,8 +188,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height):
 		f8.write(controlEnd)
 		f8.close()
 	
-	# let's close the file
-	end = """
+	# let's close the file but ask for the extent of all layers if the user wants to show only this extent:
+	if extent == 'layer extent':
+		end = """
+		map.fitBounds(feature_group.getBounds());
+	</script>
+</body>
+</html>
+	"""
+	if extent == 'canvas extent':
+		end = """
 	</script>
 </body>
 </html>
