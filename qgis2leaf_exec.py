@@ -146,14 +146,17 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	"""
 	if basemapName == 'OSM Standard':
 		basemapText = """
+		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OSM Black & White':
 		basemapText = """
+		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'Stamen Toner':
 		basemapText = """
+		map.attributionControl.addAttribution('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
 		L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png').addTo(map);
 		"""
 	
