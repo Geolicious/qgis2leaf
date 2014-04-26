@@ -111,7 +111,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
 	<script>
 		var map = L.map('map', { zoomControl:true });"""
 	#here come the basemap our geojsons will  looped after that
-	middle += """var feature_group = new L.featureGroup([]);
+	middle += """
+	var feature_group = new L.featureGroup([]);
 	"""
 	if basemapName == 'OSM Standard':
 		basemapText = """
