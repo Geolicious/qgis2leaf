@@ -103,15 +103,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
 		pt1 = xform.transform(pt0)
 		bbox_canvas = [pt1.yMinimum(), pt1.yMaximum(),pt1.xMinimum(), pt1.xMaximum()]
 		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
-	if extent == 'layer extent':
-		bounds = '[[-90,-180],[90,180]]'
-	#here come the basemap our geojsons will  looped after that
-	middle = """
+		middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
-		var feature_group = new L.featureGroup([]);
+		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);"""
+	if extent == 'layer extent':
+		middle = """
+	<script>
+		var map = L.map('map', { zoomControl:true });"""
+	#here come the basemap our geojsons will  looped after that
+	middle += """var feature_group = new L.featureGroup([]);
 	"""
-	print basemapName
 	if basemapName == 'OSM Standard':
 		basemapText = """
 		L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
