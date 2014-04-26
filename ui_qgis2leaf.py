@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Fri Apr 25 21:30:09 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Sat Apr 26 17:37:16 2014
+#      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,21 +12,12 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+    _fromUtf8 = lambda s: s
 
 class Ui_qgis2leaf(object):
     def setupUi(self, qgis2leaf):
         qgis2leaf.setObjectName(_fromUtf8("qgis2leaf"))
-        qgis2leaf.resize(449, 289)
+        qgis2leaf.resize(448, 289)
         self.gridLayoutWidget = QtGui.QWidget(qgis2leaf)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 130, 431, 136))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
@@ -71,12 +62,12 @@ class Ui_qgis2leaf(object):
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
         self.gridLayout.addWidget(self.comboBox_2, 0, 1, 1, 1)
         self.label = QtGui.QLabel(qgis2leaf)
-        self.label.setGeometry(QtCore.QRect(10, 20, 111, 16))
+        self.label.setGeometry(QtCore.QRect(10, 20, 131, 16))
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("DejaVu Sans"))
         font.setPointSize(11)
-        font.setBold(True)
         font.setWeight(75)
+        font.setBold(True)
         self.label.setFont(font)
         self.label.setObjectName(_fromUtf8("label"))
         self.label_2 = QtGui.QLabel(qgis2leaf)
@@ -115,15 +106,15 @@ class Ui_qgis2leaf(object):
         QtCore.QMetaObject.connectSlotsByName(qgis2leaf)
 
     def retranslateUi(self, qgis2leaf):
-        qgis2leaf.setWindowTitle(_translate("qgis2leaf", "qgis2leaf", None))
-        self.cancelButton.setText(_translate("qgis2leaf", "Cancel", None))
-        self.okButton.setText(_translate("qgis2leaf", "OK", None))
-        self.pushButton_2.setText(_translate("qgis2leaf", "...", None))
-        self.label_3.setText(_translate("qgis2leaf", "output project folder:", None))
-        self.label_4.setText(_translate("qgis2leaf", "basemap", None))
-        self.label_6.setText(_translate("qgis2leaf", "canvas/layer extent", None))
-        self.label.setText(_translate("qgis2leaf", "QGIS 2 Leaflet", None))
-        self.label_2.setText(_translate("qgis2leaf", "Export your current vector features to a working leaflet based webmap", None))
-        self.label_5.setText(_translate("qgis2leaf", "frame width x height", None))
-        self.actionLoadList.setText(_translate("qgis2leaf", "loadList", None))
+        qgis2leaf.setWindowTitle(QtGui.QApplication.translate("qgis2leaf", "qgis2leaf", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelButton.setText(QtGui.QApplication.translate("qgis2leaf", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.okButton.setText(QtGui.QApplication.translate("qgis2leaf", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_2.setText(QtGui.QApplication.translate("qgis2leaf", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("qgis2leaf", "output project folder:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("qgis2leaf", "basemap", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("qgis2leaf", "canvas/layer extent", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("qgis2leaf", "QGIS 2 Leaflet", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("qgis2leaf", "Export your current vector features to a working leaflet based webmap", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("qgis2leaf", "frame width x height", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadList.setText(QtGui.QApplication.translate("qgis2leaf", "loadList", None, QtGui.QApplication.UnicodeUTF8))
 
