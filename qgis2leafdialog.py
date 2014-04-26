@@ -35,16 +35,14 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui = Ui_qgis2leaf()
 		self.ui.setupUi(self)
 
-		self.setWindowTitle("QGIS2Leaflet")
+		self.setWindowTitle("QGIS 2 Leaflet")
 		
 		# Additional code
-		#self.inFileName = None
 		self.outFileName = None
 		self.rasterBands = 0
 		
 		# For now disable some features
 		self.ui.lineEdit_2.setReadOnly(False)
-		#self.ui.comboBox.setDisabled(True)
 		self.ui.okButton.setDisabled(True)
 		
 		# Connect signals
@@ -57,16 +55,18 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.okButton.clicked.connect(self.export2leaf)
 		
 		# set default width and height for the leaflet output
-		self.ui.width_box.setText('1280')
-		self.ui.height_box.setText('1024')
-		
-	#def showOpenDialog(self):
-		#self.inFileName = str(QtGui.QFileDialog.getOpenFileName(self, "Project Name:"))	
-		#driver = osgeo.ogr.GetDriverByName('ESRI Shapefile') # will select the driver foir our shp-file creation.
-		#shapeData = ogr.Open(str(self.inFileName), 1)
-		#self.ui.lineEdit.clear()
-		#self.ui.lineEdit.setText(self.inFileName)
-		
+		self.ui.radioButton.setChecked(True)
+		self.full_screen = 1
+		self.ui.radioButton.toggled.connect(self.width_)
+	def width_(self):
+			if self.ui.radioButton.isChecked() == True:
+				self.width = self.ui.width_box.setText('')
+				self.height = self.ui.height_box.setText('')
+				self.full_screen = 1
+			if self.ui.radioButton.isChecked() != True:
+				self.width = self.ui.width_box.setText('800')
+				self.height = self.ui.height_box.setText('600')
+				self.full_screen = 0
 	def showSaveDialog(self):
 		self.outFileName = str(QtGui.QFileDialog.getExistingDirectory(self, "Output Project Name:"))
 		
@@ -80,5 +80,5 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.extent = self.ui.comboBox_2.currentText()
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen)
 		self.close()

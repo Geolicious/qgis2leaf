@@ -30,7 +30,7 @@ import shutil #for reverse removing directories
 import urllib # to get files from the web
 
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -52,8 +52,37 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
 	os.makedirs(picturesStore)
 	miscStore = os.path.join(os.getcwd(),outputProjectFileName, 'misc')
 	os.makedirs(miscStore)
+	#lets create a css file for own css:
+	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'css' + os.sep + 'own_style.css', 'w') as f_css:
+		if full == 1:
+			text = """
+<style>
+	body {
+		padding: 0;
+		margin: 0;
+	}
+	html, body, #map {
+		height: 100%;
+		width: 100%;
+	}
+</style>"""
+		if full == 0:
+			text = """
+<style>
+	body {
+		padding: 0;
+		margin: 0;
+	}
+	html, body, #map {
+		height: """+str(height)+"""px;
+		width: """+str(width)+"""px;
+	}
+</style>"""
+		f_css.write(text)
+		f_css.close()
+	
 	#the index file has an easy beginning. we will store it right away:
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'w') as f:
+	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'w') as f_html:
 		base = """
 <!DOCTYPE html>
 <html>
@@ -61,13 +90,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent):
 	<title>QGIS2leaf webmap</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
+	<link rel="stylesheet" type="text/css" href="css/own_style.css">
 </head>
 <body>
-	<div id="map" style="align: center;width:""" + width + """px; height: """ + height + """px"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
+	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
   """
-		f.write(base)
-		f.close()
+		f_html.write(base)
+		f_html.close()
 	# let's create the js files in the data folder of input vector files:
 	canvas = qgis.utils.iface.mapCanvas()
 	allLayers = canvas.layers()

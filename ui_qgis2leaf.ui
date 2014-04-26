@@ -151,7 +151,7 @@
     <rect>
      <x>10</x>
      <y>100</y>
-     <width>341</width>
+     <width>431</width>
      <height>31</height>
     </rect>
    </property>
@@ -164,7 +164,7 @@
        </font>
       </property>
       <property name="text">
-       <string>frame width x height</string>
+       <string>frame width / height</string>
       </property>
      </widget>
     </item>
@@ -172,7 +172,26 @@
      <widget class="QLineEdit" name="width_box"/>
     </item>
     <item>
+     <widget class="QLabel" name="label_7">
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>/</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLineEdit" name="height_box"/>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton">
+      <property name="text">
+       <string>full screen</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
