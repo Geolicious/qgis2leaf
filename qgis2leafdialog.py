@@ -55,8 +55,10 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.okButton.clicked.connect(self.export2leaf)
 		
 		# set default width and height for the leaflet output
-		self.ui.radioButton.setChecked(True)
-		self.full_screen = 1
+		self.ui.radioButton.setChecked(False)
+		self.full_screen = 0
+		self.width = self.ui.width_box.setText('800')
+		self.height = self.ui.height_box.setText('600')
 		self.ui.radioButton.toggled.connect(self.width_)
 	def width_(self):
 			if self.ui.radioButton.isChecked() == True:

@@ -39,7 +39,8 @@ class qgis2leaf:
 		self.plugin_dir = os.path.dirname(__file__)
 		# initialize locale
 		locale = QSettings().value("locale/userLocale")[0:2]
-		localePath = os.path.join(self.plugin_dir, 'i18n', 'qgis2leaf_{}.qm'.format(locale))
+		#localePath = os.path.join(self.plugin_dir, 'i18n', 'qgis2leaf_{}.qm'.format(locale))
+		localePath = os.path.join(self.plugin_dir, 'i18n', 'realcentroid_{0}.qm'.format(locale))
 
 		if os.path.exists(localePath):
 			self.translator = QTranslator()
