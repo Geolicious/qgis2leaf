@@ -8,13 +8,14 @@ Your current QGIS project helds different data: vector, raster or plugin layers.
 
 ## Installation
 
-Download the source and place it in the "/.qgis2/python/plugins/qgis2leaf" folder (Windows: "C:\Users\{username}\.qgis\python\plugins\qgis2leaf" )
-Import the plugin using the normal add plugin method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins')
+* Download the source and place it in the `/.qgis2/python/plugins/qgis2leaf` folder  
+  (Windows: `C:\Users\{username}\.qgis\python\plugins\qgis2leaf`)
+* Import the plugin using the normal add plugin method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
 
-2014-04-22: initial commit
-2014-04-23: added disambiguation of layer types to avoid break of loop. 
+* 2014-04-22: initial commit
+* 2014-04-23: added disambiguation of layer types to avoid break of loop.
 
 ## Tests
 
@@ -27,6 +28,7 @@ Currently we are working on this project as part of the blog [digital-geography.
 
 ## License
 
+```
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -35,5 +37,5 @@ Currently we are working on this project as part of the blog [digital-geography.
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+```
 
