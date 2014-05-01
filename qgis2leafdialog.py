@@ -25,8 +25,9 @@ from ui_qgis2leaf import Ui_qgis2leaf
 import osgeo.ogr
 from osgeo import ogr
 from qgis2leaf_exec import qgis2leaf_exec
-# create the dialog for zoom to point
-
+from qgis.core import *
+import qgis.utils
+import re
 
 class qgis2leafDialog(QtGui.QDialog):
 	def __init__(self):
@@ -39,11 +40,12 @@ class qgis2leafDialog(QtGui.QDialog):
 		
 		# Additional code
 		self.outFileName = None
-		self.rasterBands = 0
-		
+		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+				
 		# For now disable some features
 		self.ui.lineEdit_2.setReadOnly(False)
 		self.ui.okButton.setDisabled(True)
+		self.ui.listWidget.clear()
 		
 		# Connect signals
 		self.ui.cancelButton.clicked.connect(self.close)
@@ -53,6 +55,7 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.comboBox_2.addItems(extFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)
+		self.ui.getButton.clicked.connect(self.layerGet)
 		
 		# set default width and height for the leaflet output
 		self.ui.radioButton.setChecked(False)
@@ -60,18 +63,28 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.setText('800')
 		self.height = self.ui.height_box.setText('600')
 		self.ui.radioButton.toggled.connect(self.width_)
+	def layerGet(self):
+		self.ui.listWidget.clear()
+		canvas = qgis.utils.iface.mapCanvas()
+		allLayers = canvas.layers()
+		for i in allLayers:
+			if i.type() != 0 :
+				print(i.name() + " skipped as it is not a vector layer")  
+			if i.type() == 0 : 
+				self.ui.listWidget.addItem(i.name())
+		self.rows = self.ui.listWidget.count()
+		self.ui.listWidget.selectAll()
 	def width_(self):
-			if self.ui.radioButton.isChecked() == True:
-				self.width = self.ui.width_box.setText('')
-				self.height = self.ui.height_box.setText('')
-				self.full_screen = 1
-			if self.ui.radioButton.isChecked() != True:
-				self.width = self.ui.width_box.setText('800')
-				self.height = self.ui.height_box.setText('600')
-				self.full_screen = 0
+		if self.ui.radioButton.isChecked() == True:
+			self.width = self.ui.width_box.setText('')
+			self.height = self.ui.height_box.setText('')
+			self.full_screen = 1
+		if self.ui.radioButton.isChecked() != True:
+			self.width = self.ui.width_box.setText('800')
+			self.height = self.ui.height_box.setText('600')
+			self.full_screen = 0
 	def showSaveDialog(self):
 		self.outFileName = str(QtGui.QFileDialog.getExistingDirectory(self, "Output Project Name:"))
-		
 		if self.outFileName != None:
 			self.ui.okButton.setDisabled(False)
 		self.ui.lineEdit_2.clear()
@@ -82,5 +95,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.extent = self.ui.comboBox_2.currentText()
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen)
+		self.layer_list = self.ui.listWidget.selectedItems()
+		for i in range(len(self.layer_list)): 
+			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list)
 		self.close()

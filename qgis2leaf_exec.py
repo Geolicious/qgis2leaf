@@ -28,20 +28,20 @@ import qgis.utils
 import os #for file writing/folder actions
 import shutil #for reverse removing directories
 import urllib # to get files from the web
+import time
+import re
 
-
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
 	# load providers
 	QgsApplication.initQgis()
 	# let's determine the current work folder of qgis:
-	print os.getcwd()
-
+	print os.getcwd()		
+	print layer_list
 	# let's create the overall folder structure:
-	if os.path.isdir(os.path.join(os.getcwd(),outputProjectFileName)):
-		shutil.rmtree(str(os.path.join(os.getcwd(),outputProjectFileName)))
+	outputProjectFileName = os.path.join(outputProjectFileName, 'export_' + str(time.strftime("%Y_%m_%d")) + '_' + str(time.strftime("%I_%M_%S")))
 	jsStore = os.path.join(os.getcwd(),outputProjectFileName, 'js')
 	os.makedirs(jsStore)
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
@@ -103,26 +103,25 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	allLayers = canvas.layers()
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
-		if i.type() != 0 :
-			print(i.name() + " skipped as it is not a vector layer")  
-		if i.type() == 0 :
-			
-			qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + str(i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
-			#now change the data structure to work with leaflet:
-			with open(dataStore + os.sep + str(i.name()) + '.js', "r+") as f2:
-				old = f2.read() # read everything in the file
-				f2.seek(0) # rewind
-				f2.write("var " + str(i.name()) + " = " + old) # write the new line before
-				f2.close
-				
-			#now add the js files as data input for our map
-			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
-				new_src = """
-	<script src='""" + 'data' + os.sep + str(i.name()) + """.js' ></script>
-	"""
-				# store everything in the file
-				f3.write(new_src)
-				f3.close()
+		for j in layer_list:
+			if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+				qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
+				#now change the data structure to work with leaflet:
+				with open(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', "r+") as f2:
+					old = f2.read() # read everything in the file
+					f2.seek(0) # rewind
+					print str(re.sub('[\W_]+', '', i.name()))
+					f2.write("var exp_" + str(re.sub('[\W_]+', '', i.name())) + " = " + old) # write the new line before
+					f2.close
+					
+				#now add the js files as data input for our map
+				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
+					new_src = """
+		<script src='""" + 'data' + os.sep + """exp_""" + re.sub('[\W_]+', '', i.name()) + """.js' ></script>
+		"""
+					# store everything in the file
+					f3.write(new_src)
+					f3.close()
 	#now determine the canvas bounding box
 	#####now with viewcontrol
 	if extent == 'canvas extent':
@@ -269,41 +268,41 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			f4.write(basemapText)
 			f4.close()
 	for i in allLayers: 
-		if i.type() != 0 :
-			print(i.name() + " skipped as it is not a vector layer")  
-		if i.type() == 0 :
-			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
-				fields = i.pendingFields() 
-				field_names = [field.name() for field in fields]
-				tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
-				row = ""
-				for field in field_names:
-					row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
-				tableend = """</table>'"""
-				table = tablestart + row +tableend
-				print table
-				new_pop = """
-		function pop_""" + i.name() + """(feature, layer) {
-			var popupContent = """ + table + """;
-			layer.bindPopup(popupContent);
-		}
-				"""
-				
-				new_obj = """
-		var """ + i.name() + """JSON = new L.geoJson(""" + i.name() + """,{
-			onEachFeature: pop_""" + i.name() + """,
-			pointToLayer: function (feature, latlng) {
-				return L.marker(latlng);
-				}
-			});
-		feature_group.addLayer(""" + i.name() + """JSON);"""
-		
-				print new_obj
-				# store everything in the file
-				f5.write(new_pop)
-				f5.write(new_obj)
-				f5.write(i.name() + """JSON.addTo(map);""")
-				f5.close()
+		for j in layer_list:
+			if re.sub('[\W_]+', '', i.name()) == j:
+				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
+					fields = i.pendingFields() 
+					field_names = [field.name() for field in fields]
+					tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
+					row = ""
+					for field in field_names:
+						row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+					tableend = """</table>'"""
+					table = tablestart + row +tableend
+					print table
+					new_pop = """
+			function pop_""" + re.sub('[\W_]+', '', i.name()) + """(feature, layer) {
+				var popupContent = """ + table + """;
+				layer.bindPopup(popupContent);
+			}
+					"""
+					
+					new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				pointToLayer: function (feature, latlng) {
+					return L.marker(latlng);
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""
+			
+					print new_obj
+					# store everything in the file
+					f5.write(new_pop)
+					f5.write(new_obj)
+					f5.write("""exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+					f5.close()
 	# let's add layer control
 	controlStart = """
 	L.control.layers({},{"""
@@ -312,13 +311,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		f6.close()
 
 	for i in allLayers: 
-		if i.type() != 0 :
-			print(i.name() + " skipped as it is not a vector layer")  
-		if i.type() == 0 :
-			with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-				new_layer = '"' + i.name() + '"' + ": " + i.name() + """JSON,"""
-				f7.write(new_layer)
-				f7.close()
+		for j in layer_list:
+			if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
+					new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+					f7.write(new_layer)
+					f7.close()
 
 	controlEnd = "}).addTo(map);"	
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f8:
