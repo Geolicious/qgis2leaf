@@ -6,6 +6,7 @@ This plugin provide an easy way to distribute and show your qgis work as a leafl
 
 Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2.
 You can choose between several basemap styles and define the initial extent of the map as well as the dimension of the webmap in your html document. To support big data exports you may disable initial loading of the layers to the map. As the webmap has a layer control you can enable visibility of the layers afterwards.
+The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder).
 
 ## Installation
 
@@ -15,6 +16,7 @@ You can choose between several basemap styles and define the initial extent of t
 
 ## Version_changes
 
+* 2014-05-03 v.0.8.1: new popup creation possibilities
 * 2014-05-03 v.0.8: new logo, new UI: toggle visibility
 * 2014-05-01 v.0.7: new layer list control for export, non-ascii character encoding problem solved, fixed folder deletion problem, fixed problem with layer names starting with numbers
 * 2014-04-27 v.0.6: fixed installation issues for older python versions (thanks to [mlaloux](https://github.com/mlaloux)), enhanced list of basemap-providers (thanks to [leaflet-providers](https://github.com/leaflet/extras/leaflet-providers/))

@@ -273,12 +273,19 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
 					fields = i.pendingFields() 
 					field_names = [field.name() for field in fields]
-					tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
-					row = ""
+					html_prov = False
 					for field in field_names:
-						row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
-					tableend = """</table>'"""
-					table = tablestart + row +tableend
+						if str(field) == 'html_exp':
+							html_prov = True
+							table = 'feature.properties.html_exp'
+							break
+					if html_prov != True:
+						tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
+						row = ""
+						for field in field_names:
+							row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+						tableend = """</table>'"""
+						table = tablestart + row +tableend
 					print table
 					new_pop = """
 			function pop_""" + re.sub('[\W_]+', '', i.name()) + """(feature, layer) {
