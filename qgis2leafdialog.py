@@ -53,6 +53,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.comboBox.addItems(attrFields)
 		extFields = ['canvas extent', 'layer extent']
 		self.ui.comboBox_2.addItems(extFields)
+		visFields = ['show all', 'show none']
+		self.ui.comboBox_3.addItems(visFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)
 		self.ui.getButton.clicked.connect(self.layerGet)
@@ -95,8 +97,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.extent = self.ui.comboBox_2.currentText()
+		self.visible = self.ui.comboBox_3.currentText()
 		self.layer_list = self.ui.listWidget.selectedItems()
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible)
 		self.close()

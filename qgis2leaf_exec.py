@@ -31,7 +31,7 @@ import urllib # to get files from the web
 import time
 import re
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -301,7 +301,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					# store everything in the file
 					f5.write(new_pop)
 					f5.write(new_obj)
-					f5.write("""exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+					if visible == 'show all':
+						f5.write("""
+					//add comment sign to hide this layer on the map in the initial view.
+					exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+					if visible == 'show none':
+						f5.write("""
+					//delete comment sign to show this layer on the map in the initial view.
+					//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 					f5.close()
 	# let's add layer control
 	controlStart = """
