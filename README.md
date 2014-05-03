@@ -5,6 +5,7 @@ This plugin provide an easy way to distribute and show your qgis work as a leafl
 ## Usage
 
 Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2.
+You can choose between several basemap styles and define the initial extent of the map as well as the dimension of the webmap in your html document. To support big data exports you may disable initial loading of the layers to the map. As the webmap has a layer control you can enable visibility of the layers afterwards.
 
 ## Installation
 
@@ -14,13 +15,19 @@ Your current QGIS project helds different data: vector, raster or plugin layers.
 
 ## Version_changes
 
+* 2014-05-03 v.0.8: new logo, new UI: toggle visibility
+* 2014-05-01 v.0.7: new layer list control for export, non-ascii character encoding problem solved, fixed folder deletion problem, fixed problem with layer names starting with numbers
+* 2014-04-27 v.0.6: fixed installation issues for older python versions (thanks to [mlaloux](https://github.com/mlaloux)), enhanced list of basemap-providers (thanks to [leaflet-providers](https://github.com/leaflet/extras/leaflet-providers/))
+* 2014-04-26 v.0.5: new control for full map support, optimized UI (thanks to [mtravis](https://github.com/mtravis), correct attribution for basemaps, new css file creation
+* 2014-04-25 v.0.4: new layer control for features (thanks to [RCura](https://github.com/RCura)), new GUI with extent setting possibility
+* 2014-04-24 v.0.3: new ui with dimension choice for webmap, enhanced html structure for better readability
+* 2014-04-23 v.0.2: added disambiguation of layer types to avoid break of loop.
 * 2014-04-22: initial commit
-* 2014-04-23: added disambiguation of layer types to avoid break of loop.
 
 ## Tests
 
-you may find testdata in the "test_data" folder.
-It was tested on Linux Mint.
+You may find testdata in the "test_data" folder.
+It was tested on Linux Mint. with QGIS 2.2 and Python 2.7.5+ 
 
 ## Contributors
 

@@ -11,8 +11,8 @@
 [general]
 name=qgis2leaf
 qgisMinimumVersion=2.0
-description=Exports a QGIS Project to a working leaflet webmap
-version=0.7
+description=Exports a QGIS project to a working leaflet webmap.
+version=0.8
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
@@ -21,13 +21,14 @@ email=riccardo.klinger@geolicious.de
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-changelog= 2014/04/22 v.0.1
-2014/04/23 v.0.2: basemap choice, popups in leafletmap
-2014/04/24 v.0.3: new ui with dimension choice for webmap, enhanced html structure for better readability
-2014/04/25 v.0.4: new layer control for features (thanks to https://github.com/RCura), new GUI with extent setting possibility
-2014/04/26 v.0.5: new control for full map support, optimized UI (thanks to https://github.com/mtravis), correct attribution for basemaps, new css file creation
-2014/04/27 v.0.6: fixed installation issues for older python versions (thanks to https://github.com/mlaloux), enhanced list of basemap-providers (thanks to: https://github.com/leaflet-extras/leaflet-providers/)
+changelog= 2014/05/03 v.0.8: new logo, new UI: toggle visibility
 2014/05/01 v.0.7: new layer list control for export, non-ascii character encoding problem solved, fixed folder deletion problem, fixed problem with layer names starting with numbers
+2014/04/27 v.0.6: fixed installation issues for older python versions (thanks to https://github.com/mlaloux), enhanced list of basemap-providers (thanks to: https://github.com/leaflet-extras/leaflet-providers/)
+2014/04/26 v.0.5: new control for full map support, optimized UI (thanks to https://github.com/mtravis), correct attribution for basemaps, new css file creation
+2014/04/25 v.0.4: new layer control for features (thanks to https://github.com/RCura), new GUI with extent setting possibility
+2014/04/24 v.0.3: new ui with dimension choice for webmap, enhanced html structure for better readability
+2014/04/23 v.0.2: basemap choice, popups in leafletmap
+2014/04/22 v.0.1: initial commit
 
 # tags are comma separated with spaces allowed
 tags=geojson, leaflet, webmap, js, html, web
@@ -35,7 +36,7 @@ tags=geojson, leaflet, webmap, js, html, web
 homepage=https://github.com/riccardoklinger/qgis2leaf/wiki
 tracker=https://github.com/riccardoklinger/qgis2leaf/issues
 repository=https://github.com/riccardoklinger/qgis2leaf
-icon=logo.png
+icon=logo_big.png
 # experimental flag
 experimental=True
 
