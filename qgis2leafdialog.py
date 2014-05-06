@@ -58,7 +58,6 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)
 		self.ui.getButton.clicked.connect(self.layerGet)
-		
 		# set default width and height for the leaflet output
 		self.ui.radioButton.setChecked(False)
 		self.full_screen = 0
