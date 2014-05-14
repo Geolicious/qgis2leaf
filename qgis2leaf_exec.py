@@ -30,6 +30,12 @@ import shutil #for reverse removing directories
 import urllib # to get files from the web
 import time
 import re
+import fileinput
+import sys #to use another print command without annoying newline characters 
+
+
+def layerstyle_single(layer):
+	return color_code
 
 def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible):
 	# supply path to where is your qgis installed
@@ -89,6 +95,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 <head>
 	<title>QGIS2leaf webmap</title>
 	<meta charset="utf-8" />
+	
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
 </head>
@@ -107,12 +114,62 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
 				qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
 				#now change the data structure to work with leaflet:
+
 				with open(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', "r+") as f2:
 					old = f2.read() # read everything in the file
 					f2.seek(0) # rewind
-					print str(re.sub('[\W_]+', '', i.name()))
+					#print str(re.sub('[\W_]+', '', i.name()))
 					f2.write("var exp_" + str(re.sub('[\W_]+', '', i.name())) + " = " + old) # write the new line before
 					f2.close
+				#lets define style for the single marker points
+				if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
+					color_str = str(i.rendererV2().symbol().color().name())
+					radius_str = str(i.rendererV2().symbol().size() * 2)
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					transp_str2 = str(i.rendererV2().symbol().alpha())
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
+						sys.stdout.write(line)
+				#lets define style for the graduaded marker points
+				if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
+					# every json entry needs a unique id:
+					iter = i.getFeatures()
+					#what is the value based on:
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())	
+					step = 0
+					colorval = []
+					for feat in iter:
+						print str(feat.attributes()[attrvalindex]) + 'attribute'
+						if str(feat.attributes()[attrvalindex]) != 'NULL':
+							value = int(feat.attributes()[attrvalindex])
+					
+						elif str(feat.attributes()[attrvalindex]) == 'NULL':
+							value = None
+						for r in i.rendererV2().ranges():
+							if value >= r.lowerValue() and value <= r.upperValue() and value != None:
+								#print r.lowerValue()
+								#print r.upperValue()
+								colorval.append(r.symbol().color().name())
+								break
+								#print r.symbol().color().name()
+							elif value == None:
+								colorval.append('#FF00FF')
+								break
+							#print colorval
+						
+					qgisLeafId = 0
+					print len(colorval)
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(colorval):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(colorval[qgisLeafId]) + """', """)
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne
+						
+					print colorval
 					
 				#now add the js files as data input for our map
 				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
@@ -134,133 +191,136 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
 		middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);"""
+		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
+		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a><br>';"""
 	if extent == 'layer extent':
 		middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true });"""
+		var map = L.map('map', { zoomControl:true });
+		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a><br>';"""
 	#here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 	middle += """
 	var feature_group = new L.featureGroup([]);
 	"""
+	
 	if basemapName == 'OSM Standard':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OSM Black & White':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'Stamen Toner':
 		basemapText = """
-		map.attributionControl.addAttribution('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
+		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
 		L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OSM DE':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OSM HOT':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'); 
 		L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
 		"""	
 	if basemapName == 'OpenSeaMap':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'); 
 		L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png').addTo(map);
 		"""		
 	if basemapName == 'Thunderforest Cycle':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png').addTo(map);
 		"""	
 	if basemapName == 'Thunderforest Transport':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png').addTo(map);
 		"""			
 	if basemapName == 'Thunderforest Landscape':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png').addTo(map);
 		"""	
 	if basemapName == 'Thunderforest Outdoors':
 		basemapText = """
-		map.attributionControl.addAttribution('&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png').addTo(map);
 		"""		
 	if basemapName == 'OpenMapSurfer Roads':
 		basemapText = """
-		map.attributionControl.addAttribution('Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}').addTo(map);
 		"""			
 	if basemapName == 'OpenMapSurfer adminb':
 		basemapText = """
-		map.attributionControl.addAttribution('Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/adminb/x={x}&y={y}&z={z}').addTo(map);
 		"""	
 	if basemapName == 'OpenMapSurfer roadsg':
 		basemapText = """
-		map.attributionControl.addAttribution('Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roadsg/x={x}&y={y}&z={z}').addTo(map);
 		"""
 	if basemapName == 'MapQuestOpen OSM':
 		basemapText = """
-		map.attributionControl.addAttribution('Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
 		L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg').addTo(map);
 		"""	
 	if basemapName == 'MapQuestOpen Aerial':
 		basemapText = """
-		map.attributionControl.addAttribution('Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'); 
 		L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg').addTo(map);
 		"""
 	if basemapName == 'Stamen Terrain':
 		basemapText = """
-		map.attributionControl.addAttribution('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
+		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
 		L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'Stamen Watercolor':
 		basemapText = """
-		map.attributionControl.addAttribution('Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
+		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
 		L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Clouds':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Precipitation':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Rain':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Pressure':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Wind':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Temp':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png').addTo(map);
 		"""
 	if basemapName == 'OpenWeatherMap Snow':
 		basemapText = """
-		map.attributionControl.addAttribution('Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
+		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
 		L.tileLayer('http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png').addTo(map);
 		"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
@@ -271,6 +331,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		for j in layer_list:
 			if re.sub('[\W_]+', '', i.name()) == j:
 				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
+					#here comes the layer style
+					#here comes the html popup content
 					fields = i.pendingFields() 
 					field_names = [field.name() for field in fields]
 					html_prov = False
@@ -286,25 +348,56 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
 						tableend = """</table>'"""
 						table = tablestart + row +tableend
-					print table
+					#print table
 					new_pop = """
 			function pop_""" + re.sub('[\W_]+', '', i.name()) + """(feature, layer) {
 				var popupContent = """ + table + """;
 				layer.bindPopup(popupContent);
 			}
 					"""
-					
-					new_obj = """
+					#single marker points:
+					 
+					if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
+						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
-				pointToLayer: function (feature, latlng) {
-					return L.marker(latlng);
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, {
+						radius: feature.properties.radius_qgis2leaf,
+						fillColor: feature.properties.color_qgis2leaf,
+						color: '#000',
+						weight: 1,
+						opacity: feature.properties.transp_qgis2leaf,
+						fillOpacity: feature.properties.transp_fill_qgis2leaf
+						})
 					}
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-			"""
+			"""		
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, {
+						fillColor: feature.properties.color_qgis2leaf,
+						color: '#000',
+						weight: 1,
+						fillOpacity: 1
+						})
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""	
+					else:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
 			
-					print new_obj
+					#print new_obj
 					# store everything in the file
 					f5.write(new_pop)
 					f5.write(new_obj)

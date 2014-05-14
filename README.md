@@ -16,6 +16,7 @@ The popup for features is either a simple table with all your attributes or defi
 
 ## Version_changes
 
+* 2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles.
 * 2014-05-03 v.0.8.1: new popup creation possibilities
 * 2014-05-03 v.0.8: new logo, new UI: toggle visibility
 * 2014-05-01 v.0.7: new layer list control for export, non-ascii character encoding problem solved, fixed folder deletion problem, fixed problem with layer names starting with numbers
