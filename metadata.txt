@@ -21,7 +21,8 @@ email=riccardo.klinger@geolicious.de
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-changelog= 2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles
+changelog= 2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
+2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles
 2014/05/03 v.0.8.1: new popup design possibilities
 2014/05/03 v.0.8: new logo, new UI: toggle visibility
 2014/05/01 v.0.7: new layer list control for export, non-ascii character encoding problem solved, fixed folder deletion problem, fixed problem with layer names starting with numbers

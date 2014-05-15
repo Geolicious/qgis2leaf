@@ -121,7 +121,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					#print str(re.sub('[\W_]+', '', i.name()))
 					f2.write("var exp_" + str(re.sub('[\W_]+', '', i.name())) + " = " + old) # write the new line before
 					f2.close
-				#lets define style for the single marker points
+				#let's define style for the single marker points
 				if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
 					color_str = str(i.rendererV2().symbol().color().name())
 					radius_str = str(i.rendererV2().symbol().size() * 2)
@@ -130,46 +130,82 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 						sys.stdout.write(line)
-				#lets define style for the graduaded marker points
+				#let's define style for categorized points
+				if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
+					iter = i.getFeatures()
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
+					categories = i.rendererV2().categories()
+					color_str = []
+					radius_str = []
+					transp_str2 = []
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					for feat in iter:
+						fid = feat.id()
+						attribute_map = feat.attributes()
+						catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+    					#print catindex
+						if catindex != -1: 
+							color_str.append(str(categories[catindex].symbol().color().name()))
+							radius_str.append(str(categories[catindex].symbol().size() * 2))
+							transp_str2.append(str(categories[catindex].symbol().alpha()))
+						else: 
+							color_str.append('#FF00FF')
+							radius_str.append('4')
+							transp_str2.append('1')
+						#print color_str
+					qgisLeafId = 0
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne
+						
+					#print color_str
+				#let's define style for the graduaded marker points
 				if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
 					# every json entry needs a unique id:
 					iter = i.getFeatures()
 					#what is the value based on:
 					provider = i.dataProvider()
 					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())	
-					step = 0
-					colorval = []
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					color_str = []
+					radius_str = []
+					transp_str2 = []
 					for feat in iter:
-						print str(feat.attributes()[attrvalindex]) + 'attribute'
 						if str(feat.attributes()[attrvalindex]) != 'NULL':
 							value = int(feat.attributes()[attrvalindex])
-					
 						elif str(feat.attributes()[attrvalindex]) == 'NULL':
 							value = None
 						for r in i.rendererV2().ranges():
 							if value >= r.lowerValue() and value <= r.upperValue() and value != None:
 								#print r.lowerValue()
 								#print r.upperValue()
-								colorval.append(r.symbol().color().name())
+								color_str.append(str(r.symbol().color().name()))
+								radius_str.append(str(r.symbol().size() * 2))
+								transp_str2.append(str(r.symbol().alpha()))
 								break
 								#print r.symbol().color().name()
 							elif value == None:
-								colorval.append('#FF00FF')
+								color_str.append('#FF00FF')
+								radius_str.append('4')
+								transp_str2.append('1')
 								break
-							#print colorval
-						
 					qgisLeafId = 0
-					print len(colorval)
 					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 						addOne = str(line).count(""""type": "Feature", "properties": { """)
-						if qgisLeafId < len(colorval):
-							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(colorval[qgisLeafId]) + """', """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
 						else:
 							line = line.replace(" "," ")
 						sys.stdout.write(line)
 						qgisLeafId = qgisLeafId+addOne
 						
-					print colorval
+					#print color_str
 					
 				#now add the js files as data input for our map
 				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
@@ -192,12 +228,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		middle = """
 	<script>
 		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
-		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a><br>';"""
+		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	if extent == 'layer extent':
 		middle = """
 	<script>
 		var map = L.map('map', { zoomControl:true });
-		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a><br>';"""
+		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	#here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 	middle += """
 	var feature_group = new L.featureGroup([]);
@@ -374,16 +410,35 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, {
+						radius: feature.properties.radius_qgis2leaf,
+						fillColor: feature.properties.color_qgis2leaf,
+						color: '#000',
+						weight: 1,
+						opacity: feature.properties.transp_qgis2leaf,
+						fillOpacity: feature.properties.transp_fill_qgis2leaf
+						})
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
 					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
 				pointToLayer: function (feature, latlng) {  
 					return L.circleMarker(latlng, {
+						radius: feature.properties.radius_qgis2leaf,
 						fillColor: feature.properties.color_qgis2leaf,
 						color: '#000',
 						weight: 1,
-						fillOpacity: 1
+						opacity: feature.properties.transp_qgis2leaf,
+						fillOpacity: feature.properties.transp_fill_qgis2leaf
 						})
 					}
 				});

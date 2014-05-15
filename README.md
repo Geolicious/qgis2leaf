@@ -1,21 +1,23 @@
 ## Synopsis
 
-This plugin provide an easy way to distribute and show your qgis work as a leaflet webmap. 
+This plugin provides an easy way to distribute and show your qgis work as a leaflet webmap. 
 
 ## Usage
 
 Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2.
 You can choose between several basemap styles and define the initial extent of the map as well as the dimension of the webmap in your html document. To support big data exports you may disable initial loading of the layers to the map. As the webmap has a layer control you can enable visibility of the layers afterwards.
 The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder).
+For single, categorized and graduated symbol point feature layers we are exporting radius, color and opacity. Unfortunately the export of forms and svg is not embedded at the moment.
 
 ## Installation
 
 * Download the source and place it in the `/.qgis2/python/plugins/qgis2leaf` folder  
   (Windows: `C:\Users\{username}\.qgis\python\plugins\qgis2leaf`)
-* Import the plugin using the normal add plugin method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
+* Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
 
+* 2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
 * 2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles.
 * 2014-05-03 v.0.8.1: new popup creation possibilities
 * 2014-05-03 v.0.8: new logo, new UI: toggle visibility
@@ -35,6 +37,7 @@ It was tested on Linux Mint. with QGIS 2.2 and Python 2.7.5+
 ## Contributors
 
 Currently we are working on this project as part of the blog [digital-geography.com](http://www.digital-geography.com 'digital-geography') and [geolicious.](http://www.geolicious.de 'geolicious')
+You find additional contributors in the changelog.
 
 ## License
 
