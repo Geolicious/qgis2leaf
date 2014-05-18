@@ -12,7 +12,7 @@
 name=qgis2leaf
 qgisMinimumVersion=2.0
 description=Exports a QGIS project to a working leaflet webmap.
-version=0.8.3
+version=0.8.4
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
