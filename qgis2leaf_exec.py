@@ -458,7 +458,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						iconUrl: feature.properties.icon_exp,
 						iconSize:     [48, 48], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
 						iconAnchor:   [24, 24], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
-						popupAnchor:  [0, 24] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
+						popupAnchor:  [0, -26] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
 		 				})
 		 			})
 				}}
