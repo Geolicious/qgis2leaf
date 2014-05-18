@@ -6,7 +6,7 @@ This plugin provides an easy way to distribute and show your qgis work as a leaf
 
 Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2.
 You can choose between several basemap styles and define the initial extent of the map as well as the dimension of the webmap in your html document. To support big data exports you may disable initial loading of the layers to the map. As the webmap has a layer control you can enable visibility of the layers afterwards.
-The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder).
+The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder). If you want to use a defined symbol in your webmap add an attribute `icon_exp` to your point shapefile and file it wit a relative path on your pc or an html statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in `places_few_1_EPSG3857_categorized.shp` in the `test_data` folder.
 For single, categorized and graduated symbol point feature layers we are exporting radius, color and opacity. Unfortunately the export of forms and svg is not embedded at the moment.
 
 ## Installation
@@ -16,7 +16,7 @@ For single, categorized and graduated symbol point feature layers we are exporti
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
-
+* 2014/05/18 v.0.8.4: define your icon for point shapes, new cdn for the needed javascripts
 * 2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
 * 2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles.
 * 2014-05-03 v.0.8.1: new popup creation possibilities

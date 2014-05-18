@@ -96,12 +96,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	<title>QGIS2leaf webmap</title>
 	<meta charset="utf-8" />
 	
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
   """
 		f_html.write(base)
 		f_html.close()
@@ -372,16 +372,21 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					fields = i.pendingFields() 
 					field_names = [field.name() for field in fields]
 					html_prov = False
+					icon_prov = False
 					for field in field_names:
 						if str(field) == 'html_exp':
 							html_prov = True
 							table = 'feature.properties.html_exp'
-							break
+						if str(field) == 'icon_exp':
+							icon_prov = True #we need this later on for icon creation
 					if html_prov != True:
 						tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
 						row = ""
 						for field in field_names:
-							row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+							if str(field) == "icon_exp":
+								row += ""
+							else: 
+								row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
 						tableend = """</table>'"""
 						table = tablestart + row +tableend
 					#print table
@@ -393,7 +398,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					"""
 					#single marker points:
 					 
-					if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
+					if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -410,7 +415,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -427,7 +432,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -443,7 +448,23 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					}
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-			"""	
+			"""		
+					elif icon_prov == True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				pointToLayer: function (feature, latlng) {
+					return L.marker(latlng, {icon: L.icon({
+						iconUrl: feature.properties.icon_exp,
+						iconSize:     [48, 48], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
+						iconAnchor:   [24, 24], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
+						popupAnchor:  [0, 24] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
+		 				})
+		 			})
+				}}
+			);
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
 					else:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{

@@ -12,7 +12,7 @@
 name=qgis2leaf
 qgisMinimumVersion=2.0
 description=Exports a QGIS project to a working leaflet webmap.
-version=0.8.1
+version=0.8.3
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
@@ -21,7 +21,8 @@ email=riccardo.klinger@geolicious.de
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-changelog= 2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
+changelog= 2014/05/18 v.0.8.4: define your icon for point shapes, new cdn for the needed javascripts
+2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
 2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles
 2014/05/03 v.0.8.1: new popup design possibilities
 2014/05/03 v.0.8: new logo, new UI: toggle visibility
