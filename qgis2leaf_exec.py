@@ -449,7 +449,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif icon_prov == True:
+					elif icon_prov == True and i.geometryType() == 0:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
