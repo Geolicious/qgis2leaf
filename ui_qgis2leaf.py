@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Tue May  6 08:24:25 2014
+# Created: Tue May 20 08:10:09 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,7 +56,7 @@ class Ui_qgis2leaf(object):
         self.listWidget.setGeometry(QtCore.QRect(10, 10, 341, 151))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.gridLayoutWidget = QtGui.QWidget(self.tab_app)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 180, 443, 210))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 190, 443, 210))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setSpacing(10)
@@ -137,7 +137,7 @@ class Ui_qgis2leaf(object):
         self.horizontalLayout_4.addWidget(self.cancelButton)
         self.gridLayout.addLayout(self.horizontalLayout_4, 6, 1, 1, 1)
         self.line_2 = QtGui.QFrame(self.tab_app)
-        self.line_2.setGeometry(QtCore.QRect(10, 160, 441, 16))
+        self.line_2.setGeometry(QtCore.QRect(10, 170, 441, 16))
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
@@ -148,14 +148,14 @@ class Ui_qgis2leaf(object):
         self.tab_help = QtGui.QWidget()
         self.tab_help.setObjectName(_fromUtf8("tab_help"))
         self.textBrowser = QtGui.QTextBrowser(self.tab_help)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 10, 441, 291))
+        self.textBrowser.setGeometry(QtCore.QRect(10, 10, 441, 391))
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
         self.tab_2.addTab(self.tab_help, _fromUtf8(""))
         self.actionLoadList = QtGui.QAction(qgis2leaf)
         self.actionLoadList.setObjectName(_fromUtf8("actionLoadList"))
 
         self.retranslateUi(qgis2leaf)
-        self.tab_2.setCurrentIndex(0)
+        self.tab_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(qgis2leaf)
 
     def retranslateUi(self, qgis2leaf):
@@ -178,12 +178,15 @@ class Ui_qgis2leaf(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Press &quot;<span style=\" font-weight:600;\">get layers</span>&quot; to add/reload your vector layers to the plugin. You can select the layers to export.</li>\n"
-"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Frame width</span> defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser.</li>\n"
-"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Extent: <span style=\" font-weight:600;\">canvas extent - </span>QGIS canvas will influence initial leaflet view / choose <span style=\" font-weight:600;\">layer extent</span> to set the leaflet webmap extent to the extent of all vector layers.</li>\n"
-"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">For large datasets set the <span style=\" font-weight:600;\">visible layers</span> to &quot;show none&quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.</li>\n"
-"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose one of the available <span style=\" font-weight:600;\">basemaps</span>. </li>\n"
-"<li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">As <span style=\" font-weight:600;\">output project folder</span> you should choose a separate folder. There will be a designated folder in it with your current export files and folders.</li></ul></body></html>", None))
+"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; text-decoration: underline;\">General help:</span></p>\n"
+"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">QGIS 2 Leaflet creates a webmap from your current QGIS vector features. Therefore it tries to copy the current vector styles to styles, leaflet will understand. If your data has an attribute called <span style=\" font-weight:600; font-style:italic;\">html_exp</span><span style=\" font-weight:600;\"> </span>it will use this for the<span style=\" font-weight:600;\"> popup content. </span>Otherwise it will create a <span style=\" font-weight:600;\">simple table</span> from all of your attributes and values. Furthermore you can define an <span style=\" font-weight:600;\">icon for your point</span> layers using an attribute called <span style=\" font-weight:600; font-style:italic;\">icon_exp</span><span style=\" font-weight:600;\">.</span> Each feature should have an <span style=\" font-weight:600;\">absolute path</span> on your current system or provide a <span style=\" font-weight:600;\">link to the image</span> (preferable *.svg or *.png). You may find suitable examples in the test_data folder.</p>\n"
+"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600; text-decoration: underline;\">GUI help:</span></p>\n"
+"<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Press &quot;<span style=\" font-weight:600;\">get layers</span>&quot; to add/reload your vector layers to the plugin. You can select the layers to export.</li>\n"
+"<li align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Frame width</span> defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser.</li>\n"
+"<li align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Extent: <span style=\" font-weight:600;\">canvas extent - </span>QGIS canvas will influence initial leaflet view / choose <span style=\" font-weight:600;\">layer extent</span> to set the leaflet webmap extent to the extent of all vector layers.</li>\n"
+"<li align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">For large datasets set the <span style=\" font-weight:600;\">visible layers</span> to &quot;show none&quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.</li>\n"
+"<li align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose one of the available <span style=\" font-weight:600;\">basemaps</span>. </li>\n"
+"<li align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">As <span style=\" font-weight:600;\">output project folder</span> you should choose a separate folder. There will be a designated folder in it with your current export files and folders.</li></ul></body></html>", None))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_help), _translate("qgis2leaf", "Help", None))
         self.actionLoadList.setText(_translate("qgis2leaf", "loadList", None))
 
