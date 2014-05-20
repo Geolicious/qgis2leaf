@@ -28,6 +28,7 @@ from qgis2leaf_exec import qgis2leaf_exec
 from qgis.core import *
 import qgis.utils
 import re
+import os
 
 class qgis2leafDialog(QtGui.QDialog):
 	def __init__(self):
@@ -44,7 +45,7 @@ class qgis2leafDialog(QtGui.QDialog):
 				
 		# For now disable some features
 		self.ui.lineEdit_2.setReadOnly(False)
-		self.ui.okButton.setDisabled(True)
+		self.ui.okButton.setDisabled(False)
 		self.ui.listWidget.clear()
 		
 		# Connect signals
@@ -54,6 +55,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		extFields = ['canvas extent', 'layer extent']
 		self.ui.comboBox_2.addItems(extFields)
 		visFields = ['show all', 'show none']
+		self.ui.lineEdit_2.setText(os.getcwd())
+		self.outFileName = self.ui.lineEdit_2.text()
 		self.ui.comboBox_3.addItems(visFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)

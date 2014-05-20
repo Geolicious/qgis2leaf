@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Tue May 20 08:10:09 2014
+# Created: Tue May 20 18:31:30 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -155,7 +155,7 @@ class Ui_qgis2leaf(object):
         self.actionLoadList.setObjectName(_fromUtf8("actionLoadList"))
 
         self.retranslateUi(qgis2leaf)
-        self.tab_2.setCurrentIndex(1)
+        self.tab_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(qgis2leaf)
 
     def retranslateUi(self, qgis2leaf):
