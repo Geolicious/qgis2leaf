@@ -131,6 +131,23 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 						sys.stdout.write(line)
+				#let's define style for the single marker lines
+				if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
+					color_str = str(i.rendererV2().symbol().color().name())
+					radius_str = str(i.rendererV2().symbol().width() * 5)
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					transp_str2 = str(i.rendererV2().symbol().alpha())
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
+						sys.stdout.write(line)
+				#let's define style for the single marker polygons
+				if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
+					color_str = str(i.rendererV2().symbol().color().name())
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					transp_str2 = str(i.rendererV2().symbol().alpha())
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
+						sys.stdout.write(line)		
 				#let's define style for categorized points
 				if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
 					iter = i.getFeatures()
@@ -164,8 +181,71 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							line = line.replace(" "," ")
 						sys.stdout.write(line)
 						qgisLeafId = qgisLeafId+addOne
-						
-					#print color_str
+					
+				#let's define style for categorized lines
+				if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
+					iter = i.getFeatures()
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
+					categories = i.rendererV2().categories()
+					color_str = []
+					radius_str = []
+					transp_str2 = []
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					for feat in iter:
+						fid = feat.id()
+						attribute_map = feat.attributes()
+						catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+    					#print catindex
+						if catindex != -1: 
+							color_str.append(str(categories[catindex].symbol().color().name()))
+							radius_str.append(str(categories[catindex].symbol().width() * 5))
+							transp_str2.append(str(categories[catindex].symbol().alpha()))
+						else: 
+							color_str.append('#FF00FF')
+							radius_str.append('4')
+							transp_str2.append('1')
+						#print color_str
+					qgisLeafId = 0
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne
+				#let's define style for categorized polygons
+				if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
+					iter = i.getFeatures()
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
+					categories = i.rendererV2().categories()
+					color_str = []
+					radius_str = []
+					transp_str2 = []
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					for feat in iter:
+						fid = feat.id()
+						attribute_map = feat.attributes()
+						catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+    					#print catindex
+						if catindex != -1: 
+							color_str.append(str(categories[catindex].symbol().color().name()))
+							transp_str2.append(str(categories[catindex].symbol().alpha()))
+						else: 
+							color_str.append('#FF00FF')
+							transp_str2.append('1')
+						#print color_str
+					qgisLeafId = 0
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne	
 				#let's define style for the graduaded marker points
 				if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
 					# every json entry needs a unique id:
@@ -206,7 +286,82 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						sys.stdout.write(line)
 						qgisLeafId = qgisLeafId+addOne
 						
-					#print color_str
+				#let's define style for the graduaded marker line
+				if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
+					# every json entry needs a unique id:
+					iter = i.getFeatures()
+					#what is the value based on:
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())	
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					color_str = []
+					radius_str = []
+					transp_str2 = []
+					for feat in iter:
+						if str(feat.attributes()[attrvalindex]) != 'NULL':
+							value = int(feat.attributes()[attrvalindex])
+						elif str(feat.attributes()[attrvalindex]) == 'NULL':
+							value = None
+						for r in i.rendererV2().ranges():
+							if value >= r.lowerValue() and value <= r.upperValue() and value != None:
+								print r.lowerValue()
+								print r.upperValue()
+								color_str.append(str(r.symbol().color().name()))
+								radius_str.append(str(r.symbol().width() * 5))
+								transp_str2.append(str(r.symbol().alpha()))
+								break
+								print r.symbol().color().name()
+							elif value == None:
+								color_str.append('#FF00FF')
+								radius_str.append('4')
+								transp_str2.append('1')
+								break
+					qgisLeafId = 0
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne
+				#let's define style for the graduaded marker polygon
+				if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
+					# every json entry needs a unique id:
+					iter = i.getFeatures()
+					#what is the value based on:
+					provider = i.dataProvider()
+					attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())	
+					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
+					color_str = []
+					radius_str = []
+					transp_str2 = []
+					for feat in iter:
+						if str(feat.attributes()[attrvalindex]) != 'NULL':
+							value = int(feat.attributes()[attrvalindex])
+						elif str(feat.attributes()[attrvalindex]) == 'NULL':
+							value = None
+						for r in i.rendererV2().ranges():
+							if value >= r.lowerValue() and value <= r.upperValue() and value != None:
+								print r.lowerValue()
+								print r.upperValue()
+								color_str.append(str(r.symbol().color().name()))
+								transp_str2.append(str(r.symbol().alpha()))
+								break
+								print r.symbol().color().name()
+							elif value == None:
+								color_str.append('#FF00FF')
+								transp_str2.append('1')
+								break
+					qgisLeafId = 0
+					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+						addOne = str(line).count(""""type": "Feature", "properties": { """)
+						if qgisLeafId < len(color_str):
+							line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+						else:
+							line = line.replace(" "," ")
+						sys.stdout.write(line)
+						qgisLeafId = qgisLeafId+addOne						
 					
 				#now add the js files as data input for our map
 				with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
@@ -416,6 +571,31 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
+					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {weight: feature.properties.radius_qgis2leaf,
+							color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
+					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""	
 					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
@@ -433,6 +613,31 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {weight: feature.properties.radius_qgis2leaf,
+							color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""				
 					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
@@ -446,6 +651,31 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						opacity: feature.properties.transp_qgis2leaf,
 						fillOpacity: feature.properties.transp_fill_qgis2leaf
 						})
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""		
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {weight: feature.properties.radius_qgis2leaf,
+							color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
+					}
+				});
+			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+			"""	
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2 and icon_prov != True:
+						new_obj = """
+			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
+				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				style: function (feature) {
+					return {color: feature.properties.color_qgis2leaf,
+							opacity: feature.properties.transp_qgis2leaf,
+							fillOpacity: feature.properties.transp_fill_qgis2leaf};
 					}
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
