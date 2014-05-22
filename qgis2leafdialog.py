@@ -29,6 +29,7 @@ from qgis.core import *
 import qgis.utils
 import re
 import os
+import tempfile
 
 class qgis2leafDialog(QtGui.QDialog):
 	def __init__(self):
@@ -55,7 +56,7 @@ class qgis2leafDialog(QtGui.QDialog):
 		extFields = ['canvas extent', 'layer extent']
 		self.ui.comboBox_2.addItems(extFields)
 		visFields = ['show all', 'show none']
-		self.ui.lineEdit_2.setText(os.getcwd())
+		self.ui.lineEdit_2.setText(tempfile.gettempdir())
 		self.outFileName = self.ui.lineEdit_2.text()
 		self.ui.comboBox_3.addItems(visFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)

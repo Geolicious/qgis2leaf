@@ -5,7 +5,7 @@
                                  A QGIS plugin
  QGIS to Leaflet creation programm
                              -------------------
-        begin                : 2013-04-29
+        begin                : 2014-04-29
         copyright            : (C) 2013 by Riccardo Klinger
         email                : riccardo.klinger@geolicious.com
  ***************************************************************************/
@@ -31,6 +31,7 @@ import urllib # to get files from the web
 import time
 import re
 import fileinput
+import webbrowser #to open the made map directly in your browser
 import sys #to use another print command without annoying newline characters 
 
 
@@ -525,3 +526,4 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f9:
 		f9.write(end)
 		f9.close()
+	webbrowser.open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html')
