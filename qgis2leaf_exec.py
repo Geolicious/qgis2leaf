@@ -571,7 +571,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1 and icon_prov != True:
+					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -584,7 +584,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2 and icon_prov != True:
+					elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -613,7 +613,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1 and icon_prov != True:
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -626,7 +626,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2 and icon_prov != True:
+					elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -655,7 +655,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""		
-					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1 and icon_prov != True:
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
@@ -668,7 +668,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 			feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 			"""	
-					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2 and icon_prov != True:
+					elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 						new_obj = """
 			var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 				onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
