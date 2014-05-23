@@ -146,7 +146,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 					transp_str2 = str(i.rendererV2().symbol().alpha())
 					for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
-						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
+						line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 						sys.stdout.write(line)		
 				#let's define style for categorized points
 				if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
