@@ -23,7 +23,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_qgis2leaf import Ui_qgis2leaf
 import osgeo.ogr
-from osgeo import ogr
+from osgeo import ogr 
 from qgis2leaf_exec import qgis2leaf_exec
 from qgis.core import *
 import qgis.utils
@@ -73,9 +73,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		canvas = qgis.utils.iface.mapCanvas()
 		allLayers = canvas.layers()
 		for i in allLayers:
-			if i.type() != 0 :
-				print(i.name() + " skipped as it is not a vector layer")  
-			if i.type() == 0 : 
+			if i.type() == 2:
+				print(i.name() + " skipped as it is not a vector layer nor a raster layer")  
+			if i.type() < 2: 
 				self.ui.listWidget.addItem(i.name())
 		self.rows = self.ui.listWidget.count()
 		self.ui.listWidget.selectAll()

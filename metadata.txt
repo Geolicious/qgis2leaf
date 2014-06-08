@@ -13,7 +13,7 @@ name=qgis2leaf
 qgisMinimumVersion=2.0
 description=This plugin provides an easy way to distribute and show your qgis work as a leaflet webmap. It tries to recreate your current map layout by exporting vector layers.
 	You may find help here https://github.com/geolicious/qgis2leaf .
-version=0.9
+version=0.95
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
@@ -22,7 +22,8 @@ email=riccardo.klinger@geolicious.de
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-changelog= 2014/05/22 v.0.9: support for styles of polygons and polylines
+changelog= 2014/05/22 v.0.95: support for raster data as image overlays
+	2014/05/22 v.0.9: support for styles of polygons and polylines
 	2014/05/18 v.0.8.4: define your icon for point shapes, new cdn for the needed javascripts
 	2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
 	2014/05/15 v.0.8.2: style export for graduated and single symbol point shapefiles

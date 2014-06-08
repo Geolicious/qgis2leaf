@@ -5,12 +5,12 @@
     <mapcanvas>
         <units>degrees</units>
         <extent>
-            <xmin>4.71928537730573794</xmin>
-            <ymin>47.50429305250000311</ymin>
-            <xmax>15.63043072269426048</xmax>
-            <ymax>53.80000264750000838</ymax>
+            <xmin>13.67375168089202475</xmin>
+            <ymin>52.75223854905814136</ymin>
+            <xmax>15.12261852555103303</xmax>
+            <ymax>53.29591665353544983</ymax>
         </extent>
-        <projections>0</projections>
+        <projections>1</projections>
         <destinationsrs>
             <spatialrefsys>
                 <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
@@ -23,9 +23,15 @@
                 <geographicflag>true</geographicflag>
             </spatialrefsys>
         </destinationsrs>
-        <layer_coordinate_transform_info/>
+        <layer_coordinate_transform_info>
+            <layer_coordinate_transform destAuthId="EPSG:4326" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="OpenLayers_plugin_layer20140608224943240"/>
+            <layer_coordinate_transform destAuthId="EPSG:4326" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="places_few_1_EPSG385720140608161153957"/>
+            <layer_coordinate_transform destAuthId="EPSG:4326" srcAuthId="EPSG:4284" srcDatumTransform="-1" destDatumTransform="-1" layerid="n_33_113_1_432620140608232234802"/>
+            <layer_coordinate_transform destAuthId="EPSG:4326" srcAuthId="EPSG:25832" srcDatumTransform="-1" destDatumTransform="-1" layerid="test20140608221937023"/>
+            <layer_coordinate_transform destAuthId="EPSG:4326" srcAuthId="EPSG:4284" srcDatumTransform="-1" destDatumTransform="-1" layerid="n_33_113_1_428420140609000502678"/>
+        </layer_coordinate_transform_info>
     </mapcanvas>
-    <legend updateDrawingOrder="true" activeLayer="places_few_1_EPSG385720140608161153957">
+    <legend updateDrawingOrder="true" activeLayer="polygon_feature20140608161153968">
         <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="polygon_feature" showFeatureCount="0">
             <filegroup open="true" hidden="false">
                 <legendlayerfile isInOverview="0" layerid="polygon_feature20140608161153968" visible="1"/>
@@ -34,6 +40,16 @@
         <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="places_few_2" showFeatureCount="0">
             <filegroup open="true" hidden="false">
                 <legendlayerfile isInOverview="0" layerid="places_few_220140608161153963" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="test" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="test20140608221937023" visible="1"/>
+            </filegroup>
+        </legendlayer>
+        <legendlayer drawingOrder="-1" open="false" checked="Qt::Checked" name="n-33-113-1_4284" showFeatureCount="0">
+            <filegroup open="false" hidden="false">
+                <legendlayerfile isInOverview="0" layerid="n_33_113_1_428420140609000502678" visible="1"/>
             </filegroup>
         </legendlayer>
         <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="places_few_1_EPSG3857" showFeatureCount="0">
@@ -52,7 +68,7 @@
             </filegroup>
         </legendlayer>
     </legend>
-    <projectlayers layercount="5">
+    <projectlayers layercount="7">
         <maplayer minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>line_feature20140608161153936</id>
             <datasource>./line_feature.shp</datasource>
@@ -125,14 +141,54 @@
                 <multilineenabled fieldname="" on=""/>
                 <selectedonly on=""/>
             </labelattributes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
             <attributeactions/>
+        </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>n_33_113_1_428420140609000502678</id>
+            <datasource>./n-33-113-1_4284.tif</datasource>
+            <title></title>
+            <abstract></abstract>
+            <keywordList>
+                <value></value>
+            </keywordList>
+            <layername>n-33-113-1_4284</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=longlat +ellps=krass +towgs84=23.92,-141.27,-80.9,-0,0.35,0.82,-0.12 +no_defs</proj4>
+                    <srsid>3416</srsid>
+                    <srid>4284</srid>
+                    <authid>EPSG:4284</authid>
+                    <description>Pulkovo 1942</description>
+                    <projectionacronym>longlat</projectionacronym>
+                    <ellipsoidacronym>krass</ellipsoidacronym>
+                    <geographicflag>true</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <customproperties>
+                <property key="identify/format" value="Value"/>
+            </customproperties>
+            <provider>gdal</provider>
+            <pipe>
+                <rasterrenderer gradient="BlackToWhite" opacity="1" alphaBand="-1" type="singlebandgray" grayBand="1">
+                    <rasterTransparency/>
+                    <contrastEnhancement>
+                        <minValue>40.8398</minValue>
+                        <maxValue>253.008</maxValue>
+                        <algorithm>StretchToMinimumMaximum</algorithm>
+                    </contrastEnhancement>
+                </rasterrenderer>
+                <brightnesscontrast brightness="0" contrast="0"/>
+                <huesaturation colorizeGreen="128" colorizeOn="0" colorizeRed="255" colorizeBlue="128" grayscaleMode="0" saturation="0" colorizeStrength="100"/>
+                <rasterresampler maxOversampling="2"/>
+            </pipe>
+            <blendMode>0</blendMode>
         </maplayer>
         <maplayer minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>places_few_120140608161153950</id>
@@ -208,10 +264,10 @@
                 <multilineenabled fieldname="" on=""/>
                 <selectedonly on=""/>
             </labelattributes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -361,8 +417,6 @@
                         </layer>
                     </symbol>
                 </source-symbol>
-                <colorramp type="randomcolors" name="[source]"/>
-                <invertedcolorramp value="0"/>
                 <rotation/>
                 <sizescale scalemethod="area"/>
             </renderer-v2>
@@ -517,10 +571,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="population"/>
                 <edittype labelontop="0" editable="1" type="0" name="type"/>
             </edittypes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>tablayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -830,10 +884,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="population"/>
                 <edittype labelontop="0" editable="1" type="0" name="type"/>
             </edittypes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -907,25 +961,83 @@
                 <multilineenabled fieldname="" on=""/>
                 <selectedonly on=""/>
             </labelattributes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
             <attributeactions/>
         </maplayer>
+        <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+            <id>test20140608221937023</id>
+            <datasource>../../../../../Desktop/test</datasource>
+            <title></title>
+            <abstract></abstract>
+            <keywordList>
+                <value></value>
+            </keywordList>
+            <layername>test</layername>
+            <srs>
+                <spatialrefsys>
+                    <proj4>+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+                    <srsid>2105</srsid>
+                    <srid>25832</srid>
+                    <authid>EPSG:25832</authid>
+                    <description>ETRS89 / UTM zone 32N</description>
+                    <projectionacronym>utm</projectionacronym>
+                    <ellipsoidacronym>GRS80</ellipsoidacronym>
+                    <geographicflag>false</geographicflag>
+                </spatialrefsys>
+            </srs>
+            <customproperties>
+                <property key="identify/format" value="Value"/>
+            </customproperties>
+            <provider>gdal</provider>
+            <pipe>
+                <rasterrenderer opacity="1" alphaBand="-1" blueBand="3" greenBand="2" type="multibandcolor" redBand="1">
+                    <rasterTransparency/>
+                </rasterrenderer>
+                <brightnesscontrast brightness="0" contrast="0"/>
+                <huesaturation colorizeGreen="128" colorizeOn="0" colorizeRed="255" colorizeBlue="128" grayscaleMode="0" saturation="0" colorizeStrength="100"/>
+                <rasterresampler maxOversampling="2"/>
+            </pipe>
+            <blendMode>0</blendMode>
+        </maplayer>
     </projectlayers>
     <properties>
-        <SpatialRefSys>
-            <ProjectCRSProj4String type="QString">+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs</ProjectCRSProj4String>
-            <ProjectCrs type="QString">EPSG:3857</ProjectCrs>
-            <ProjectCRSID type="int">3857</ProjectCRSID>
-        </SpatialRefSys>
+        <WMSContactPerson type="QString"></WMSContactPerson>
+        <WMSOnlineResource type="QString"></WMSOnlineResource>
+        <WMSContactOrganization type="QString"></WMSContactOrganization>
+        <WMSKeywordList type="QStringList">
+            <value></value>
+        </WMSKeywordList>
+        <WFSUrl type="QString"></WFSUrl>
         <Paths>
             <Absolute type="bool">false</Absolute>
         </Paths>
+        <WMSServiceTitle type="QString"></WMSServiceTitle>
+        <WFSLayers type="QStringList"/>
+        <WMSContactMail type="QString"></WMSContactMail>
+        <PositionPrecision>
+            <DecimalPlaces type="int">2</DecimalPlaces>
+            <Automatic type="bool">true</Automatic>
+            <DegreeFormat type="QString">D</DegreeFormat>
+        </PositionPrecision>
+        <WCSUrl type="QString"></WCSUrl>
+        <WMSContactPhone type="QString"></WMSContactPhone>
+        <WMSServiceCapabilities type="bool">false</WMSServiceCapabilities>
+        <WMSServiceAbstract type="QString"></WMSServiceAbstract>
+        <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
+        <Measure>
+            <Ellipsoid type="QString">WGS84</Ellipsoid>
+        </Measure>
+        <WFSTLayers>
+            <Insert type="QStringList"/>
+            <Update type="QStringList"/>
+            <Delete type="QStringList"/>
+        </WFSTLayers>
         <Gui>
             <SelectionColorBluePart type="int">0</SelectionColorBluePart>
             <CanvasColorGreenPart type="int">255</CanvasColorGreenPart>
@@ -935,9 +1047,29 @@
             <SelectionColorGreenPart type="int">255</SelectionColorGreenPart>
             <CanvasColorBluePart type="int">255</CanvasColorBluePart>
         </Gui>
-        <PositionPrecision>
-            <DecimalPlaces type="int">2</DecimalPlaces>
-            <Automatic type="bool">true</Automatic>
-        </PositionPrecision>
+        <Identify>
+            <disabledLayers type="QStringList"/>
+        </Identify>
+        <Macros>
+            <pythonCode type="QString"></pythonCode>
+        </Macros>
+        <WMSAccessConstraints type="QString"></WMSAccessConstraints>
+        <WCSLayers type="QStringList"/>
+        <SpatialRefSys>
+            <ProjectCRSProj4String type="QString">+proj=longlat +datum=WGS84 +no_defs</ProjectCRSProj4String>
+            <ProjectCrs type="QString">EPSG:4326</ProjectCrs>
+            <ProjectCRSID type="int">3452</ProjectCRSID>
+            <ProjectionsEnabled type="int">1</ProjectionsEnabled>
+        </SpatialRefSys>
+        <DefaultStyles>
+            <Fill type="QString"></Fill>
+            <Line type="QString"></Line>
+            <Marker type="QString"></Marker>
+            <RandomColors type="bool">true</RandomColors>
+            <AlphaInt type="int">255</AlphaInt>
+            <ColorRamp type="QString"></ColorRamp>
+        </DefaultStyles>
+        <WMSFees type="QString"></WMSFees>
+        <WMSUrl type="QString"></WMSUrl>
     </properties>
 </qgis>
