@@ -16,7 +16,7 @@ For single, categorized and graduated symbol point feature layers we are exporti
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
-* 2014/05/22 v.0.95: raster support for image overlays
+* 2014/05/22 v.0.95: raster support for image overlays with thanks to https://github.com/geohacker/leaflet-opacity
 * 2014/05/22 v.0.9: support for styles of polygons and polylines
 * 2014/05/18 v.0.8.4: define your icon for point shapes, new cdn for the needed javascripts
 * 2014/05/15 v.0.8.3: style export for graduated, single and categorized symbol point shapefiles
