@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>502</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
     <rect>
      <x>10</x>
      <y>30</y>
-     <width>431</width>
+     <width>461</width>
      <height>21</height>
     </rect>
    </property>
@@ -49,7 +49,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Export your vector features to leaflet based webmap</string>
+    <string>Export your vector and raster to a leaflet based webmap</string>
    </property>
   </widget>
   <widget class="Line" name="line_3">
@@ -71,7 +71,7 @@
      <x>10</x>
      <y>60</y>
      <width>461</width>
-     <height>431</height>
+     <height>481</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -79,7 +79,7 @@
    </property>
    <widget class="QWidget" name="tab_app">
     <attribute name="title">
-     <string>QGISLeaf</string>
+     <string>qgis2leaf</string>
     </attribute>
     <widget class="QListWidget" name="listWidget">
      <property name="geometry">
@@ -97,31 +97,99 @@
        <x>10</x>
        <y>190</y>
        <width>443</width>
-       <height>210</height>
+       <height>250</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="spacing">
        <number>10</number>
       </property>
-      <item row="5" column="1">
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
+         <string>Full Screen</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLineEdit" name="width_box"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>/</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="height_box"/>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="font">
+         <font>
+          <family>DejaVu Sans</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>Visible layers:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBox_3"/>
+      </item>
+      <item row="7" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cancelButton">
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="6" column="1">
        <widget class="QLineEdit" name="lineEdit_2"/>
       </item>
-      <item row="6" column="2">
+      <item row="7" column="2">
        <widget class="QPushButton" name="okButton">
         <property name="text">
          <string>OK</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="6" column="2">
        <widget class="QPushButton" name="pushButton_2">
         <property name="text">
          <string>...</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="6" column="0">
        <widget class="QLabel" name="label_3">
         <property name="font">
          <font>
@@ -175,73 +243,33 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QRadioButton" name="radioButton">
-        <property name="text">
-         <string>Full Screen</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLineEdit" name="width_box"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="font">
-           <font>
-            <family>DejaVu Sans</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>/</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="height_box"/>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_9">
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_8">
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
          </font>
         </property>
         <property name="text">
-         <string>Visible layers:</string>
+         <string>Opacity control:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBox_3"/>
-      </item>
-      <item row="6" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cancelButton">
-          <property name="text">
-           <string>Cancel</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -282,23 +310,25 @@
        <x>10</x>
        <y>10</y>
        <width>441</width>
-       <height>391</height>
+       <height>431</height>
       </rect>
      </property>
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;General help:&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;QGIS 2 Leaflet creates a webmap from your current QGIS vector features. Therefore it tries to copy the current vector styles to styles, leaflet will understand. If your data has an attribute called &lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;html_exp&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt;it will use this for the&lt;span style=&quot; font-weight:600;&quot;&gt; popup content. &lt;/span&gt;Otherwise it will create a &lt;span style=&quot; font-weight:600;&quot;&gt;simple table&lt;/span&gt; from all of your attributes and values. Furthermore you can define an &lt;span style=&quot; font-weight:600;&quot;&gt;icon for your point&lt;/span&gt; layers using an attribute called &lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;icon_exp&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;.&lt;/span&gt; Each feature should have an &lt;span style=&quot; font-weight:600;&quot;&gt;absolute path&lt;/span&gt; on your current system or provide a &lt;span style=&quot; font-weight:600;&quot;&gt;link to the image&lt;/span&gt; (preferable *.svg or *.png). You may find suitable examples in the test_data folder.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;GUI help:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Press &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;get layers&lt;/span&gt;&amp;quot; to add/reload your vector layers to the plugin. You can select the layers to export.&lt;/li&gt;
-&lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Frame width&lt;/span&gt; defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser.&lt;/li&gt;
-&lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Extent: &lt;span style=&quot; font-weight:600;&quot;&gt;canvas extent - &lt;/span&gt;QGIS canvas will influence initial leaflet view / choose &lt;span style=&quot; font-weight:600;&quot;&gt;layer extent&lt;/span&gt; to set the leaflet webmap extent to the extent of all vector layers.&lt;/li&gt;
-&lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For large datasets set the &lt;span style=&quot; font-weight:600;&quot;&gt;visible layers&lt;/span&gt; to &amp;quot;show none&amp;quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.&lt;/li&gt;
-&lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose one of the available &lt;span style=&quot; font-weight:600;&quot;&gt;basemaps&lt;/span&gt;. &lt;/li&gt;
-&lt;li align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;As &lt;span style=&quot; font-weight:600;&quot;&gt;output project folder&lt;/span&gt; you should choose a separate folder. There will be a designated folder in it with your current export files and folders.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; text-decoration: underline;&quot;&gt;General help:&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;QGIS 2 Leaflet creates a webmap from your current QGIS vector features and rasters. Therefore it tries to copy the current vector styles to styles, leaflet will understand. If your data has an attribute called &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;html_exp&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;it will use this for the&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt; popup content. &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;Otherwise it will create a &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;simple table&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; from all of your attributes and values. Furthermore you can define an &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;icon for your point&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; layers using an attribute called &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;icon_exp&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; Each feature should have an &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;absolute path&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; on your current system or provide a &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;link to the image&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; (preferable *.svg or *.png). You may find suitable examples in the test_data folder.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;Raster images will be tranlated to EPSG:4326/jpg using GDAL. Make sure you've installed GDAL.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; text-decoration: underline;&quot;&gt;GUI help:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Press &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;get layers&lt;/span&gt;&amp;quot; to add/reload your vector layers to the plugin. You can select the layers to export.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Frame width&lt;/span&gt; defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Extent: &lt;span style=&quot; font-weight:600;&quot;&gt;canvas extent - &lt;/span&gt;QGIS canvas will influence initial leaflet view / choose &lt;span style=&quot; font-weight:600;&quot;&gt;layer extent&lt;/span&gt; to set the leaflet webmap extent to the extent of all vector layers.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For large datasets set the &lt;span style=&quot; font-weight:600;&quot;&gt;visible layers&lt;/span&gt; to &amp;quot;show none&amp;quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose one of the available &lt;span style=&quot; font-weight:600;&quot;&gt;basemaps&lt;/span&gt;. &lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opacity of raster images in your map can be changed using the &lt;span style=&quot; font-weight:600;&quot;&gt;Opacity control&lt;/span&gt; which is a slider below your map.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;As &lt;span style=&quot; font-weight:600;&quot;&gt;output project folder&lt;/span&gt; you should choose a separate folder. There will be a designated folder in it with your current export files and folders.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>

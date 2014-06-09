@@ -41,7 +41,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -75,12 +75,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		height: 100%;
 		width: 100%;
 	}
-	html, body, #slide {
-		margin-left: auto;
-		margin-right: auto;
-		width: 100%;
-</style>"""
-		if full == 0:
+"""
+		elif full == 0:
 			text = """
 <style>
 	body {
@@ -91,11 +87,24 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		height: """+str(height)+"""px;
 		width: """+str(width)+"""px;
 	}
-	html, body, #slide {
+"""
+		if opacity_raster == True and full == 1:
+			text += """
+				html, body, #slide {
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+</style>"""
+		elif opacity_raster == True and full== 0:
+			text += """	
+		html, body, #slide {
 		margin-left: auto;
 		margin-right: auto;
 		width: """+str(width)+"""px;
 </style>"""
+		elif opacity_raster == False:
+			text += """
+		</style>"""
 		f_css.write(text)
 		f_css.close()
 	
@@ -113,10 +122,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
-	<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
-  """
-		f_html.write(base)
+	"""
+		if opacity_raster == True:
+			base += """<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">"""
+  		f_html.write(base)
 		f_html.close()
 	# let's create the js files in the data folder of input vector files:
 	canvas = qgis.utils.iface.mapCanvas()
@@ -799,27 +809,31 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		f8.truncate()
 		f8.write(controlEnd)
 		f8.close()
-	opacityStart = """
-	function updateOpacity(value) {"""
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f9:
-		f9.write(opacityStart)
-		f9.close()
+	if opacity_raster == True:
+		opacityStart = """
+		function updateOpacity(value) {
+		"""
+		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f9:
+			f9.write(opacityStart)
+			f9.close()
 
-	for i in allLayers: 
-		for j in layer_list:
-			if i.type() == 1:
-				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f10:
-						new_opc = """
-						overlay_""" + re.sub('[\W_]+', '', i.name()) + """.setOpacity(value);"""
-						f10.write(new_opc)
-						f10.close()	
-	opacityEnd = """}"""	
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f11:
-		f11.seek(-1, os.SEEK_END)
-		f11.truncate()
-		f11.write(opacityEnd)
-		f11.close()
+		for i in allLayers: 
+			for j in layer_list:
+				if i.type() == 1:
+					if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f10:
+							new_opc = """
+							overlay_""" + re.sub('[\W_]+', '', i.name()) + """.setOpacity(value);"""
+							f10.write(new_opc)
+							f10.close()	
+		opacityEnd = """}"""	
+		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f11:
+			f11.seek(-1, os.SEEK_END)
+			f11.truncate()
+			f11.write(opacityEnd)
+			f11.close()
+	elif opacity_raster == False:
+		print "no opacity control added"
 	
 	# let's close the file but ask for the extent of all layers if the user wants to show only this extent:
 	if extent == 'layer extent':
