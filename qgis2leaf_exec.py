@@ -587,7 +587,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								if str(field) == "icon_exp":
 									row += ""
 								else: 
-									row += """<tr><td>""" + str(field) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+									row += """<tr><td>""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
 							tableend = """</table>'"""
 							table = tablestart + row +tableend
 						#print table
