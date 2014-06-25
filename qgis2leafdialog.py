@@ -71,6 +71,11 @@ class qgis2leafDialog(QtGui.QDialog):
 	def layerGet(self):
 		self.ui.listWidget.clear()
 		canvas = qgis.utils.iface.mapCanvas()
+		canvasSize = canvas.size()    
+		canvasWidth = canvasSize.width()
+		canvasHeight = canvasSize.height()
+		self.width = self.ui.width_box.setText(str(canvasWidth))
+		self.height = self.ui.height_box.setText(str(canvasHeight))
 		allLayers = canvas.layers()
 		for i in allLayers:
 			if i.type() == 2:
