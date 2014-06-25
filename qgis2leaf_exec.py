@@ -165,9 +165,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							sys.stdout.write(line)
 					#let's define style for the single marker polygons
 					if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-						color_str = str(i.rendererV2().symbol().color().name())
-						borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-						radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+						if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
+							color_str = 'none'
+							borderColor_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
+						else:
+							color_str = str(i.rendererV2().symbol().color().name())
+							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
+							radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 						transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 						transp_str2 = str(i.rendererV2().symbol().alpha())
 						for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
