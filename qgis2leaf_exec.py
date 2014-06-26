@@ -94,6 +94,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		margin-left: auto;
 		margin-right: auto;
 		width: 100%;
+	}
 </style>"""
 		elif opacity_raster == True and full== 0:
 			text += """	
@@ -101,6 +102,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		margin-left: auto;
 		margin-right: auto;
 		width: """+str(width)+"""px;
+	}
 </style>"""
 		elif opacity_raster == False:
 			text += """
