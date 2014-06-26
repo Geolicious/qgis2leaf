@@ -75,6 +75,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		height: 100%;
 		width: 100%;
 	}
+	th {
+		text-align: left;
+		vertical-align: top;
+	}
 """
 		elif full == 0:
 			text = """
@@ -588,14 +592,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
 						if html_prov != True:
-							tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
+							tablestart = """'<table>"""
 							row = ""
 							for field in field_names:
 								if str(field) == "icon_exp":
 									row += ""
 								else: 
 									if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
-										row += """<tr><td>""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+										row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
 							tableend = """</table>'"""
 							table = tablestart + row +tableend
 						#print table
