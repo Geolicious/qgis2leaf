@@ -145,6 +145,9 @@ class Ui_qgis2leaf(object):
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
+        self.getSizeButton = QtGui.QPushButton(self.tab_app)
+        self.getSizeButton.setGeometry(QtCore.QRect(360, 90, 81, 31))
+        self.getSizeButton.setObjectName(_fromUtf8("getSizeButton"))
         self.getButton = QtGui.QPushButton(self.tab_app)
         self.getButton.setGeometry(QtCore.QRect(360, 130, 81, 31))
         self.getButton.setObjectName(_fromUtf8("getButton"))
@@ -177,6 +180,7 @@ class Ui_qgis2leaf(object):
         self.label_6.setText(QtGui.QApplication.translate("qgis2leaf", "Extent:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("qgis2leaf", "Frame width / height:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("qgis2leaf", "Opacity control:", None, QtGui.QApplication.UnicodeUTF8))
+        self.getSizeButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Map Size", None, QtGui.QApplication.UnicodeUTF8))
         self.getButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Layers", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_app), QtGui.QApplication.translate("qgis2leaf", "qgis2leaf", None, QtGui.QApplication.UnicodeUTF8))
         self.textBrowser.setHtml(QtGui.QApplication.translate("qgis2leaf", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

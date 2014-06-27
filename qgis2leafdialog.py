@@ -61,6 +61,7 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.comboBox_3.addItems(visFields)
 		self.ui.pushButton_2.clicked.connect(self.showSaveDialog)
 		self.ui.okButton.clicked.connect(self.export2leaf)
+		self.ui.getSizeButton.clicked.connect(self.getSize)
 		self.ui.getButton.clicked.connect(self.layerGet)
 		# set default width and height for the leaflet output
 		self.ui.radioButton.setChecked(False)
@@ -68,14 +69,16 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.setText('800')
 		self.height = self.ui.height_box.setText('600')
 		self.ui.radioButton.toggled.connect(self.width_)
-	def layerGet(self):
-		self.ui.listWidget.clear()
+	def getSize(self):
 		canvas = qgis.utils.iface.mapCanvas()
 		canvasSize = canvas.size()    
 		canvasWidth = canvasSize.width()
 		canvasHeight = canvasSize.height()
 		self.width = self.ui.width_box.setText(str(canvasWidth))
 		self.height = self.ui.height_box.setText(str(canvasHeight))
+	def layerGet(self):
+		self.ui.listWidget.clear()
+		canvas = qgis.utils.iface.mapCanvas()
 		allLayers = canvas.layers()
 		for i in allLayers:
 			if i.type() == 2:
