@@ -574,7 +574,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			f4.write(middle)
 			f4.write(basemapText)
 			f4.close()
-	for i in allLayers: 
+	for i in reversed(allLayers): 
 		for j in layer_list:
 			if re.sub('[\W_]+', '', i.name()) == j:
 				if i.type()==0:
