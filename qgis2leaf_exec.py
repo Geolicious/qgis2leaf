@@ -75,6 +75,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		height: 100%;
 		width: 100%;
 	}
+	th {
+		text-align: left;
+		vertical-align: top;
+	}
 """
 		elif full == 0:
 			text = """
@@ -94,6 +98,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		margin-left: auto;
 		margin-right: auto;
 		width: 100%;
+	}
 </style>"""
 		elif opacity_raster == True and full== 0:
 			text += """	
@@ -101,6 +106,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		margin-left: auto;
 		margin-right: auto;
 		width: """+str(width)+"""px;
+	}
 </style>"""
 		elif opacity_raster == False:
 			text += """
@@ -165,9 +171,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							sys.stdout.write(line)
 					#let's define style for the single marker polygons
 					if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-						color_str = str(i.rendererV2().symbol().color().name())
-						borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-						radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+						if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
+							color_str = 'none'
+							borderColor_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
+						else:
+							color_str = str(i.rendererV2().symbol().color().name())
+							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
+							radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 						transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 						transp_str2 = str(i.rendererV2().symbol().alpha())
 						for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
@@ -442,128 +453,129 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	if basemapName == 'OSM Standard':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OSM Black & White':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'Stamen Toner':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OSM DE':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OSM HOT':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'); 
-		L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
 		"""	
 	if basemapName == 'OpenSeaMap':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'); 
-		L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png');
 		"""		
 	if basemapName == 'Thunderforest Cycle':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png');
 		"""	
 	if basemapName == 'Thunderforest Transport':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png');
 		"""			
 	if basemapName == 'Thunderforest Landscape':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png');
 		"""	
 	if basemapName == 'Thunderforest Outdoors':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png');
 		"""		
 	if basemapName == 'OpenMapSurfer Roads':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}').addTo(map);
+		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}');
 		"""			
 	if basemapName == 'OpenMapSurfer adminb':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/adminb/x={x}&y={y}&z={z}').addTo(map);
+		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/adminb/x={x}&y={y}&z={z}');
 		"""	
 	if basemapName == 'OpenMapSurfer roadsg':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roadsg/x={x}&y={y}&z={z}').addTo(map);
+		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roadsg/x={x}&y={y}&z={z}');
 		"""
 	if basemapName == 'MapQuestOpen OSM':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg').addTo(map);
+		var basemap = L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg');
 		"""	
 	if basemapName == 'MapQuestOpen Aerial':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'); 
-		L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg').addTo(map);
+		var basemap = L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg');
 		"""
 	if basemapName == 'Stamen Terrain':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'Stamen Watercolor':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Clouds':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Precipitation':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Rain':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Pressure':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Wind':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Temp':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png');
 		"""
 	if basemapName == 'OpenWeatherMap Snow':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		L.tileLayer('http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png').addTo(map);
+		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png');
 		"""
+	basemapText += """	basemap.addTo(map);"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
 			f4.write(middle)
 			f4.write(basemapText)
 			f4.close()
-	for i in allLayers: 
+	for i in reversed(allLayers): 
 		for j in layer_list:
 			if re.sub('[\W_]+', '', i.name()) == j:
 				if i.type()==0:
@@ -581,14 +593,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
 						if html_prov != True:
-							tablestart = """'<table><tr><th>attribute</th><th>value</th></tr>"""
+							tablestart = """'<table>"""
 							row = ""
 							for field in field_names:
 								if str(field) == "icon_exp":
 									row += ""
 								else: 
 									if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
-										row += """<tr><td>""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</td><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+										row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
 							tableend = """</table>'"""
 							table = tablestart + row +tableend
 						#print table
@@ -789,7 +801,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						f5_raster.close()
 	# let's add layer control
 	controlStart = """
-	L.control.layers({},{"""
+	L.control.layers({'"""+basemapName+"""': basemap},{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)
 		f6.close()
