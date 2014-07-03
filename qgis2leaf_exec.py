@@ -24,7 +24,7 @@ from PyQt4.QtCore import QFileInfo
 import osgeo.ogr, osgeo.osr #we will need some packages
 from osgeo import ogr
 from osgeo import gdal
-import subprocess
+import processing
 import shutil
 from qgis.core import *
 import qgis.utils
@@ -32,6 +32,7 @@ import os #for file writing/folder actions
 import shutil #for reverse removing directories
 import urllib # to get files from the web
 import time
+import tempfile
 import re
 import fileinput
 import webbrowser #to open the made map directly in your browser
@@ -410,10 +411,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				#here comes the raster layers. you need an installed version of gdal
 				elif i.type() == 1:
 					print i.name()
-					filename_raster = str(i.dataProvider().dataSourceUri())
-					ret = 0
-					ret2 = 0
-					out_raster_name = dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
+					in_raster = str(i.dataProvider().dataSourceUri())
+					prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + 'prov.tif'
+					out_raster = dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
 
 					if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
 					#print out_raster_name
@@ -421,10 +421,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						shutil.copyfile(filename_raster+".aux.xml", out_raster_name + ".aux.xml")
 						shutil.copyfile(filename_raster, out_raster_name)
 					else:
-						ret = subprocess.check_call(['gdal_translate -of jpeg -outsize 100% 100% -a_srs EPSG:4326 ' + filename_raster + " " +  out_raster_name], shell=True)
+						processing.runalg("gdalogr:warpreproject",str(in_raster),str(i.crs().authid()),"EPSG:4326",0,1,"",prov_raster)
+						format = "jpeg"
+						driver = gdal.GetDriverByName( format )
+						src_ds = gdal.Open(prov_raster)
+						dst_ds = driver.CreateCopy( out_raster, src_ds, 0 ) 
+						dst_ds = None #free the dataset	
+						src_ds = None #free the dataset				
+						#ret = subprocess.check_call(['gdal_translate -of jpeg -outsize 100% 100% -a_srs EPSG:4326 ' + filename_raster + " " +  out_raster_name], shell=True)
 						#ret2 = subprocess.check_call(['cp ' + filename_raster + ".aux.xml " +  out_raster_name + ".aux.xml"], shell=True)
-					if ret != 0:
-						print "translating your raster to jpg failed"
+
 	#now determine the canvas bounding box
 	#####now with viewcontrol
 	if extent == 'canvas extent':
