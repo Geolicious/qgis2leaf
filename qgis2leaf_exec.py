@@ -418,8 +418,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
 					#print out_raster_name
 					#print('gdal_translate -of jpeg -outsize 100% 100% ' + filename_raster + " " +  out_raster_name)
-						shutil.copyfile(filename_raster+".aux.xml", out_raster_name + ".aux.xml")
-						shutil.copyfile(filename_raster, out_raster_name)
+						shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
+						shutil.copyfile(in_raster, out_raster)
 					else:
 						processing.runalg("gdalogr:warpreproject",str(in_raster),str(i.crs().authid()),"EPSG:4326",0,1,"",prov_raster)
 						format = "jpeg"
