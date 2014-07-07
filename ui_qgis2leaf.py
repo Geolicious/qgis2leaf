@@ -145,6 +145,13 @@ class Ui_qgis2leaf(object):
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
+        self.encode2JSON = QtGui.QCheckBox(self.tab_app)
+        self.encode2JSON.setEnabled(True)
+        self.encode2JSON.setAutoFillBackground(False)
+        self.encode2JSON.setText(_fromUtf8("\n Encode all\n layers to\n GeoJSON"))
+        self.encode2JSON.setChecked(True)
+        self.encode2JSON.setObjectName(_fromUtf8("encode2JSON"))
+        self.encode2JSON.setGeometry(QtCore.QRect(360, 0, 81, 51));
         self.getSizeButton = QtGui.QPushButton(self.tab_app)
         self.getSizeButton.setGeometry(QtCore.QRect(360, 90, 81, 31))
         self.getSizeButton.setObjectName(_fromUtf8("getSizeButton"))
@@ -180,6 +187,7 @@ class Ui_qgis2leaf(object):
         self.label_6.setText(QtGui.QApplication.translate("qgis2leaf", "Extent:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("qgis2leaf", "Frame width / height:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("qgis2leaf", "Opacity control:", None, QtGui.QApplication.UnicodeUTF8))
+        self.encode2JSON.setText(QtGui.QApplication.translate("qgis2leaf", "\n Encode all\n layers to\n GeoJSON", None, QtGui.QApplication.UnicodeUTF8))
         self.getSizeButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Map Size", None, QtGui.QApplication.UnicodeUTF8))
         self.getButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Layers", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_app), QtGui.QApplication.translate("qgis2leaf", "qgis2leaf", None, QtGui.QApplication.UnicodeUTF8))
@@ -200,4 +208,3 @@ class Ui_qgis2leaf(object):
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">As <span style=\" font-weight:600;\">output project folder</span> you should choose a separate folder. There will be a designated folder in it with your current export files and folders.</li></ul></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_help), QtGui.QApplication.translate("qgis2leaf", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadList.setText(QtGui.QApplication.translate("qgis2leaf", "loadList", None, QtGui.QApplication.UnicodeUTF8))
-
