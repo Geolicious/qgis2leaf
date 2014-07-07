@@ -111,8 +111,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.visible = self.ui.comboBox_3.currentText()
 		self.layer_list = self.ui.listWidget.selectedItems()
 		self.opacity = self.ui.checkBox.isChecked()
-		print self.opacity
+		self.encode2JSON = self.ui.encode2JSON.isChecked()
+		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON)
 		self.close()
