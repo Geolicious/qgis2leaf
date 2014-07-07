@@ -602,24 +602,24 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								table = 'feature.properties.html_exp'
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
-						if html_prov != True:
-							tablestart = """'<table>"""
-							row = ""
-							for field in field_names:
-								if str(field) == "icon_exp":
-									row += ""
-								else: 
-									if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
-										row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
-							tableend = """</table>'"""
-							table = tablestart + row +tableend
+							if html_prov != True:
+								tablestart = """'<table>"""
+								row = ""
+								for field in field_names:
+									if str(field) == "icon_exp":
+										row += ""
+									else: 
+										if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
+											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+								tableend = """</table>'"""
+								table = tablestart + row +tableend
 						#print table
 						popFuncs = """					var popupContent = """ + table + """;
 					layer.bindPopup(popupContent);
 """
 						new_pop = """
 				function pop_""" + re.sub('[\W_]+', '', i.name()) + """(feature, layer) {
-
+					"""+popFuncs+"""
 
 				}
 						"""
