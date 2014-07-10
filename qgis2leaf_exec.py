@@ -92,6 +92,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		height: """+str(height)+"""px;
 		width: """+str(width)+"""px;
 	}
+	th {
+		text-align: left;
+		vertical-align: top;
+	}
 """
 		if opacity_raster == True and full == 1:
 			text += """
