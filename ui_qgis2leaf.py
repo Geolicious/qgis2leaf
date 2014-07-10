@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Thu Jul 10 20:56:25 2014
+# Created: Fri Jul 11 01:47:41 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -155,10 +155,10 @@ class Ui_qgis2leaf(object):
         self.encode2JSON.setGeometry(QtCore.QRect(330, 140, 151, 31))
         self.encode2JSON.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.encode2JSON.setObjectName(_fromUtf8("encode2JSON"))
-        self.label_10 = QtGui.QLabel(self.tab_app)
-        self.label_10.setGeometry(QtCore.QRect(370, 86, 66, 41))
-        self.label_10.setText(_fromUtf8(""))
-        self.label_10.setObjectName(_fromUtf8("label_10"))
+        self.createcluster = QtGui.QCheckBox(self.tab_app)
+        self.createcluster.setGeometry(QtCore.QRect(330, 100, 151, 31))
+        self.createcluster.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.createcluster.setObjectName(_fromUtf8("createcluster"))
         self.tab_2.addTab(self.tab_app, _fromUtf8(""))
         self.tab_help = QtGui.QWidget()
         self.tab_help.setObjectName(_fromUtf8("tab_help"))
@@ -191,6 +191,7 @@ class Ui_qgis2leaf(object):
         self.getButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Layers", None, QtGui.QApplication.UnicodeUTF8))
         self.getSizeButton.setText(QtGui.QApplication.translate("qgis2leaf", "Get Size", None, QtGui.QApplication.UnicodeUTF8))
         self.encode2JSON.setText(QtGui.QApplication.translate("qgis2leaf", "Encode to JSON", None, QtGui.QApplication.UnicodeUTF8))
+        self.createcluster.setText(QtGui.QApplication.translate("qgis2leaf", "Create cluster", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_app), QtGui.QApplication.translate("qgis2leaf", "qgis2leaf", None, QtGui.QApplication.UnicodeUTF8))
         self.textBrowser.setHtml(QtGui.QApplication.translate("qgis2leaf", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

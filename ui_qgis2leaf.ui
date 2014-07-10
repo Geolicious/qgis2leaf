@@ -328,17 +328,20 @@
       <string>Encode to JSON</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_10">
+    <widget class="QCheckBox" name="createcluster">
      <property name="geometry">
       <rect>
-       <x>370</x>
-       <y>86</y>
-       <width>66</width>
-       <height>41</height>
+       <x>330</x>
+       <y>100</y>
+       <width>151</width>
+       <height>31</height>
       </rect>
      </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <property name="text">
-      <string/>
+      <string>Create cluster</string>
      </property>
     </widget>
    </widget>

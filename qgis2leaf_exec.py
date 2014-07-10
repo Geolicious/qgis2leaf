@@ -42,12 +42,12 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
 	pluginDir = os.path.dirname(os.path.realpath(__file__))
-	cluster_set = 1
+	
 	cluster_num = 1
 	# load providers
 	QgsApplication.initQgis()
@@ -701,7 +701,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					});
 				"""
 #add points to the cluster group
-							if cluster_set == 1:
+							if cluster_set == True:
 								new_obj += """
 				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
 				map.on('overlayadd overlayremove', function(e){
@@ -716,7 +716,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 				"""			
 								cluster_num += 1	
-							elif cluster_set == 0:
+							elif cluster_set == False:
 								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -858,7 +858,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					});
 				"""
 				#add points to the cluster group
-							if cluster_set == 1:
+							if cluster_set == True:
 								
 								new_obj += """
 				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
@@ -874,7 +874,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 				"""			
 								cluster_num += 1	
-							elif cluster_set == 0:
+							elif cluster_set == False:
 								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -921,7 +921,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					});
 				"""
 								#add points to the cluster group
-							if cluster_set == 1:
+							if cluster_set == True:
 								new_obj += """
 				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
 				map.on('overlayadd overlayremove', function(e){
@@ -936,7 +936,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 				"""			
 								cluster_num += 1	
-							elif cluster_set == 0:
+							elif cluster_set == False:
 								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -982,7 +982,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				);
 				"""
 				#add points to the cluster group
-							if cluster_set == 1:
+							if cluster_set == True:
 								new_obj += """
 				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
 				map.on('overlayadd overlayremove', function(e){
@@ -997,7 +997,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				});
 				"""			
 								cluster_num += 1
-							elif cluster_set == 0:
+							elif cluster_set == False:
 								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
