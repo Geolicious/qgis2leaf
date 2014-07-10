@@ -47,7 +47,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
 	pluginDir = os.path.dirname(os.path.realpath(__file__))
-
+	cluster_set = 1
+	cluster_num = 1
 	# load providers
 	QgsApplication.initQgis()
 	# let's determine the current work folder of qgis:
@@ -58,10 +59,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	jsStore = os.path.join(os.getcwd(),outputProjectFileName, 'js')
 	os.makedirs(jsStore)
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'Autolinker.min.js', jsStore + os.sep + 'Autolinker.min.js')
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet.markercluster.js', jsStore + os.sep + 'leaflet.markercluster.js')
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
 	os.makedirs(dataStore)
 	cssStore = os.path.join(os.getcwd(),outputProjectFileName, 'css')
 	os.makedirs(cssStore)
+	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.css', cssStore + os.sep + 'MarkerCluster.css')
+	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.Default.css', cssStore + os.sep + 'MarkerCluster.Default.css')
 	picturesStore = os.path.join(os.getcwd(),outputProjectFileName, 'pictures')
 	os.makedirs(picturesStore)
 	miscStore = os.path.join(os.getcwd(),outputProjectFileName, 'misc')
@@ -132,13 +136,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	<meta charset="utf-8" />
 	
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
+	<link rel="stylesheet" href="css/MarkerCluster.css" />
+	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
-	<script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+	<script src="http://code.jquery.com/jquery-2.0.0.min.js"></script> <!-- this is the javascript file that does the magic-->
 	<script src="js/Autolinker.min.js"></script>
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="js/leaflet.markercluster.js"></script>
 	"""
 		if opacity_raster == True:
 			base += """<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">"""
@@ -460,12 +467,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	<script>
 		var map = L.map('map', { zoomControl:true });
 		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">gis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
-	#here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
+	# we will start with the clustergroup
 	middle += """
 	var feature_group = new L.featureGroup([]);
+
 	var raster_group = new L.LayerGroup([]);
 	"""
-	
+#here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
+
 	if basemapName == 'OSM Standard':
 		basemapText = """
 		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
@@ -654,7 +663,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -669,10 +678,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
+			
 								"""
 							else:
 								new_obj = """
@@ -689,10 +699,30 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							})
 						}
 					});
+				"""
+#add points to the cluster group
+							if cluster_set == 1:
+								new_obj += """
+				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				map.on('overlayadd overlayremove', function(e){
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
+						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						cluster_group""" + str(cluster_num) + """.addTo(map);
+					};
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
+						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						map.removeLayer(cluster_group""" + str(cluster_num) + """);
+					}
+				});
+				"""			
+								cluster_num += 1	
+							elif cluster_set == 0:
+								print "feature_group" 
+								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
-					map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
@@ -746,7 +776,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
-					map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
@@ -826,6 +856,27 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							})
 						}
 					});
+				"""
+				#add points to the cluster group
+							if cluster_set == 1:
+								
+								new_obj += """
+				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				map.on('overlayadd overlayremove', function(e){
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
+						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						cluster_group""" + str(cluster_num) + """.addTo(map);
+					};
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
+						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						map.removeLayer(cluster_group""" + str(cluster_num) + """);
+					}
+				});
+				"""			
+								cluster_num += 1	
+							elif cluster_set == 0:
+								print "feature_group" 
+								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
@@ -868,8 +919,28 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							})
 						}
 					});
+				"""
+								#add points to the cluster group
+							if cluster_set == 1:
+								new_obj += """
+				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				map.on('overlayadd overlayremove', function(e){
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
+						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						cluster_group""" + str(cluster_num) + """.addTo(map);
+					};
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
+						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						map.removeLayer(cluster_group""" + str(cluster_num) + """);
+					}
+				});
+				"""			
+								cluster_num += 1	
+							elif cluster_set == 0:
+								print "feature_group" 
+								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-				"""		
+				"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
 							new_obj = """
 				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
@@ -909,6 +980,26 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			 			})
 					}}
 				);
+				"""
+				#add points to the cluster group
+							if cluster_set == 1:
+								new_obj += """
+				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				map.on('overlayadd overlayremove', function(e){
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
+						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						cluster_group""" + str(cluster_num) + """.addTo(map);
+					};
+					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
+						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+						map.removeLayer(cluster_group""" + str(cluster_num) + """);
+					}
+				});
+				"""			
+								cluster_num += 1
+							elif cluster_set == 0:
+								print "feature_group" 
+								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""		
 						else:
@@ -926,7 +1017,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						if visible == 'show all':
 							f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
-						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						if visible == 'show none':
 							f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
@@ -956,6 +1047,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						f5_raster.close()
 	# let's add layer control
 	controlStart = """
+	feature_group.addTo(map);
+
 	L.control.layers({'"""+basemapName+"""': basemap},{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)
@@ -1018,7 +1111,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	"""
 	if extent == 'canvas extent':
 		end = """
-		window.onload = init;
+		
 	</script>
 </body>
 </html>
