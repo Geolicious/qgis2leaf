@@ -46,6 +46,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
+	pluginDir = os.path.dirname(os.path.realpath(__file__))
+
 	# load providers
 	QgsApplication.initQgis()
 	# let's determine the current work folder of qgis:
@@ -55,6 +57,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	outputProjectFileName = os.path.join(outputProjectFileName, 'export_' + str(time.strftime("%Y_%m_%d")) + '_' + str(time.strftime("%I_%M_%S")))
 	jsStore = os.path.join(os.getcwd(),outputProjectFileName, 'js')
 	os.makedirs(jsStore)
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'Autolinker.min.js', jsStore + os.sep + 'Autolinker.min.js')
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
 	os.makedirs(dataStore)
 	cssStore = os.path.join(os.getcwd(),outputProjectFileName, 'css')
@@ -131,6 +134,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
 	<script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+	<script src="js/Autolinker.min.js"></script>
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
@@ -614,7 +618,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 										row += ""
 									else: 
 										if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
-											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + feature.properties.""" + str(field) + """ + '</td></tr>"""
+											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties.""" + str(field) + """)) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
 						#print table
