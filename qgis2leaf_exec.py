@@ -983,17 +983,27 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						//add comment sign to hide this layer on the map in the initial view.
 						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						if visible == 'show all' and cluster_set == True:
-							f5.write("""
+							if i.geometryType() == 0:
+								f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
 						cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+							if i.geometryType() != 0:
+								f5.write("""
+						//add comment sign to hide this layer on the map in the initial view.
+						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == False:
 							f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
 						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == True:
-							f5.write("""
+							if i.geometryType() == 0:
+								f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
 						//cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+							if i.geometryType() != 0:
+								f5.write("""
+						//delete comment sign to show this layer on the map in the initial view.
+						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
 					print "this is a raster"
@@ -1029,9 +1039,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			if i.type() == 0:
 				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-						if cluster_set == False:
+						if cluster_set == False or i.geometryType() != 0:
 							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
-						if cluster_set == True:
+						if cluster_set == True and i.geometryType() == 0:
 							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
