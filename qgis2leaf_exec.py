@@ -703,17 +703,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 #add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				map.on('overlayadd overlayremove', function(e){
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
-						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						cluster_group""" + str(cluster_num) + """.addTo(map);
-					};
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
-						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						map.removeLayer(cluster_group""" + str(cluster_num) + """);
-					}
-				});
+				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
@@ -861,17 +852,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							if cluster_set == True:
 								
 								new_obj += """
-				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				map.on('overlayadd overlayremove', function(e){
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
-						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						cluster_group""" + str(cluster_num) + """.addTo(map);
-					};
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
-						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						map.removeLayer(cluster_group""" + str(cluster_num) + """);
-					}
-				});
+				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
@@ -923,17 +905,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				map.on('overlayadd overlayremove', function(e){
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
-						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						cluster_group""" + str(cluster_num) + """.addTo(map);
-					};
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
-						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						map.removeLayer(cluster_group""" + str(cluster_num) + """);
-					}
-				});
+				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
@@ -984,17 +957,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+str(cluster_num) + """= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				map.on('overlayadd overlayremove', function(e){
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)==true){
-						cluster_group""" + str(cluster_num) + """.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						cluster_group""" + str(cluster_num) + """.addTo(map);
-					};
-					if (map.hasLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON)!=true){
-						cluster_group""" + str(cluster_num) + """.removeLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
-						map.removeLayer(cluster_group""" + str(cluster_num) + """);
-					}
-				});
+				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""			
 								cluster_num += 1
 							elif cluster_set == False:
@@ -1014,14 +978,22 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						# store everything in the file
 						f5.write(new_pop)
 						f5.write(new_obj)
-						if visible == 'show all':
+						if visible == 'show all' and cluster_set == False:
 							f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
-						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
-						if visible == 'show none':
+						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						if visible == 'show all' and cluster_set == True:
+							f5.write("""
+						//add comment sign to hide this layer on the map in the initial view.
+						cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						if visible == 'show none' and cluster_set == False:
 							f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
 						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						if visible == 'show none' and cluster_set == True:
+							f5.write("""
+						//delete comment sign to show this layer on the map in the initial view.
+						//cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
 					print "this is a raster"
@@ -1047,8 +1019,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						f5_raster.close()
 	# let's add layer control
 	controlStart = """
-	feature_group.addTo(map);
-
 	L.control.layers({'"""+basemapName+"""': basemap},{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)
@@ -1059,7 +1029,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			if i.type() == 0:
 				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-						new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+						if cluster_set == False:
+							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+						if cluster_set == True:
+							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
 			elif i.type() == 1:
@@ -1111,7 +1084,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	"""
 	if extent == 'canvas extent':
 		end = """
-		
+		window.onload = init;
 	</script>
 </body>
 </html>
