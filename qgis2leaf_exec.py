@@ -1007,7 +1007,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						f5.close()
 				elif i.type() == 1:
 					print "this is a raster"
-					out_raster_name = dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
+					out_raster_name = 'data/' + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
 					pt2	= i.extent()
 					print pt2
 					crsSrc = i.crs()    # WGS 84
