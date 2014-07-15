@@ -156,9 +156,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	allLayers = canvas.layers()
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
-		if i.providerType() != 'WFS' or encode2JSON == True:
-			for j in layer_list:
-				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+		for j in layer_list:
+			if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+				if i.providerType() != 'WFS' or encode2JSON == True and i:
 					if i.type() ==0:
 						qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
 						#now change the data structure to work with leaflet:
