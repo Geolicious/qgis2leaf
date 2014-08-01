@@ -139,7 +139,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	<link rel="stylesheet" href="css/MarkerCluster.css" />
 	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
-	<script src="http://code.jquery.com/jquery-2.0.0.min.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script> <!-- this is the javascript file that does the magic-->
 	<script src="js/Autolinker.min.js"></script>
 </head>
 <body>
