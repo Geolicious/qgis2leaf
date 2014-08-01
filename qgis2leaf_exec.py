@@ -82,6 +82,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	html, body, #map {
 		height: 100%;
 		width: 100%;
+		padding: 0;
+		margin: 0;
 	}
 	th {
 		text-align: left;
@@ -106,18 +108,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 """
 		if opacity_raster == True and full == 1:
 			text += """
-				html, body, #slide {
-		margin-left: auto;
-		margin-right: auto;
+	html, body, #slide {
 		width: 100%;
+		padding: 0;
+		margin: 0;
 	}
 </style>"""
 		elif opacity_raster == True and full== 0:
 			text += """	
 		html, body, #slide {
-		margin-left: auto;
-		margin-right: auto;
 		width: """+str(width)+"""px;
+		padding: 0;
+		margin: 0;
 	}
 </style>"""
 		elif opacity_raster == False:
@@ -134,13 +136,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 <head>
 	<title>QGIS2leaf webmap</title>
 	<meta charset="utf-8" />
-	
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" href="css/MarkerCluster.css" />
 	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
 	<link rel="stylesheet" type="text/css" href="css/own_style.css">
-	<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script> <!-- this is the javascript file that does the magic-->
-	<script src="js/Autolinker.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="js/Autolinker.min.js"></script>"""
+		if full == 1:
+			base +="""
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />"""
+		base += """
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
