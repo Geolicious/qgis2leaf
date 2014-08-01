@@ -166,7 +166,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						with open(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', "r+") as f2:
 							old = f2.read() # read everything in the file
 							f2.seek(0) # rewind
-							#print str(re.sub('[\W_]+', '', i.name()))
 							f2.write("var exp_" + str(re.sub('[\W_]+', '', i.name())) + " = " + old) # write the new line before
 							f2.close
 						#let's define style for the single marker points
@@ -216,7 +215,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								fid = feat.id()
 								attribute_map = feat.attributes()
 								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
-								#print catindex
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									radius_str.append(str(categories[catindex].symbol().size() * 2))
@@ -225,7 +223,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 									color_str.append('#FF00FF')
 									radius_str.append('4')
 									transp_str2.append('1')
-								#print color_str
 							qgisLeafId = 0
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
@@ -250,7 +247,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								fid = feat.id()
 								attribute_map = feat.attributes()
 								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
-								#print catindex
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									radius_str.append(str(categories[catindex].symbol().width() * 5))
@@ -259,7 +255,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 									color_str.append('#FF00FF')
 									radius_str.append('4')
 									transp_str2.append('1')
-								#print color_str
 							qgisLeafId = 0
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
@@ -283,14 +278,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								fid = feat.id()
 								attribute_map = feat.attributes()
 								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
-								#print catindex
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									transp_str2.append(str(categories[catindex].symbol().alpha()))
 								else: 
 									color_str.append('#FF00FF')
 									transp_str2.append('1')
-								#print color_str
 							qgisLeafId = 0
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
@@ -318,13 +311,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 									value = None
 								for r in i.rendererV2().ranges():
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
-										#print r.lowerValue()
-										#print r.upperValue()
 										color_str.append(str(r.symbol().color().name()))
 										radius_str.append(str(r.symbol().size() * 2))
 										transp_str2.append(str(r.symbol().alpha()))
 										break
-										#print r.symbol().color().name()
 									elif value == None:
 										color_str.append('#FF00FF')
 										radius_str.append('4')
@@ -358,13 +348,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 									value = None
 								for r in i.rendererV2().ranges():
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
-										print r.lowerValue()
-										print r.upperValue()
 										color_str.append(str(r.symbol().color().name()))
 										radius_str.append(str(r.symbol().width() * 5))
 										transp_str2.append(str(r.symbol().alpha()))
 										break
-										print r.symbol().color().name()
 									elif value == None:
 										color_str.append('#FF00FF')
 										radius_str.append('4')
@@ -397,12 +384,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 									value = None
 								for r in i.rendererV2().ranges():
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
-										print r.lowerValue()
-										print r.upperValue()
 										color_str.append(str(r.symbol().color().name()))
 										transp_str2.append(str(r.symbol().alpha()))
 										break
-										print r.symbol().color().name()
 									elif value == None:
 										color_str.append('#FF00FF')
 										transp_str2.append('1')
@@ -427,14 +411,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							f3.close()
 					#here comes the raster layers. you need an installed version of gdal
 					elif i.type() == 1:
-						print i.name()
 						in_raster = str(i.dataProvider().dataSourceUri())
 						prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + 'prov.tif'
 						out_raster = dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
 
 						if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
-						#print out_raster_name
-						#print('gdal_translate -of jpeg -outsize 100% 100% ' + filename_raster + " " +  out_raster_name)
 							shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
 							shutil.copyfile(in_raster, out_raster)
 						else:
@@ -630,7 +611,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties.""" + str(field) + """)) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
-						#print table
 						popFuncs = """					var popupContent = """ + table + """;
 					layer.bindPopup(popupContent);
 """
@@ -708,7 +688,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
-								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
@@ -857,7 +836,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
-								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""		
@@ -910,7 +888,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
-								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""	
@@ -962,7 +939,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				"""			
 								cluster_num += 1
 							elif cluster_set == False:
-								print "feature_group" 
 								new_obj += """
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""		
@@ -974,7 +950,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
 				"""		
 				
-						#print new_obj
 						# store everything in the file
 						f5.write(new_pop)
 						f5.write(new_obj)
@@ -1006,17 +981,14 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
-					print "this is a raster"
 					out_raster_name = 'data/' + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
 					pt2	= i.extent()
-					print pt2
 					crsSrc = i.crs()    # WGS 84
 					crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
 					xform = QgsCoordinateTransform(crsSrc, crsDest)
 					pt3 = xform.transform(pt2)
 					bbox_canvas2 = [pt3.yMinimum(), pt3.yMaximum(),pt3.xMinimum(), pt3.xMaximum()]
 					bounds2 = '[[' + str(pt3.yMinimum()) + ',' + str(pt3.xMinimum()) + '],[' + str(pt3.yMaximum()) + ',' + str(pt3.xMaximum()) +']]'
-					print bounds2
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
 						
 						new_obj = """
@@ -1082,19 +1054,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 			f11.close()
 	elif opacity_raster == False:
 		print "no opacity control added"
-	
 	# let's close the file but ask for the extent of all layers if the user wants to show only this extent:
 	if extent == 'layer extent':
 		end = """
 		map.fitBounds(feature_group.getBounds());
-		window.onload = init;
 	</script>
 </body>
 </html>
 	"""
 	if extent == 'canvas extent':
 		end = """
-		window.onload = init;
 	</script>
 </body>
 </html>
