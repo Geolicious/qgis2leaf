@@ -16,6 +16,7 @@ For single, categorized and graduated symbol point feature layers we are exporti
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/08/06 v.0.961: webmap title creation option, improved layer control with pretty names with help from [tomchadwin](https://github.com/tomchadwin) and supported by [the city of Ottawa](http://www.spcottawa.on.ca/)
 * 2014/07/11 v.0.96: cluster support, autohotlinking, wfs and wms support and layer order fix with a lot of help from [tomchadwin](https://github.com/tomchadwin)
 * 2014/05/22 v.0.95: raster support for image overlays with thanks to https://github.com/geohacker/leaflet-opacity
 * 2014/05/22 v.0.9: support for styles of polygons and polylines

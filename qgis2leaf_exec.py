@@ -42,7 +42,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -113,7 +113,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		padding: 0;
 		margin: 0;
 	}
-</style>"""
+"""
 		elif opacity_raster == True and full== 0:
 			text += """	
 		html, body, #slide {
@@ -121,10 +121,25 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		padding: 0;
 		margin: 0;
 	}
-</style>"""
+
+"""
 		elif opacity_raster == False:
 			text += """
-		</style>"""
+		"""
+		text += """
+		.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+        }
+    .info h2 {
+    margin: 0 0 5px;
+    color: #777;
+}
+</style>"""
 		f_css.write(text)
 		f_css.close()
 	
@@ -133,8 +148,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		base = """
 <!DOCTYPE html>
 <html>
-<head>
+<head> """
+		if webpage_name == "":
+			base +="""
 	<title>QGIS2leaf webmap</title>
+	"""
+		else:
+			base +="""
+	<title>""" + (webpage_name).encode('utf-8') + """</title>
+	"""
+		base += """
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" href="css/MarkerCluster.css" />
@@ -1004,6 +1027,22 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 
 						f5_raster.write(new_obj)
 						f5_raster.close()
+	#lets add a Title and a subtitle
+	if webmap_head != "": 
+		titleStart ="""
+		var title = new L.Control();
+		title.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+			this.update();
+			return this._div;
+	    };
+	    title.update = function () {
+			this._div.innerHTML = '<h2>""" + webmap_head.encode('utf-8') + """</h2>""" + webmap_subhead.encode('utf-8') + """'
+		};
+		title.addTo(map);"""
+		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5contr:
+			f5contr.write(titleStart)
+			f5contr.close()
 	# let's add layer control
 	controlStart = """
 	L.control.layers({'"""+basemapName+"""': basemap},{"""
@@ -1017,15 +1056,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
-							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
 						if cluster_set == True and i.geometryType() == 0:
-							new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
 			elif i.type() == 1:
 				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-						new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
+						#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
+						new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
 						f7.write(new_layer)
 						f7.close()	
 	controlEnd = "}).addTo(map);"	

@@ -69,6 +69,15 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.width = self.ui.width_box.setText('800')
 		self.height = self.ui.height_box.setText('600')
 		self.ui.radioButton.toggled.connect(self.width_)
+		if QgsProject.instance().title() != "":
+			self.webpage_name = self.ui.webpage_name.setText(unicode(QgsProject.instance().title()))
+			self.webmap_head = self.ui.webmap_head.setText(unicode(QgsProject.instance().title()))
+			self.webmap_subhead = self.ui.webmap_subhead.setText(unicode(QgsProject.instance().title()))
+		else:
+			self.webpage_name = self.ui.webpage_name.setText("QGIS2leaf webmap")
+			self.webmap_head = self.ui.webmap_head.setText("This is the title")
+			self.webmap_subhead = self.ui.webmap_subhead.setText("This is the subtitle")
+
 	def getSize(self):
 		canvas = qgis.utils.iface.mapCanvas()
 		canvasSize = canvas.size()    
@@ -107,6 +116,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.basemapName = self.ui.comboBox.currentText()
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
+		self.webpage_name = self.ui.webpage_name.text()
+		self.webmap_head = self.ui.webmap_head.text()
+		self.webmap_subhead = self.ui.webmap_subhead.text()
 		self.extent = self.ui.comboBox_2.currentText()
 		self.visible = self.ui.comboBox_3.currentText()
 		self.layer_list = self.ui.listWidget.selectedItems()
@@ -116,5 +128,5 @@ class qgis2leafDialog(QtGui.QDialog):
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead)
 		self.close()
