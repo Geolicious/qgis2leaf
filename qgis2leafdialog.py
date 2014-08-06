@@ -125,8 +125,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.opacity = self.ui.checkBox.isChecked()
 		self.encode2JSON = self.ui.encode2JSON.isChecked()
 		self.createcluster = self.ui.createcluster.isChecked()
+		self.legend = self.ui.createlegend.isChecked()
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend)
 		self.close()

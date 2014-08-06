@@ -42,7 +42,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead):
+def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -848,7 +848,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							radius: feature.properties.radius_qgis2leaf,
 							fillColor: feature.properties.color_qgis2leaf,
 							color: '#000',
-							weight: 1,
+							weight: 0.2,
 							opacity: feature.properties.transp_qgis2leaf,
 							fillOpacity: feature.properties.transp_fill_qgis2leaf
 							})
@@ -885,9 +885,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
 					style: function (feature) {
-						return {color: feature.properties.color_qgis2leaf,
+						return {fillColor: feature.properties.color_qgis2leaf,
+								color: '#000',
+								weight: 1,
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
+								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -925,9 +927,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
 					style: function (feature) {
 						return {weight: feature.properties.radius_qgis2leaf,
-								color: feature.properties.color_qgis2leaf,
+								fillColor: feature.properties.color_qgis2leaf,
+								color: '#000',
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
+								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -937,9 +940,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
 					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
 					style: function (feature) {
-						return {color: feature.properties.color_qgis2leaf,
+						return {fillColor: feature.properties.color_qgis2leaf,
+								color: '#000',
+								weight: 1,
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
+								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -1027,7 +1032,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 
 						f5_raster.write(new_obj)
 						f5_raster.close()
-	#lets add a Title and a subtitle
+	
+
+
+	#let's add a Title and a subtitle
 	if webmap_head != "": 
 		titleStart ="""
 		var title = new L.Control();
@@ -1043,6 +1051,56 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5contr:
 			f5contr.write(titleStart)
 			f5contr.close()
+	
+
+
+
+	#let's add a legend
+	if legend == True:
+		legendStart = """
+		var legend = L.control({position: 'bottomright'});
+		
+		legend.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend');
+		div.innerHTML = "<h3>Legend</h3><table>"""
+		for i in reversed(allLayers): 
+			for j in layer_list:
+				if re.sub('[\W_]+', '', i.name()) == j:
+					if i.type() == 0:
+						fields = i.pendingFields() 
+						field_names = [field.name() for field in fields]
+						legend_ico_prov = False
+						legend_exp_prov = False
+						for field in field_names:
+							if str(field) == 'legend_ico':
+								legend_ico_prov = True
+							if str(field) == 'legend_exp':
+								legend_exp_prov = True
+						if legend_ico_prov == True and legend_exp_prov == True:
+							iter = i.getFeatures()
+							for feat in iter:
+								fid = feat.id()
+								provider = i.dataProvider()
+								legend_ico_index = provider.fieldNameIndex('legend_ico')
+								legend_exp_index = provider.fieldNameIndex('legend_exp')
+								attribute_map = feat.attributes()
+								legend_icon = attribute_map[legend_ico_index]
+								legend_expression = attribute_map[legend_exp_index]
+								print legend_expression
+								print legend_icon 
+								break
+							legendStart += """<tr><td><img src='""" + unicode(legend_icon) + """' width='24px'></img></td><td>"""+unicode(legend_expression) + """</td></tr>"""
+
+		legendStart += """</table>";
+    		return div;
+		};
+		legend.addTo(map);
+"""
+		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5leg:
+			f5leg.write(legendStart)
+			f5leg.close()
+	
+
 	# let's add layer control
 	controlStart = """
 	L.control.layers({'"""+basemapName+"""': basemap},{"""
@@ -1071,6 +1129,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						f7.write(new_layer)
 						f7.close()	
 	controlEnd = "}).addTo(map);"	
+	
+
+
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f8:
 		f8.seek(-1, os.SEEK_END)
 		f8.truncate()
