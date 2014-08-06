@@ -219,7 +219,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							for feat in iter:
 								fid = feat.id()
 								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									radius_str.append(str(categories[catindex].symbol().size() * 2))
@@ -251,7 +251,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							for feat in iter:
 								fid = feat.id()
 								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									radius_str.append(str(categories[catindex].symbol().width() * 5))
@@ -282,7 +282,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							for feat in iter:
 								fid = feat.id()
 								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(str(attribute_map[attrvalindex]))
+								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									transp_str2.append(str(categories[catindex].symbol().alpha()))
