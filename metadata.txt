@@ -13,7 +13,7 @@ name=qgis2leaf
 qgisMinimumVersion=2.0
 description=Export your QGIS project to a leaflet based webmap.
 about=QGIS 2 Leaflet creates a webmap from your current QGIS vector features and rasters. Therefore it tries to copy the current styles to styles, leaflet will understand.
-version=0.961
+version=0.97
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
