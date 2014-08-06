@@ -334,7 +334,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							transp_str2 = []
 							for feat in iter:
 								if str(feat.attributes()[attrvalindex]) != 'NULL':
-									value = int(feat.attributes()[attrvalindex])
+									value = feat.attributes()[attrvalindex]
 								elif str(feat.attributes()[attrvalindex]) == 'NULL':
 									value = None
 								for r in i.rendererV2().ranges():
@@ -371,7 +371,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							transp_str2 = []
 							for feat in iter:
 								if str(feat.attributes()[attrvalindex]) != 'NULL':
-									value = int(feat.attributes()[attrvalindex])
+									value = feat.attributes()[attrvalindex]
 								elif str(feat.attributes()[attrvalindex]) == 'NULL':
 									value = None
 								for r in i.rendererV2().ranges():
@@ -407,7 +407,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							transp_str2 = []
 							for feat in iter:
 								if str(feat.attributes()[attrvalindex]) != 'NULL':
-									value = int(feat.attributes()[attrvalindex])
+									value = feat.attributes()[attrvalindex]
 								elif str(feat.attributes()[attrvalindex]) == 'NULL':
 									value = None
 								for r in i.rendererV2().ranges():
