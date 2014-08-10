@@ -956,9 +956,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 					pointToLayer: function (feature, latlng) {
 						return L.marker(latlng, {icon: L.icon({
 							iconUrl: feature.properties.icon_exp,
-							iconSize:     [48, 48], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
-							iconAnchor:   [24, 24], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
-							popupAnchor:  [0, -26] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
+							iconSize:     [24, 24], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
+							iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
+							popupAnchor:  [0, -14] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
 			 				})
 			 			})
 					}}
@@ -1089,7 +1089,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								print legend_expression
 								print legend_icon 
 								break
-							legendStart += """<tr><td><img src='""" + unicode(legend_icon) + """' width='24px'></img></td><td>"""+unicode(legend_expression) + """</td></tr>"""
+							legendStart += """<tr><td><img src='""" + unicode(legend_icon) + """'></img></td><td>"""+unicode(legend_expression) + """</td></tr>"""
 
 		legendStart += """</table>";
     		return div;
@@ -1128,7 +1128,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
 						f7.write(new_layer)
 						f7.close()	
-	controlEnd = "}).addTo(map);"	
+	controlEnd = "},{collapsed:false}).addTo(map);"	
 	
 
 
