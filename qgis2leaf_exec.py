@@ -703,7 +703,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							color: '#000',
 							weight: 1,
 							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_fill_qgis2leaf
+							fillOpacity: feature.properties.transp_qgis2leaf
 							})
 						}
 					});
@@ -768,7 +768,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						return {weight: feature.properties.radius_qgis2leaf,
 								color: feature.properties.color_qgis2leaf,
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
+								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -830,7 +830,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 								fillColor: feature.properties.color_qgis2leaf,
 								weight: feature.properties.radius_qgis2leaf,
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
+								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
@@ -850,7 +850,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							color: '#000',
 							weight: 0.2,
 							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_fill_qgis2leaf
+							fillOpacity: feature.properties.transp_qgis2leaf
 							})
 						}
 					});
@@ -905,7 +905,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 							color: '#000',
 							weight: 1,
 							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_fill_qgis2leaf
+							fillOpacity: feature.properties.transp_qgis2leaf
 							})
 						}
 					});
