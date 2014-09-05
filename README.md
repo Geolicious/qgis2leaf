@@ -9,6 +9,7 @@ You can choose between several basemap styles and define the initial extent of t
 The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder). If you want to use a defined symbol in your webmap add an attribute `icon_exp` to your point shapefile and file it wit a relative path on your pc or an html statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in `places_few_1_EPSG3857_categorized.shp` in the `test_data` folder (Donkey designed by Gabriele Malaspina from the thenounproject.com).
 For single, categorized and graduated symbol point feature layers we are exporting radius (not for polygons), color and opacity. Unfortunately the export of forms and svg is not embedded at the moment.
 If you would like to create a legend you need to add the attributes `legend_exp` (text to be shown) and `legend_ico` (icon to be shown) to the desired layer and fill in the link to the icon and the text. Check the test files for details.
+With version 0.98 you have the possibility to define your own basemap. Therefore you need to alter the file qgis2leaf_layerlist and simply add your line to the list. The list consists of the basemap name, an URL for the tiles and an Attributionstring. If you alter the file you need to reload the plugin to see effects. You can use the [plugin reloader plugin](https://plugins.qgis.org/plugins/plugin_reloader/) for this purpose.
 
 ## Installation
 
@@ -17,8 +18,9 @@ If you would like to create a legend you need to add the attributes `legend_exp`
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
-* 2014/08/06 v.0.97: new option to create a legend. supported by [the city of Ottawa](http://www.spcottawa.on.ca/)
-* 2014/08/06 v.0.961: webmap title creation option, improved layer control with pretty names with help from [tomchadwin](https://github.com/tomchadwin) and supported by [the city of Ottawa](http://www.spcottawa.on.ca/)
+* 2014/09/05 v.0.98: additional file for basemap entries
+* 2014/08/06 v.0.97: new option to create a legend. supported by [the SPC Ottawa](http://www.spcottawa.on.ca/)
+* 2014/08/06 v.0.961: webmap title creation option, improved layer control with pretty names with help from [tomchadwin](https://github.com/tomchadwin) and supported by [the SPC Ottawa](http://www.spcottawa.on.ca/)
 * 2014/07/11 v.0.96: cluster support, autohotlinking, wfs and wms support and layer order fix with a lot of help from [tomchadwin](https://github.com/tomchadwin)
 * 2014/05/22 v.0.95: raster support for image overlays with thanks to https://github.com/geohacker/leaflet-opacity
 * 2014/05/22 v.0.9: support for styles of polygons and polylines

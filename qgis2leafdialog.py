@@ -26,6 +26,7 @@ import osgeo.ogr
 from osgeo import ogr 
 from qgis2leaf_exec import qgis2leaf_exec
 from qgis.core import *
+from qgis2leaf_layerlist import layerlist
 import qgis.utils
 import re
 import os
@@ -51,7 +52,17 @@ class qgis2leafDialog(QtGui.QDialog):
 		
 		# Connect signals
 		self.ui.cancelButton.clicked.connect(self.close)
-		attrFields = ['OSM Standard', 'OSM Black & White', 'OSM DE', 'OSM HOT', 'OpenSeaMap', 'Thunderforest Cycle', 'Thunderforest Transport', 'Thunderforest Landscape', 'Thunderforest Outdoors', 'OpenMapSurfer Roads', 'OpenMapSurfer adminb', 'OpenMapSurfer roadsg', 'MapQuestOpen OSM', 'MapQuestOpen Aerial', 'Stamen Terrain','Stamen Toner', 'Stamen Watercolor', 'OpenWeatherMap Clouds', 'OpenWeatherMap Precipitation', 'OpenWeatherMap Rain', 'OpenWeatherMap Pressure','OpenWeatherMap Wind', 'OpenWeatherMap Temp', 'OpenWeatherMap Snow']
+		dictionary = layerlist()
+		attrFields = []
+		for i in range(len(dictionary)):
+			#print dictionary[i]
+			for key in dictionary[i]:
+				if key == 'META':
+					continue
+				else:
+					attrFields.append(key)
+		
+		#attrFields = ['OSM Standard', 'OSM Black & White', 'OSM DE', 'OSM HOT', 'OpenSeaMap', 'Thunderforest Cycle', 'Thunderforest Transport', 'Thunderforest Landscape', 'Thunderforest Outdoors', 'OpenMapSurfer Roads', 'OpenMapSurfer adminb', 'OpenMapSurfer roadsg', 'MapQuestOpen OSM', 'MapQuestOpen Aerial', 'Stamen Terrain','Stamen Toner', 'Stamen Watercolor', 'OpenWeatherMap Clouds', 'OpenWeatherMap Precipitation', 'OpenWeatherMap Rain', 'OpenWeatherMap Pressure','OpenWeatherMap Wind', 'OpenWeatherMap Temp', 'OpenWeatherMap Snow']
 		self.ui.comboBox.addItems(attrFields)
 		extFields = ['canvas extent', 'layer extent']
 		self.ui.comboBox_2.addItems(extFields)
@@ -113,7 +124,17 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.ui.lineEdit_2.setText(self.outFileName)
 		
 	def export2leaf(self):
-		self.basemapName = self.ui.comboBox.currentText()
+		dictionary = layerlist()
+		for i in range(len(dictionary)):
+			#print dictionary[i]
+			for key in dictionary[i]:
+				if key == 'META':
+					continue
+				else:
+					if self.ui.comboBox.currentText() == key:
+						self.basemapMeta = dictionary[i]['META']
+						self.basemapName = self.ui.comboBox.currentText()
+						self.basemapAddress = dictionary[i][self.ui.comboBox.currentText()]
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.webpage_name = self.ui.webpage_name.text()
@@ -129,5 +150,5 @@ class qgis2leafDialog(QtGui.QDialog):
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend)
 		self.close()

@@ -42,7 +42,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend):
+def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -432,7 +432,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 						#now add the js files as data input for our map
 						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
 							new_src = """
-				<script src='""" + 'data' + '/' + """exp_""" + re.sub('[\W_]+', '', i.name()) + """.js' ></script>
+				<script src='""" + 'data' + """/exp_""" + re.sub('[\W_]+', '', i.name()) + """.js' ></script>
 				"""
 							# store everything in the file
 							f3.write(new_src)
@@ -483,129 +483,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, width, height, extent, fu
 	var raster_group = new L.LayerGroup([]);
 	"""
 #here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
-
-	if basemapName == 'OSM Standard':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OSM Black & White':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'Stamen Toner':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		var basemap = L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OSM DE':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OSM HOT':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
-		"""	
-	if basemapName == 'OpenSeaMap':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors'); 
-		var basemap = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png');
-		"""		
-	if basemapName == 'Thunderforest Cycle':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png');
-		"""	
-	if basemapName == 'Thunderforest Transport':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png');
-		"""			
-	if basemapName == 'Thunderforest Landscape':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png');
-		"""	
-	if basemapName == 'Thunderforest Outdoors':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png');
-		"""		
-	if basemapName == 'OpenMapSurfer Roads':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roads/x={x}&y={y}&z={z}');
-		"""			
-	if basemapName == 'OpenMapSurfer adminb':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/adminb/x={x}&y={y}&z={z}');
-		"""	
-	if basemapName == 'OpenMapSurfer roadsg':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://openmapsurfer.uni-hd.de/tiles/roadsg/x={x}&y={y}&z={z}');
-		"""
-	if basemapName == 'MapQuestOpen OSM':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'); 
-		var basemap = L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg');
-		"""	
-	if basemapName == 'MapQuestOpen Aerial':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'); 
-		var basemap = L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg');
-		"""
-	if basemapName == 'Stamen Terrain':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		var basemap = L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'Stamen Watercolor':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>');
-		var basemap = L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Clouds':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Precipitation':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Rain':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/rain/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Pressure':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Wind':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Temp':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png');
-		"""
-	if basemapName == 'OpenWeatherMap Snow':
-		basemapText = """
-		map.attributionControl.addAttribution(additional_attrib + 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>'); 
-		var basemap = L.tileLayer('http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png');
-		"""
-	basemapText += """	basemap.addTo(map);"""
-	layerOrder = """	var layerOrder=new Array();"""
+#basemap name	
+	basemapText = """
+	var basemap= L.tileLayer('""" + basemapAddress + """');"""
+#attribution	
+	basemapText += """
+	map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
+	basemapText += """	
+	basemap.addTo(map);"""
+	layerOrder = """	
+	var layerOrder=new Array();"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
 			f4.write(middle)
 			f4.write(basemapText)
