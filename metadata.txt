@@ -13,7 +13,7 @@ name=qgis2leaf
 qgisMinimumVersion=2.0
 description=Export your QGIS project to a leaflet based webmap.
 about=QGIS 2 Leaflet creates a webmap from your current QGIS vector features and rasters. Therefore it tries to copy the current styles to styles, leaflet will understand.
-version=0.98
+version=0.99a
 author=Riccardo Klinger, Geolicious
 email=riccardo.klinger@geolicious.de
 
@@ -22,7 +22,8 @@ email=riccardo.klinger@geolicious.de
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-changelog= 	2014/09/05 v.0.98: additional file for basemap entries
+changelog=2014/09/10 v.0.99a: added warning and treatment of unsupported characters in attribute names
+	2014/09/05 v.0.98: additional file for basemap entries
 	2014/08/06 v.0.97: option for legend creation. supported by the SPC Ottawa
 	2014/08/06 v.0.961: webmap title creation option, improved layer control with pretty names with help from https://github.com/tomchadwin and supported by the SPC Ottawa
 	2014/07/11 v.0.96: support for wfs/wms, cluster strategy, autohotlinking and other great stuff due to the help of https://github.com/tomchadwin

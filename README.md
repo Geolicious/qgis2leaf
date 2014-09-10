@@ -18,6 +18,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/09/10 v.0.99a: added warning and treatment of unsupported characters in attribute names
 * 2014/09/05 v.0.98: additional file for basemap entries
 * 2014/08/06 v.0.97: new option to create a legend. supported by [the SPC Ottawa](http://www.spcottawa.on.ca/)
 * 2014/08/06 v.0.961: webmap title creation option, improved layer control with pretty names with help from [tomchadwin](https://github.com/tomchadwin) and supported by [the SPC Ottawa](http://www.spcottawa.on.ca/)
@@ -40,7 +41,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 ## Tests
 
 You may find testdata in the "test_data" folder.
-It was tested on Linux Mint and Windows 7 with QGIS 2.2 and 2.4 and Python 2.7.5+ 
+It was tested on Linux Mint/Ubuntu and Windows 7 with QGIS 2.2 and 2.4 and Python 2.7.5+ 
 
 ## Contributors
 
