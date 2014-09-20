@@ -42,7 +42,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend):
+def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend, locate, address):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -162,7 +162,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" href="css/MarkerCluster.css" />
 	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
-	<link rel="stylesheet" type="text/css" href="css/own_style.css">
+	<link rel="stylesheet" type="text/css" href="css/own_style.css">"""
+		if address == True:
+			base += """
+        <link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	"""
+		base +="""
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> <!-- this is the javascript file that does the magic-->
 	<script src="js/Autolinker.min.js"></script>"""
 		if full == 1:
@@ -172,7 +176,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script> <!-- this is the javascript file that does the magic-->"""
+		if address == True:
+			
+			base +="""
+	<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>"""
+		base +="""
 	<script src="js/leaflet.markercluster.js"></script>
 	"""
 		if opacity_raster == True:
@@ -938,8 +947,19 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5contr:
 			f5contr.write(titleStart)
 			f5contr.close()
-	
-
+			#here comes the address search:
+	if address == True:
+		address_text = """
+		var osmGeocoder = new L.Control.OSMGeocoder({
+            collapsed: false,
+            position: 'topright',
+            text: 'Find!',
+			});
+		osmGeocoder.addTo(map);
+		"""
+		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5addr:
+			f5addr.write(address_text)
+			f5addr.close()
 
 
 	#let's add a legend
@@ -986,7 +1006,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5leg:
 			f5leg.write(legendStart)
 			f5leg.close()
-	
 
 	# let's add layer control
 	controlStart = """
@@ -1049,16 +1068,32 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			f11.close()
 	elif opacity_raster == False:
 		print "no opacity control added"
+
+	#here comes the user locate:
+	if locate == True:
+		end = """
+		map.locate({setView: true, maxZoom: 16});
+		function onLocationFound(e) {
+    		var radius = e.accuracy / 2;
+			L.marker(e.latlng).addTo(map)
+        	.bindPopup("You are within " + radius + " meters from this point").openPopup();
+			L.circle(e.latlng, radius).addTo(map);
+		}
+		map.on('locationfound', onLocationFound);
+		"""
+	if locate == False:
+		end = ''
 	# let's close the file but ask for the extent of all layers if the user wants to show only this extent:
 	if extent == 'layer extent':
-		end = """
+		end += """
 		map.fitBounds(feature_group.getBounds());
 	</script>
 </body>
 </html>
 	"""
 	if extent == 'canvas extent':
-		end = """
+		end += """
+	L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
 	</script>
 </body>
 </html>

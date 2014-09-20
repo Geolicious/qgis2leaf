@@ -9,6 +9,8 @@ You can choose between several basemap styles and define the initial extent of t
 The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder). If you want to use a defined symbol in your webmap add an attribute `icon_exp` to your point shapefile and file it wit a relative path on your pc or an html statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in `places_few_1_EPSG3857_categorized.shp` in the `test_data` folder (Donkey designed by Gabriele Malaspina from the thenounproject.com).
 For single, categorized and graduated symbol point feature layers we are exporting radius (not for polygons), color and opacity. Unfortunately the export of forms and svg is not embedded at the moment.
 If you would like to create a legend you need to add the attributes `legend_exp` (text to be shown) and `legend_ico` (icon to be shown) to the desired layer and fill in the link to the icon and the text. Check the test files for details.
+The 'locate' button will ask for acces to geolocate the browser and will add a marker where the webmap user is found
+the 'address' button will add a geocode window in the upper right corner of the webmap.
 With version 0.98 you have the possibility to define your own basemap. Therefore you need to alter the file qgis2leaf_layerlist and simply add your line to the list. The list consists of the basemap name, an URL for the tiles and an Attributionstring. If you alter the file you need to reload the plugin to see effects. You can use the [plugin reloader plugin](https://plugins.qgis.org/plugins/plugin_reloader/) for this purpose.
 
 ## Installation
@@ -18,6 +20,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://www.qgis.org/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/09/20 v.0.99b: added settings save and load, user locate and address search (thanks to [Karsten](https://github.com/k4r573n))
 * 2014/09/10 v.0.99a: added warning and treatment of unsupported characters in attribute names
 * 2014/09/05 v.0.98: additional file for basemap entries
 * 2014/08/06 v.0.97: new option to create a legend. supported by [the SPC Ottawa](http://www.spcottawa.on.ca/)
