@@ -121,7 +121,7 @@ class qgis2leafDialog(QtGui.QDialog):
 				fields = i.pendingFields()
 				field_names = [field.name() for field in fields]
 				for field in field_names:
-					m = re.search('[ -/]|[:-^]|[`-`]|[{-~]|[^\x00-\x7F]',field)
+					m = re.search('[ - ]|[\{-\~]|[^\x00-\x7F]|[ -/]|[=]|[@]|[<]|[>]|[[]|[]]|[\^]',field)
 					if str(m) != "None":
 						QtGui.QMessageBox.about(self, "Non supported attribute names detected!", "Your layer<br><b>"+ unicode(i.name()) + "</b><br>has an attribute called<br><b>" + unicode(field) + "</b><br>There are characters in the attribute name that are not allowed:<br><b>'" + unicode(m.group(0))+ "'</b><br>Consider using the <a href='http://plugins.qgis.org/plugins/tablemanager/'>table manager plugin</a> to rename your attributes.<br><br><b><em>As it is, this layer will not be exported for the webmap.</em></b>")
 						layer_granted = 0
