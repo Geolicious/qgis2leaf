@@ -470,7 +470,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	#####now with viewcontrol
 	if extent == 'canvas extent':
 		pt0	= canvas.extent()
-		crsSrc = qgis.utils.iface.mapCanvas().mapRenderer().destinationCrs()    # WGS 84
+		try:
+			crsSrc = qgis.utils.iface.mapCanvas().mapSettings().destinationCrs() # WGS 84
+		except:
+			crsSrc = qgis.utils.iface.mapCanvas().mapRenderer().destinationCrs() # WGS 84
 		crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
 		xform = QgsCoordinateTransform(crsSrc, crsDest)
 		pt1 = xform.transform(pt0)
