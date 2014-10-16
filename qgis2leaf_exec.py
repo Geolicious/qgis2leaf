@@ -531,7 +531,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									if str(field) == "icon_exp":
 										row += ""
 									else: 
-										if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
+										if i.editorWidgetV2(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
 											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties['""" + str(field) + """'])) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
