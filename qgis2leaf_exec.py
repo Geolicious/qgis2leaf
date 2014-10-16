@@ -532,7 +532,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										row += ""
 									else: 
 										if i.editType(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
-											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties.""" + str(field) + """)) + '</td></tr>"""
+											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties['""" + str(field) + """'])) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
 						popFuncs = """					var popupContent = """ + table + """;
