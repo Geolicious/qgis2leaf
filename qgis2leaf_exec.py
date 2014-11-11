@@ -193,17 +193,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	allLayers = canvas.layers()
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
+		safeLayerName = re.sub('[\W_]+', '', i.name())
 		for j in layer_list:
-			if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+			if safeLayerName == re.sub('[\W_]+', '', j):
 				if i.providerType() != 'WFS' or encode2JSON == True and i:
 					if i.type() ==0:
-						qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', 'utf-8', exp_crs, 'GeoJson')
+						qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + safeLayerName + '.js', 'utf-8', exp_crs, 'GeoJson')
 						#now change the data structure to work with leaflet:
 
-						with open(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js', "r+") as f2:
+						with open(dataStore + os.sep + 'exp_' + safeLayerName + '.js', "r+") as f2:
 							old = f2.read() # read everything in the file
 							f2.seek(0) # rewind
-							f2.write("var exp_" + str(re.sub('[\W_]+', '', i.name())) + " = " + old) # write the new line before
+							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
 						#let's define style for the single marker points
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
@@ -211,7 +212,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							radius_str = str(i.rendererV2().symbol().size() * 2)
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 								sys.stdout.write(line)
 						#let's define style for the single marker lines
@@ -220,7 +221,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							radius_str = str(i.rendererV2().symbol().width() * 5)
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 								sys.stdout.write(line)
 						#let's define style for the single marker polygons
@@ -235,7 +236,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "border_color_qgis2leaf": '""" + borderColor_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 								sys.stdout.write(line)		
 						#let's define style for categorized points
@@ -261,7 +262,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									radius_str.append('4')
 									transp_str2.append('1')
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -293,7 +294,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									radius_str.append('4')
 									transp_str2.append('1')
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -322,7 +323,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									color_str.append('#FF00FF')
 									transp_str2.append('1')
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -358,7 +359,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -395,7 +396,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -429,7 +430,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.js',inplace=1):
+							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
@@ -441,7 +442,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						#now add the js files as data input for our map
 						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
 							new_src = """
-				<script src='""" + 'data' + """/exp_""" + re.sub('[\W_]+', '', i.name()) + """.js' ></script>
+				<script src='""" + 'data' + """/exp_""" + safeLayerName + """.js' ></script>
 				"""
 							# store everything in the file
 							f3.write(new_src)
@@ -449,8 +450,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					#here comes the raster layers. you need an installed version of gdal
 					elif i.type() == 1:
 						in_raster = str(i.dataProvider().dataSourceUri())
-						prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + 'prov.tif'
-						out_raster = dataStore + os.sep + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
+						prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + 'prov.tif'
+						out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.jpg'
 
 						if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
 							shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
@@ -510,9 +511,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			f4.write(basemapText)
 			f4.write(layerOrder)
 			f4.close()
-	for i in reversed(allLayers): 
+	for i in reversed(allLayers):
+		safeLayerName = re.sub('[\W_]+', '', i.name())
+
 		for j in layer_list:
-			if re.sub('[\W_]+', '', i.name()) == j:
+			if safeLayerName == j:
+
 				if i.type()==0:
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
 						#here comes the layer style
@@ -542,7 +546,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					layer.bindPopup(popupContent);
 """
 						new_pop = """
-				function pop_""" + re.sub('[\W_]+', '', i.name()) + """(feature, layer) {
+				function pop_""" + safeLayerName + """(feature, layer) {
 					"""+popFuncs+"""
 
 				}
@@ -550,7 +554,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						#single marker points:
 						 
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
-							layerName=re.sub('[\W_]+', '', i.name())
+							layerName=safeLayerName
+
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								color_str = str(i.rendererV2().symbol().color().name())
 								radius_str = str(i.rendererV2().symbol().size() * 2)
@@ -598,8 +603,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								"""
 							else:
 								new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {  
 						return L.circleMarker(latlng, {
 							radius: feature.properties.radius_qgis2leaf,
@@ -615,20 +620,21 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 #add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
-							layerName=re.sub('[\W_]+', '', i.name())
+							layerName=safeLayerName
+
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								color_str = str(i.rendererV2().symbol().color().name())
 								radius_str = str(i.rendererV2().symbol().width() * 5)
@@ -670,8 +676,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								"""
 							else:
 								new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {weight: feature.properties.radius_qgis2leaf,
 								color: feature.properties.color_qgis2leaf,
@@ -679,14 +685,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-							layerName=re.sub('[\W_]+', '', i.name())
+							layerName=safeLayerName
+
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
 									color_str = 'none'
@@ -735,8 +742,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								"""
 							else:
 								new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {color: feature.properties.border_color_qgis2leaf,
 								fillColor: feature.properties.color_qgis2leaf,
@@ -745,7 +752,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
@@ -753,8 +760,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				"""	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {  
 						return L.circleMarker(latlng, {
 							radius: feature.properties.radius_qgis2leaf,
@@ -771,18 +778,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							if cluster_set == True:
 								
 								new_obj += """
-				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {weight: feature.properties.radius_qgis2leaf,
 								color: feature.properties.color_qgis2leaf,
@@ -790,12 +797,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {fillColor: feature.properties.color_qgis2leaf,
 								color: '#000',
@@ -804,12 +811,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {  
 						return L.circleMarker(latlng, {
 							radius: feature.properties.radius_qgis2leaf,
@@ -825,18 +832,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
 				"""			
 								cluster_num += 1	
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {weight: feature.properties.radius_qgis2leaf,
 								fillColor: feature.properties.color_qgis2leaf,
@@ -845,12 +852,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {fillColor: feature.properties.color_qgis2leaf,
 								color: '#000',
@@ -859,12 +866,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""		
 						elif icon_prov == True and i.geometryType() == 0:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {
 						return L.marker(latlng, {icon: L.icon({
 							iconUrl: feature.properties.icon_exp,
@@ -879,20 +886,20 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
 				"""			
 								cluster_num += 1
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""		
 						else:
 							new_obj = """
-				var exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON = new L.geoJson(exp_""" + re.sub('[\W_]+', '', i.name()) + """,{
-					onEachFeature: pop_""" + re.sub('[\W_]+', '', i.name()) + """,
+				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+					onEachFeature: pop_""" + safeLayerName + """,
 					});
-				feature_group.addLayer(exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON);
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""		
 				
 						# store everything in the file
@@ -901,32 +908,32 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						if visible == 'show all' and cluster_set == False:
 							f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
-						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show all' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
-						cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
 							if i.geometryType() != 0:
 								f5.write("""
 						//add comment sign to hide this layer on the map in the initial view.
-						exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == False:
 							f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
-						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						//exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
-						//cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						//cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
 							if i.geometryType() != 0:
 								f5.write("""
 						//delete comment sign to show this layer on the map in the initial view.
-						//exp_""" + re.sub('[\W_]+', '', i.name()) + """JSON.addTo(map);""")
+						//exp_""" + safeLayerName + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
-					out_raster_name = 'data/' + 'exp_' + re.sub('[\W_]+', '', i.name()) + '.jpg'
+					out_raster_name = 'data/' + 'exp_' + safeLayerName + '.jpg'
 					pt2	= i.extent()
 					crsSrc = i.crs()    # WGS 84
 					crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
@@ -937,10 +944,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
 						
 						new_obj = """
-				var img_""" + re.sub('[\W_]+', '', i.name()) + """= '""" + out_raster_name + """';
-				var img_bounds_""" + re.sub('[\W_]+', '', i.name()) + """ = """+ bounds2 + """;
-				var overlay_""" + re.sub('[\W_]+', '', i.name()) + """ = new L.imageOverlay(img_""" + re.sub('[\W_]+', '', i.name()) + """, img_bounds_""" + re.sub('[\W_]+', '', i.name()) + """).addTo(map);
-				raster_group.addLayer(overlay_""" + re.sub('[\W_]+', '', i.name()) + """);"""
+				var img_""" + safeLayerName + """= '""" + out_raster_name + """';
+				var img_bounds_""" + safeLayerName + """ = """+ bounds2 + """;
+				var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
+				raster_group.addLayer(overlay_""" + safeLayerName + """);"""
 
 						f5_raster.write(new_obj)
 						f5_raster.close()
@@ -986,9 +993,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		legend.onAdd = function (map) {
 		var div = L.DomUtil.create('div', 'info legend');
 		div.innerHTML = "<h3>Legend</h3><table>"""
-		for i in reversed(allLayers): 
+		for i in reversed(allLayers):
+			safeLayerName = re.sub('[\W_]+', '', i.name())
+
 			for j in layer_list:
-				if re.sub('[\W_]+', '', i.name()) == j:
+				if safeLayerName == j:
+
 					if i.type() == 0:
 						fields = i.pendingFields() 
 						field_names = [field.name() for field in fields]
@@ -1031,23 +1041,24 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		f6.close()
 
 	for i in allLayers: 
+		safeLayerName = re.sub('[\W_]+', '', i.name())
 		for j in layer_list:
 			if i.type() == 0:
-				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
-							#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
-							new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							#new_layer = '"' + safeLayerName + '"' + ": exp_" + safeLayerName + """JSON,"""
+							new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
 						if cluster_set == True and i.geometryType() == 0:
-							#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
-							new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ re.sub('[\W_]+', '', i.name()) + """JSON,"""
+							#new_layer = '"' + safeLayerName + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
+							new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
 			elif i.type() == 1:
-				if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-						#new_layer = '"' + re.sub('[\W_]+', '', i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
-						new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + re.sub('[\W_]+', '', i.name()) + ""","""
+						#new_layer = '"' + safeLayerName + '"' + ": overlay_" + safeLayerName + ""","""
+						new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + safeLayerName + ""","""
 						f7.write(new_layer)
 						f7.close()	
 	controlEnd = "},{collapsed:false}).addTo(map);"	
@@ -1068,12 +1079,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			f9.close()
 
 		for i in allLayers: 
+			safeLayerName = re.sub('[\W_]+', '', i.name())
 			for j in layer_list:
 				if i.type() == 1:
-					if re.sub('[\W_]+', '', i.name()) == re.sub('[\W_]+', '', j):
+					if safeLayerName == re.sub('[\W_]+', '', j):
 						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f10:
 							new_opc = """
-							overlay_""" + re.sub('[\W_]+', '', i.name()) + """.setOpacity(value);"""
+							overlay_""" + safeLayerName + """.setOpacity(value);"""
 							f10.write(new_opc)
 							f10.close()	
 		opacityEnd = """}"""	
