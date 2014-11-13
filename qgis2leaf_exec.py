@@ -580,8 +580,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
 			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
+			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+								if cluster_set == True:
+									new_obj += """
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
 					dataType : 'jsonp',
 					jsonpCallback : 'get"""+layerName+"""Json',
@@ -596,8 +599,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							});
 						for (index = 0; index < layerOrder.length; index++) {
 							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
-					}
+						}"""
+								if cluster_set == True:
+									new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
+				"""			
+									cluster_num += 1	
+								new_obj+="""}
 				});
 			
 								"""
@@ -618,13 +626,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					});
 				"""
 #add points to the cluster group
-							if cluster_set == True:
-								new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
-								cluster_num += 1	
-							elif cluster_set == False:
+							if cluster_set == False:
 								new_obj += """
 				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
