@@ -513,10 +513,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			f4.close()
 	for i in reversed(allLayers):
 		safeLayerName = re.sub('[\W_]+', '', i.name())
-
 		for j in layer_list:
 			if safeLayerName == j:
-
 				if i.type()==0:
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
 						#here comes the layer style
@@ -555,7 +553,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						 
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
-
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								color_str = str(i.rendererV2().symbol().color().name())
 								radius_str = str(i.rendererV2().symbol().size() * 2)
@@ -593,7 +590,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						L.geoJson(response, {
 								onEachFeature : function (feature, layer) {
 									"""+popFuncs+"""
-
 									exp_"""+layerName+"""JSON.addData(feature)
 								}
 							});
@@ -636,7 +632,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
 							layerName=safeLayerName
-
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								color_str = str(i.rendererV2().symbol().color().name())
 								radius_str = str(i.rendererV2().symbol().width() * 5)
@@ -695,7 +690,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
 							layerName=safeLayerName
-
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
 									color_str = 'none'
@@ -761,7 +755,68 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				}
 				"""	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
-							new_obj = """
+							layerName=safeLayerName
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								categories = i.rendererV2().categories()
+								valueAttr = i.rendererV2().classAttribute()
+								categoryStr = "			function doStyle(feature) {"
+								categoryStr += "			switch (feature.properties." + valueAttr + ") {"
+								for cat in categories:
+									if not cat.value():
+										categoryStr += "default: return {"
+									else:
+										categoryStr += "case '" + unicode(cat.value()) + "': return {"
+									categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
+									categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
+									categoryStr += "color: '#000',"
+									categoryStr += "weight: 1,"
+									#categoryStr += "opacity: '" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + "',"
+									categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
+									categoryStr +="};"
+									categoryStr += "break;"
+								categoryStr += "}}"
+								stylestr="""
+								pointToLayer: function (feature, latlng) {  
+								return L.circleMarker(latlng, doStyle(feature))
+								},
+                                onEachFeature : function (feature, layer) {
+                                """+popFuncs+"""
+                                }
+                                """
+								new_obj="""
+			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+								if cluster_set == True:
+									new_obj += """
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""var """+layerName+"""ajax = $.ajax({
+					url : """+layerName+"""URL,
+					dataType : 'jsonp',
+					jsonpCallback : 'get"""+layerName+"""Json',
+					contentType : 'application/json',
+					success : function (response) {
+						L.geoJson(response, {
+								onEachFeature : function (feature, layer) {
+									"""+popFuncs+"""
+									exp_"""+layerName+"""JSON.addData(feature)
+								}
+							});
+						for (index = 0; index < layerOrder.length; index++) {
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+						}"""
+								if cluster_set == True:
+									new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
+				"""			
+									cluster_num += 1	
+								new_obj+="""}
+				});
+			
+								"""
+							else:
+								new_obj = """
 				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {  
@@ -997,10 +1052,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		div.innerHTML = "<h3>Legend</h3><table>"""
 		for i in reversed(allLayers):
 			safeLayerName = re.sub('[\W_]+', '', i.name())
-
 			for j in layer_list:
 				if safeLayerName == j:
-
 					if i.type() == 0:
 						fields = i.pendingFields() 
 						field_names = [field.name() for field in fields]
