@@ -888,13 +888,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						for (index = 0; index < layerOrder.length; index++) {
 							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
 
-
-
-
-
-
-
-
 						}
 					}
 				});
@@ -915,19 +908,70 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					"""		
 
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
-							new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					style: function (feature) {
-						return {fillColor: feature.properties.color_qgis2leaf,
-								color: '#000',
-								weight: 1,
-								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_qgis2leaf};
+							layerName=safeLayerName
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								categories = i.rendererV2().categories()
+								valueAttr = i.rendererV2().classAttribute()
+								categoryStr = "			function doStyle" + layerName + "(feature) {"
+								categoryStr += "			switch (feature.properties." + valueAttr + ") {"
+								for cat in categories:
+									if not cat.value():
+										categoryStr += "default: return {"
+									else:
+										categoryStr += "case '" + unicode(cat.value()) + "': return {"
+									categoryStr += "weight: '" + unicode(cat.symbol().symbolLayer(0).borderWidth() * 5) + "',"
+									categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
+									categoryStr += "color: '" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + "',"
+									categoryStr += "weight: '1',"
+									categoryStr += "opacity: '" + str(cat.symbol().alpha()) + "',"
+									categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
+									categoryStr +="};"
+									categoryStr += "break;"
+								categoryStr += "}}"
+								stylestr="""style:doStyle""" + layerName + """,
+                                onEachFeature : function (feature, layer) {
+                                """+popFuncs+"""
+                                }
+                                """
+								new_obj="""
+			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+			var """+layerName+"""ajax = $.ajax({
+					url : """+layerName+"""URL,
+					dataType : 'jsonp',
+					jsonpCallback : 'get"""+layerName+"""Json',
+					contentType : 'application/json',
+					success : function (response) {
+						L.geoJson(response, {
+								onEachFeature : function (feature, layer) {
+									"""+popFuncs+"""
+									exp_"""+layerName+"""JSON.addData(feature)
+								}
+							});
+						for (index = 0; index < layerOrder.length; index++) {
+							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
 						}
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""				
+					}
+				});
+								"""
+							else:
+								new_obj = """
+					var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+						onEachFeature: pop_""" + safeLayerName + """,
+						style: function (feature) {
+							return {fillColor: feature.properties.color_qgis2leaf,
+									color: '#000',
+									weight: 1,
+									opacity: feature.properties.transp_qgis2leaf,
+									fillOpacity: feature.properties.transp_qgis2leaf};
+							}
+
+						});
+					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+
+					"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							new_obj = """
 				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
