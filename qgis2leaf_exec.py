@@ -629,7 +629,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
-				"""		
+				"""
+							else:
+								new_obj += """
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
+				"""			
+								cluster_num += 1	
+
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -799,7 +807,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					success : function (response) {
 						L.geoJson(response, {
 								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
 									exp_"""+layerName+"""JSON.addData(feature)
 								}
 							});
@@ -887,7 +894,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							});
 						for (index = 0; index < layerOrder.length; index++) {
 							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
-
 						}
 					}
 				});
@@ -903,10 +909,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									fillOpacity: feature.properties.transp_qgis2leaf};
 							}
 						});
-
 					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 					"""		
-
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -967,10 +971,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									opacity: feature.properties.transp_qgis2leaf,
 									fillOpacity: feature.properties.transp_qgis2leaf};
 							}
-
 						});
 					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-
 					"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							new_obj = """
@@ -1062,7 +1064,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				"""		
 				
 						# store everything in the file
-						f5.write(new_pop)
+						if i.providerType() != 'WFS' or encode2JSON == True:
+							f5.write(new_pop)
 						f5.write(new_obj)
 						if visible == 'show all' and cluster_set == False:
 							f5.write("""
