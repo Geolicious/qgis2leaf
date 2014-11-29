@@ -59,6 +59,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	jsStore = os.path.join(os.getcwd(),outputProjectFileName, 'js')
 	os.makedirs(jsStore)
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'Autolinker.min.js', jsStore + os.sep + 'Autolinker.min.js')
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet-hash.js', jsStore + os.sep + 'leaflet-hash.js')
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet.markercluster.js', jsStore + os.sep + 'leaflet.markercluster.js')
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
 	os.makedirs(dataStore)
@@ -176,7 +177,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 </head>
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script> <!-- this is the javascript file that does the magic-->"""
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
+	<script src="js/leaflet-hash.js"></script>"""
 		if address == True:
 			
 			base +="""
@@ -215,6 +217,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							transp_str2 = str(i.rendererV2().symbol().alpha())
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "borderColor_qgis2leaf": '""" + borderColor_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
+								line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
+								line = line.replace("""] ] } }""", """] } }""")
 								sys.stdout.write(line)
 						#let's define style for the single marker lines
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
@@ -270,8 +274,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
 									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "borderColor_qgis2leaf": '""" + str(borderColor_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
+									line = line.replace("""] ] } }""", """] } }""")
 								else:
 									line = line.replace(" "," ")
+									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
+									line = line.replace("""] ] } }""", """] } }""")
 								sys.stdout.write(line)
 								qgisLeafId = qgisLeafId+addOne
 							
@@ -355,6 +363,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								for r in i.rendererV2().ranges():
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
 										color_str.append(str(r.symbol().color().name()))
+										#print str(r.symbol().color().name())
 										radius_str.append(str(r.symbol().size() * 2))
 										borderColor_str.append(str(r.symbol().symbolLayer(0).borderColor().name()))
 										transp_str2.append(str(r.symbol().alpha()))
@@ -362,14 +371,20 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									elif value == None:
 										color_str.append('#FF00FF')
 										radius_str.append('4')
+										borderColor_str.append('#000')
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
+							print len(borderColor_str)
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ +  str(radius_str[qgisLeafId]) + """, "borderColor_qgis2leaf": '""" + str(borderColor_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
+									line = line.replace("""] ] } }""", """] } }""")								
 								else:
+									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
+									line = line.replace("""] ] } }""", """] } }""")									
 									line = line.replace(" "," ")
 								sys.stdout.write(line)
 								qgisLeafId = qgisLeafId+addOne
@@ -489,6 +504,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		middle = """
 	<script>
 		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
+		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	if extent == 'layer extent':
 		middle = """

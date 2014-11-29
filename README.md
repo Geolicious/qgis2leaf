@@ -20,6 +20,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/11/29 v.1.00: solved some issues with styles and cluster strategy, added hashes (thanks to https://github.com/mlevans)
 * 2014/09/20 v.0.99b: added settings save and load, user locate and address search (thanks to [Karsten](https://github.com/k4r573n))
 * 2014/09/10 v.0.99a: added warning and treatment of unsupported characters in attribute names
 * 2014/09/05 v.0.98: additional file for basemap entries
@@ -44,7 +45,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 ## Tests
 
 You may find testdata in the "test_data" folder.
-It was tested on Linux Mint/Ubuntu and Windows 7 with QGIS 2.2 and 2.4 and Python 2.7.5+ 
+It was tested on Linux Mint/Ubuntu and Windows 7 with QGIS 2.6 and Python 2.7.5+ 
 
 ## Contributors
 
