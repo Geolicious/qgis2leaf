@@ -45,7 +45,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		# Additional code
 		self.outFileName = None
 		self.ui.listWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-				
+		self.ui.comboBox.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+		
 		# For now disable some features
 		self.ui.lineEdit_2.setReadOnly(False)
 		self.ui.okButton.setDisabled(False)
@@ -163,7 +164,7 @@ class qgis2leafDialog(QtGui.QDialog):
 		import csv
 		my_dict = {"test": 1, "testing": 2}
 		#here the list of arguments:
-		self.basemapname = self.ui.comboBox.currentText()
+		self.basemapname = self.ui.comboBox.selectedItems()
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.webpage_name = self.ui.webpage_name.text()
@@ -243,6 +244,9 @@ class qgis2leafDialog(QtGui.QDialog):
 					self.ui.address.setChecked(True)
 
 	def export2leaf(self):
+		self.basemapName = []
+		self.basemapMeta = []
+		self.basemapAddress = []
 		dictionary = layerlist()
 		for i in range(len(dictionary)):
 			#print dictionary[i]
@@ -250,10 +254,13 @@ class qgis2leafDialog(QtGui.QDialog):
 				if key == 'META':
 					continue
 				else:
-					if self.ui.comboBox.currentText() == key:
-						self.basemapMeta = dictionary[i]['META']
-						self.basemapName = self.ui.comboBox.currentText()
-						self.basemapAddress = dictionary[i][self.ui.comboBox.currentText()]
+					for baseitem in self.ui.comboBox.selectedItems():
+						if baseitem.text() == key:
+							self.basemapMeta.append(dictionary[i]['META'])
+							print baseitem.text()
+							self.basemapName.append(baseitem.text())
+							self.basemapAddress.append(dictionary[i][baseitem.text()])
+		
 		self.outFileName=self.ui.lineEdit_2.text()		
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
@@ -269,6 +276,10 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.legend = self.ui.createlegend.isChecked()
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
+		print str(self.basemapName) + """___""" + str(self.basemapAddress)
+		if len(self.basemapName) < 1:
+			QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
+			return()
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())

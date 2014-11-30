@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>625</height>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,7 +71,7 @@
      <x>10</x>
      <y>60</y>
      <width>551</width>
-     <height>561</height>
+     <height>621</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -97,7 +97,7 @@
        <x>10</x>
        <y>166</y>
        <width>531</width>
-       <height>361</height>
+       <height>421</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -172,9 +172,6 @@
         </item>
        </layout>
       </item>
-      <item row="5" column="1">
-       <widget class="QLineEdit" name="lineEdit_2"/>
-      </item>
       <item row="10" column="2">
        <widget class="QPushButton" name="okButton">
         <property name="text">
@@ -201,9 +198,6 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QComboBox" name="comboBox"/>
-      </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="comboBox_2"/>
       </item>
@@ -215,7 +209,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Basemap:</string>
+         <string>Basemaps:</string>
         </property>
        </widget>
       </item>
@@ -294,6 +288,12 @@
          <string>Locate</string>
         </property>
        </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="lineEdit_2"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QListWidget" name="comboBox"/>
       </item>
      </layout>
     </widget>

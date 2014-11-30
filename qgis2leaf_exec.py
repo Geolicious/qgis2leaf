@@ -510,6 +510,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		middle = """
 	<script>
 		var map = L.map('map', { zoomControl:true });
+		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	# we will start with the clustergroup
 	middle += """
@@ -519,13 +520,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	"""
 #here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 #basemap name	
-	basemapText = """
-	var basemap= L.tileLayer('""" + basemapAddress + """');"""
+	basemapText = """"""
+	for l in range(0,len(basemapAddress)):
+		print basemapAddress[l]
+		basemapText += """
+	var basemap_""" + str(l) +""" = L.tileLayer('""" + basemapAddress[l] + """', { 
+		attribution: additional_attrib + '""" + str(basemapMeta[l]) + """'});"""
 #attribution	
-	basemapText += """
-	map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
-	basemapText += """	
-	basemap.addTo(map);"""
+	#	basemapText += """
+	#map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
+		if l == 0:
+			basemapText += """	
+	basemap_""" + str(l)+""".addTo(map);"""
 	layerOrder = """	
 	var layerOrder=new Array();"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
@@ -562,11 +568,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties['""" + str(field) + """'])) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
-						popFuncs = """					var popupContent = """ + table + """;
-					layer.bindPopup(popupContent);
+						popFuncs = """					
+	var popupContent = """ + table + """;
+	layer.bindPopup(popupContent);
 """
 						new_pop = """
-				function pop_""" + safeLayerName + """(feature, layer) {
+							function pop_""" + safeLayerName + """(feature, layer) {
 					"""+popFuncs+"""
 
 				}
@@ -1221,8 +1228,28 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			f5leg.close()
 
 	# let's add layer control
-	controlStart = """
-	L.control.layers({'"""+basemapName+"""': basemap},{"""
+	print len(basemapName)
+	if len(basemapName) == 1:
+		controlStart = """
+	var baseMaps = {
+		'""" + str(basemapName[0]) + """': basemap_0
+	};"""
+	if len(basemapName) > 1:
+		controlStart = """
+	var baseMaps = {"""
+		for l in range(0,len(basemapName)):
+			if l < len(basemapName)-1:
+				controlStart+= """
+		'""" + str(basemapName[l]) + """': basemap_""" + str(l) + ""","""
+			if l == len(basemapName)-1:
+				controlStart+= """
+		'""" + str(basemapName[l]) + """': basemap_""" + str(l) + """};"""
+    #if len
+	#control_basemap = """
+	#var baseMaps = {"""
+	#for l in range(0,len(basemapName)):
+	controlStart += """
+	L.control.layers(baseMaps,{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)
 		f6.close()

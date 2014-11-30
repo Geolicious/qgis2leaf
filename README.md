@@ -11,7 +11,7 @@ For single, categorized and graduated symbol point feature layers we are exporti
 If you would like to create a legend you need to add the attributes `legend_exp` (text to be shown) and `legend_ico` (icon to be shown) to the desired layer and fill in the link to the icon and the text. Check the test files for details.
 The 'locate' button will ask for acces to geolocate the browser and will add a marker where the webmap user is found
 the 'address' button will add a geocode window in the upper right corner of the webmap.
-With version 0.98 you have the possibility to define your own basemap. Therefore you need to alter the file qgis2leaf_layerlist and simply add your line to the list. The list consists of the basemap name, an URL for the tiles and an Attributionstring. If you alter the file you need to reload the plugin to see effects. You can use the [plugin reloader plugin](https://plugins.qgis.org/plugins/plugin_reloader/) for this purpose.
+With version 0.98 you have the possibility to define your own basemap. Therefore you need to alter the file qgis2leaf_layerlist and simply add your line to the list. The list consists of the basemap names, an URL for the tiles and an attributionstring. If you alter the file you need to reload the plugin to see effects. You can use the [plugin reloader plugin](https://plugins.qgis.org/plugins/plugin_reloader/) for this purpose.
 
 ## Installation
 
@@ -20,7 +20,8 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
-* 2014/11/29 v.1.00: solved some issues with styles and cluster strategy, added hashes (thanks to https://github.com/mlevans)
+* 2014/11/30 v.1.1: multiple basemaps.
+* 2014/11/29 v.1.00: solved some issues with styles and cluster strategy, added hashes (thanks to https://github.com/mlevans), thanks to [tomchadwin](https://github.com/tomchadwin) for issue solving!
 * 2014/09/20 v.0.99b: added settings save and load, user locate and address search (thanks to [Karsten](https://github.com/k4r573n))
 * 2014/09/10 v.0.99a: added warning and treatment of unsupported characters in attribute names
 * 2014/09/05 v.0.98: additional file for basemap entries

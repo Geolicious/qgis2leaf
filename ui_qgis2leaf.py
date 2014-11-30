@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Sat Sep 20 21:47:40 2014
+# Created: Sat Nov 29 23:01:29 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_qgis2leaf(object):
     def setupUi(self, qgis2leaf):
         qgis2leaf.setObjectName(_fromUtf8("qgis2leaf"))
-        qgis2leaf.resize(568, 625)
+        qgis2leaf.resize(568, 688)
         self.label = QtGui.QLabel(qgis2leaf)
         self.label.setGeometry(QtCore.QRect(10, 10, 131, 18))
         font = QtGui.QFont()
@@ -48,7 +48,7 @@ class Ui_qgis2leaf(object):
         self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_3.setObjectName(_fromUtf8("line_3"))
         self.tab_2 = QtGui.QTabWidget(qgis2leaf)
-        self.tab_2.setGeometry(QtCore.QRect(10, 60, 551, 561))
+        self.tab_2.setGeometry(QtCore.QRect(10, 60, 551, 621))
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.tab_app = QtGui.QWidget()
         self.tab_app.setObjectName(_fromUtf8("tab_app"))
@@ -56,7 +56,7 @@ class Ui_qgis2leaf(object):
         self.listWidget.setGeometry(QtCore.QRect(10, 10, 311, 141))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.gridLayoutWidget = QtGui.QWidget(self.tab_app)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 166, 531, 361))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 166, 531, 421))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setSpacing(10)
@@ -97,9 +97,6 @@ class Ui_qgis2leaf(object):
         self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
         self.horizontalLayout_4.addWidget(self.cancelButton)
         self.gridLayout.addLayout(self.horizontalLayout_4, 10, 1, 1, 1)
-        self.lineEdit_2 = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
-        self.gridLayout.addWidget(self.lineEdit_2, 5, 1, 1, 1)
         self.okButton = QtGui.QPushButton(self.gridLayoutWidget)
         self.okButton.setObjectName(_fromUtf8("okButton"))
         self.gridLayout.addWidget(self.okButton, 10, 2, 1, 1)
@@ -112,9 +109,6 @@ class Ui_qgis2leaf(object):
         self.label_3.setFont(font)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout.addWidget(self.label_3, 5, 0, 1, 1)
-        self.comboBox = QtGui.QComboBox(self.gridLayoutWidget)
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.gridLayout.addWidget(self.comboBox, 4, 1, 1, 1)
         self.comboBox_2 = QtGui.QComboBox(self.gridLayoutWidget)
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
         self.gridLayout.addWidget(self.comboBox_2, 2, 1, 1, 1)
@@ -166,6 +160,12 @@ class Ui_qgis2leaf(object):
         self.locate = QtGui.QCheckBox(self.gridLayoutWidget)
         self.locate.setObjectName(_fromUtf8("locate"))
         self.gridLayout.addWidget(self.locate, 2, 2, 1, 1)
+        self.lineEdit_2 = QtGui.QLineEdit(self.gridLayoutWidget)
+        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
+        self.gridLayout.addWidget(self.lineEdit_2, 5, 1, 1, 1)
+        self.comboBox = QtGui.QListWidget(self.gridLayoutWidget)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.gridLayout.addWidget(self.comboBox, 4, 1, 1, 1)
         self.line_2 = QtGui.QFrame(self.tab_app)
         self.line_2.setGeometry(QtCore.QRect(10, 150, 531, 16))
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
@@ -396,7 +396,7 @@ class Ui_qgis2leaf(object):
         self.okButton.setText(_translate("qgis2leaf", "OK", None))
         self.pushButton_2.setText(_translate("qgis2leaf", "...", None))
         self.label_3.setText(_translate("qgis2leaf", "Output project folder:", None))
-        self.label_4.setText(_translate("qgis2leaf", "Basemap:", None))
+        self.label_4.setText(_translate("qgis2leaf", "Basemaps:", None))
         self.label_6.setText(_translate("qgis2leaf", "Extent:", None))
         self.label_5.setText(_translate("qgis2leaf", "Frame width / height:", None))
         self.label_8.setText(_translate("qgis2leaf", "Webpage name", None))
