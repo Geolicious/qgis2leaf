@@ -164,7 +164,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		import csv
 		my_dict = {"test": 1, "testing": 2}
 		#here the list of arguments:
-		self.basemapname = self.ui.comboBox.selectedItems()
+		#due to multiple basemaps we skip this ATM
+		#self.basemapname = self.ui.comboBox.selectedItems()
 		self.width = self.ui.width_box.text()
 		self.height = self.ui.height_box.text()
 		self.webpage_name = self.ui.webpage_name.text()
@@ -179,8 +180,10 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.legend = self.ui.createlegend.isChecked()
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
-		my_settings = {"Foldername": self.outFileName, "Basemap": self.basemapname, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
-		
+		#due to multiple basemaps we don't store basemaps ATM
+		#my_settings = {"Foldername": self.outFileName, "Basemap": self.basemapname, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
+		my_settings = {"Foldername": self.outFileName, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
+
 		with open(str(self.ui.lineEdit_3.text()), 'wb') as f: 
    			w = csv.DictWriter(f, my_settings.keys())
    			w.writeheader()
@@ -194,8 +197,9 @@ class qgis2leafDialog(QtGui.QDialog):
 			for rows in reader:
 				#now restore the settings by mapping the file:
 				self.ui.lineEdit_2.setText(rows['Foldername'])
-				index_basemap = self.ui.comboBox.findText(rows['Basemap'])
-				self.ui.comboBox.setCurrentIndex(index_basemap)
+				#due to multiple basemaps we skip this ATM
+				#index_basemap = self.ui.comboBox.findText(rows['Basemap'])
+				#self.ui.comboBox.setCurrentIndex(index_basemap)
 				self.ui.width_box.setText(rows['Width'])
 				self.ui.height_box.setText(rows['Height'])
 				index_extent = self.ui.comboBox_2.findText(rows['Extent'])
