@@ -1013,7 +1013,62 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 					"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
-							new_obj = """
+							layerName=safeLayerName
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								#categories = i.rendererV2().categories()
+								valueAttr = i.rendererV2().classAttribute()
+								categoryStr = "			function doStyle" + layerName + "(feature) {"
+								for r in i.rendererV2().ranges():
+									categoryStr += "if (feature.properties." + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + ") { return {"
+									categoryStr += "radius: '" + unicode(r.symbol().size() * 2) + "',"
+									categoryStr += "fillColor: '" + unicode(r.symbol().color().name()) + "',"
+									categoryStr += "color: '" + unicode(r.symbol().symbolLayer(0).borderColor().name())+ "',"
+									categoryStr += "weight: 1,"
+									#categoryStr += "opacity: '" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + "',"
+									categoryStr += "fillOpacity: '" + str(r.symbol().alpha()) + "',"
+									categoryStr +="}}"
+								categoryStr += "}"
+								stylestr="""
+								pointToLayer: function (feature, latlng) {  
+								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))
+								},
+                                onEachFeature : function (feature, layer) {
+                                """+popFuncs+"""
+                                }
+                                """
+								new_obj="""
+			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+								if cluster_set == True:
+									new_obj += """
+				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""var """+layerName+"""ajax = $.ajax({
+					url : """+layerName+"""URL,
+					dataType : 'jsonp',
+					jsonpCallback : 'get"""+layerName+"""Json',
+					contentType : 'application/json',
+					success : function (response) {
+						L.geoJson(response, {
+								onEachFeature : function (feature, layer) {
+									exp_"""+layerName+"""JSON.addData(feature)
+								}
+							});
+						for (index = 0; index < layerOrder.length; index++) {
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+						}"""
+								if cluster_set == True:
+									new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
+				"""			
+									cluster_num += 1	
+								new_obj+="""}
+				});
+			
+								"""
+							else:
+								new_obj = """
 				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 					onEachFeature: pop_""" + safeLayerName + """,
 					pointToLayer: function (feature, latlng) {  
