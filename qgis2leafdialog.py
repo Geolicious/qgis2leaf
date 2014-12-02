@@ -180,9 +180,10 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.legend = self.ui.createlegend.isChecked()
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
+		self.precision = self.ui.spinBox.value()
 		#due to multiple basemaps we don't store basemaps ATM
 		#my_settings = {"Foldername": self.outFileName, "Basemap": self.basemapname, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
-		my_settings = {"Foldername": self.outFileName, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
+		my_settings = {"Foldername": self.outFileName, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address, "precision": self.precision}
 
 		with open(str(self.ui.lineEdit_3.text()), 'wb') as f: 
    			w = csv.DictWriter(f, my_settings.keys())
@@ -246,6 +247,7 @@ class qgis2leafDialog(QtGui.QDialog):
 					self.ui.address.setChecked(False)
 				if rows["Address"] == "True":
 					self.ui.address.setChecked(True)
+				self.ui.spinBox.setValue(int(rows['precision']))
 
 	def export2leaf(self):
 		self.basemapName = []
@@ -280,12 +282,13 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.legend = self.ui.createlegend.isChecked()
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
-		print str(self.basemapName) + """___""" + str(self.basemapAddress)
+		self.precision = self.ui.spinBox.value()
+		print self.precision
 		if len(self.basemapName) < 1:
 			QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
 			return()
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision)
 		self.close()

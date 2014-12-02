@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Sat Nov 29 23:01:29 2014
+# Created: Tue Dec  2 06:21:25 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -53,10 +53,10 @@ class Ui_qgis2leaf(object):
         self.tab_app = QtGui.QWidget()
         self.tab_app.setObjectName(_fromUtf8("tab_app"))
         self.listWidget = QtGui.QListWidget(self.tab_app)
-        self.listWidget.setGeometry(QtCore.QRect(10, 10, 311, 141))
+        self.listWidget.setGeometry(QtCore.QRect(10, 10, 311, 161))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.gridLayoutWidget = QtGui.QWidget(self.tab_app)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 166, 531, 421))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 186, 531, 401))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setSpacing(10)
@@ -167,7 +167,7 @@ class Ui_qgis2leaf(object):
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.gridLayout.addWidget(self.comboBox, 4, 1, 1, 1)
         self.line_2 = QtGui.QFrame(self.tab_app)
-        self.line_2.setGeometry(QtCore.QRect(10, 150, 531, 16))
+        self.line_2.setGeometry(QtCore.QRect(10, 170, 531, 16))
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
@@ -315,26 +315,41 @@ class Ui_qgis2leaf(object):
         self.getSizeButton.setGeometry(QtCore.QRect(430, 10, 81, 31))
         self.getSizeButton.setObjectName(_fromUtf8("getSizeButton"))
         self.encode2JSON = QtGui.QCheckBox(self.tab_app)
-        self.encode2JSON.setGeometry(QtCore.QRect(340, 70, 151, 21))
+        self.encode2JSON.setGeometry(QtCore.QRect(330, 60, 151, 21))
         self.encode2JSON.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.encode2JSON.setObjectName(_fromUtf8("encode2JSON"))
         self.createcluster = QtGui.QCheckBox(self.tab_app)
-        self.createcluster.setGeometry(QtCore.QRect(340, 50, 151, 21))
+        self.createcluster.setGeometry(QtCore.QRect(330, 40, 151, 21))
         self.createcluster.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.createcluster.setObjectName(_fromUtf8("createcluster"))
         self.createlegend = QtGui.QCheckBox(self.tab_app)
-        self.createlegend.setGeometry(QtCore.QRect(340, 90, 151, 21))
+        self.createlegend.setGeometry(QtCore.QRect(330, 80, 151, 21))
         self.createlegend.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.createlegend.setObjectName(_fromUtf8("createlegend"))
         self.checkBox = QtGui.QCheckBox(self.tab_app)
         self.checkBox.setEnabled(True)
-        self.checkBox.setGeometry(QtCore.QRect(340, 110, 186, 21))
+        self.checkBox.setGeometry(QtCore.QRect(330, 100, 186, 21))
         self.checkBox.setAutoFillBackground(False)
         self.checkBox.setChecked(False)
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
         self.address = QtGui.QCheckBox(self.tab_app)
-        self.address.setGeometry(QtCore.QRect(340, 130, 181, 22))
+        self.address.setGeometry(QtCore.QRect(330, 120, 181, 22))
         self.address.setObjectName(_fromUtf8("address"))
+        self.widget = QtGui.QWidget(self.tab_app)
+        self.widget.setGeometry(QtCore.QRect(330, 140, 208, 29))
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.widget)
+        self.horizontalLayout.setMargin(0)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.spinBox = QtGui.QSpinBox(self.widget)
+        self.spinBox.setMinimum(1)
+        self.spinBox.setMaximum(15)
+        self.spinBox.setProperty("value", 15)
+        self.spinBox.setObjectName(_fromUtf8("spinBox"))
+        self.horizontalLayout.addWidget(self.spinBox)
+        self.label_14 = QtGui.QLabel(self.widget)
+        self.label_14.setObjectName(_fromUtf8("label_14"))
+        self.horizontalLayout.addWidget(self.label_14)
         self.tab_2.addTab(self.tab_app, _fromUtf8(""))
         self.tab_settings = QtGui.QWidget()
         self.tab_settings.setObjectName(_fromUtf8("tab_settings"))
@@ -410,6 +425,7 @@ class Ui_qgis2leaf(object):
         self.createlegend.setText(_translate("qgis2leaf", "Create legend", None))
         self.checkBox.setText(_translate("qgis2leaf", "Create opacity control", None))
         self.address.setText(_translate("qgis2leaf", "Address search field", None))
+        self.label_14.setText(_translate("qgis2leaf", "Coordinate precision", None))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_app), _translate("qgis2leaf", "Export", None))
         self.label_12.setText(_translate("qgis2leaf", "Setup File:", None))
         self.pushButton_3.setText(_translate("qgis2leaf", "...", None))
@@ -433,8 +449,9 @@ class Ui_qgis2leaf(object):
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">Raster images will be tranlated to EPSG:4326/jpg using GDAL python bindings.</span></p>\n"
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; text-decoration: underline;\">GUI help:</span></p>\n"
 "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Press &quot;<span style=\" font-weight:600;\">get layers</span>&quot; to add/reload your vector layers to the plugin. You can select the layers to export.</li>\n"
+"<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">QGIS2leaf will export your QGIS data as geoJSON. Use <span style=\" font-weight:600;\">Coordinate precision</span> to define the needed precision of coordinates. Higher precision will enable sub-milimeter precision but also increased file sizes and lower webmap performance.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Your QGIS project might have a WFS embedded. Check <span style=\" font-weight:600;\">Encode to JSON </span>to create a local copy of the WFS. If unchecked leaflet will use the same WFS in its map.</li>\n"
-"<ul type=\"circle\" style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Frame width</span> defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser. Press <span style=\" font-weight:600;\">Get Size </span>to set the dimensions of the webmap according to your current QGIS map window.</li></ul>\n"
+"<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Frame width</span> defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser. Press <span style=\" font-weight:600;\">Get Size </span>to set the dimensions of the webmap according to your current QGIS map window.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Extent: <span style=\" font-weight:600;\">canvas extent - </span>QGIS canvas will influence initial leaflet view / choose <span style=\" font-weight:600;\">layer extent</span> to set the leaflet webmap extent to the extent of all vector layers. Check <span style=\" font-weight:600;\">Locate </span>to set the center of the webmap to the user position (determined by GPS/3G/IP).</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">For large datasets set the <span style=\" font-weight:600;\">visible layers</span> to &quot;show none&quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose one of the available <span style=\" font-weight:600;\">basemaps</span>. </li>\n"

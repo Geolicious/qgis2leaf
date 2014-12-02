@@ -20,6 +20,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/12/02 v.1.1b: precision export support thanks to [ndawson](http://gis.stackexchange.com/users/28443/ndawson)
 * 2014/11/30 v.1.1: multiple basemaps.
 * 2014/11/29 v.1.00: solved some issues with styles and cluster strategy, added hashes (thanks to https://github.com/mlevans), thanks to [tomchadwin](https://github.com/tomchadwin) for issue solving!
 * 2014/09/20 v.0.99b: added settings save and load, user locate and address search (thanks to [Karsten](https://github.com/k4r573n))
