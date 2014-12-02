@@ -140,6 +140,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
     margin: 0 0 5px;
     color: #777;
 }
+		.leaflet-container {
+    background: #FFF;
 </style>"""
 		f_css.write(text)
 		f_css.close()
@@ -520,18 +522,21 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	"""
 #here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 #basemap name	
-	basemapText = """"""
-	for l in range(0,len(basemapAddress)):
-		print basemapAddress[l]
-		basemapText += """
-	var basemap_""" + str(l) +""" = L.tileLayer('""" + basemapAddress[l] + """', { 
-		attribution: additional_attrib + '""" + str(basemapMeta[l]) + """'});"""
-#attribution	
-	#	basemapText += """
-	#map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
-		if l == 0:
-			basemapText += """	
-	basemap_""" + str(l)+""".addTo(map);"""
+	if basemapName == 0:
+		basemapText = """"""
+	else:
+		basemapText = """"""
+		for l in range(0,len(basemapAddress)):
+			print basemapAddress[l]
+			basemapText += """
+		var basemap_""" + str(l) +""" = L.tileLayer('""" + basemapAddress[l] + """', { 
+			attribution: additional_attrib + '""" + str(basemapMeta[l]) + """'});"""
+	#attribution	
+		#	basemapText += """
+		#map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
+			if l == 0:
+				basemapText += """	
+		basemap_""" + str(l)+""".addTo(map);"""
 	layerOrder = """	
 	var layerOrder=new Array();"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
@@ -1229,6 +1234,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 
 	# let's add layer control
 	print len(basemapName)
+	if len(basemapName) == 0:
+		controlStart = """"""
 	if len(basemapName) == 1:
 		controlStart = """
 	var baseMaps = {
@@ -1248,7 +1255,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	#control_basemap = """
 	#var baseMaps = {"""
 	#for l in range(0,len(basemapName)):
-	controlStart += """
+	if len(basemapName) == 0:
+		controlStart += """
+	L.control.layers({},{"""
+	else:
+		controlStart += """
 	L.control.layers(baseMaps,{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)

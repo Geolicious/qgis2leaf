@@ -284,9 +284,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.address = self.ui.address.isChecked()
 		self.precision = self.ui.spinBox.value()
 		print self.precision
-		if len(self.basemapName) < 1:
-			QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
-			return()
+		#if len(self.basemapName) < 1:
+		#	QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
+		#	return()
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
