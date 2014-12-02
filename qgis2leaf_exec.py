@@ -1096,7 +1096,49 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
-							new_obj = """
+							layerName=safeLayerName
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								#categories = i.rendererV2().categories()
+								valueAttr = i.rendererV2().classAttribute()
+								categoryStr = "			function doStyle" + layerName + "(feature) {"
+								for r in i.rendererV2().ranges():
+									categoryStr += "if (feature.properties." + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + ") { return {"
+									categoryStr += "color: '" + unicode(r.symbol().symbolLayer(0).color().name())+ "',"
+									categoryStr += "weight: '" + unicode(r.symbol().width() * 5) + "',"
+									categoryStr += "opacity: '" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + "',"
+									#categoryStr += "fillOpacity: '" + str(r.symbol().alpha()) + "',"
+									categoryStr +="}}"
+								categoryStr += "}"
+								stylestr="""style:doStyle""" + layerName + """,
+                                onEachFeature : function (feature, layer) {
+                                """+popFuncs+"""
+                                }
+                                """
+								new_obj="""
+			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+			var """+layerName+"""ajax = $.ajax({
+					url : """+layerName+"""URL,
+					dataType : 'jsonp',
+					jsonpCallback : 'get"""+layerName+"""Json',
+					contentType : 'application/json',
+					success : function (response) {
+						L.geoJson(response, {
+								onEachFeature : function (feature, layer) {
+									"""+popFuncs+"""
+									exp_"""+layerName+"""JSON.addData(feature)
+								}
+							});
+						for (index = 0; index < layerOrder.length; index++) {
+							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+						}
+					}
+				});
+								"""
+							else:
+								new_obj = """
 				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
