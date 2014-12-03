@@ -31,6 +31,7 @@ import qgis.utils
 import os #for file writing/folder actions
 import shutil #for reverse removing directories
 import urllib # to get files from the web
+from urlparse import parse_qs
 import time
 import tempfile
 import re
@@ -472,23 +473,24 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							f3.close()
 					#here comes the raster layers. you need an installed version of gdal
 					elif i.type() == 1:
-						in_raster = str(i.dataProvider().dataSourceUri())
-						prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + 'prov.tif'
-						out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.jpg'
+						if i.dataProvider().name() != "wms":
+							in_raster = str(i.dataProvider().dataSourceUri())
+							prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + 'prov.tif'
+							out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.jpg'
 
-						if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
-							shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
-							shutil.copyfile(in_raster, out_raster)
-						else:
-							processing.runalg("gdalogr:warpreproject",str(in_raster),str(i.crs().authid()),"EPSG:4326",0,1,"",prov_raster)
-							format = "jpeg"
-							driver = gdal.GetDriverByName( format )
-							src_ds = gdal.Open(prov_raster)
-							dst_ds = driver.CreateCopy( out_raster, src_ds, 0 ) 
-							dst_ds = None #free the dataset	
-							src_ds = None #free the dataset				
-							#ret = subprocess.check_call(['gdal_translate -of jpeg -outsize 100% 100% -a_srs EPSG:4326 ' + filename_raster + " " +  out_raster_name], shell=True)
-							#ret2 = subprocess.check_call(['cp ' + filename_raster + ".aux.xml " +  out_raster_name + ".aux.xml"], shell=True)
+							if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
+								shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
+								shutil.copyfile(in_raster, out_raster)
+							else:
+								processing.runalg("gdalogr:warpreproject",str(in_raster),str(i.crs().authid()),"EPSG:4326",0,1,"",prov_raster)
+								format = "jpeg"
+								driver = gdal.GetDriverByName( format )
+								src_ds = gdal.Open(prov_raster)
+								dst_ds = driver.CreateCopy( out_raster, src_ds, 0 ) 
+								dst_ds = None #free the dataset	
+								src_ds = None #free the dataset				
+								#ret = subprocess.check_call(['gdal_translate -of jpeg -outsize 100% 100% -a_srs EPSG:4326 ' + filename_raster + " " +  out_raster_name], shell=True)
+								#ret2 = subprocess.check_call(['cp ' + filename_raster + ".aux.xml " +  out_raster_name + ".aux.xml"], shell=True)
 
 	#now determine the canvas bounding box
 	#####now with viewcontrol
@@ -664,7 +666,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 """
 							if cluster_set == False:
 								new_obj += """
-
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
@@ -1276,21 +1277,39 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						//exp_""" + safeLayerName + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
-					out_raster_name = 'data/' + 'exp_' + safeLayerName + '.jpg'
-					pt2	= i.extent()
-					crsSrc = i.crs()    # WGS 84
-					crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
-					xform = QgsCoordinateTransform(crsSrc, crsDest)
-					pt3 = xform.transform(pt2)
-					bbox_canvas2 = [pt3.yMinimum(), pt3.yMaximum(),pt3.xMinimum(), pt3.xMaximum()]
-					bounds2 = '[[' + str(pt3.yMinimum()) + ',' + str(pt3.xMinimum()) + '],[' + str(pt3.yMaximum()) + ',' + str(pt3.xMaximum()) +']]'
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
+					if i.dataProvider().name() == "wms":
+						d = parse_qs(i.source())
+						wms_url = d['url'][0]
+						wms_layer = d['layers'][0]
+						wms_format = d['format'][0]
+						wms_crs = d['crs'][0]
 						
+						new_obj = """var overlay_""" + safeLayerName + """ = L.tileLayer.wms('""" + wms_url + """', {
+    layers: '""" + wms_layer + """',
+    format: '""" + wms_format + """',
+	transparent: true,
+	crs: L.CRS.EPSG4326,
+}).addTo(map);"""
+						
+						print d
+						#print i.source()
+					else:
+						out_raster_name = 'data/' + 'exp_' + safeLayerName + '.jpg'
+						pt2	= i.extent()
+						crsSrc = i.crs()    # WGS 84
+						crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
+						xform = QgsCoordinateTransform(crsSrc, crsDest)
+						pt3 = xform.transform(pt2)
+						bbox_canvas2 = [pt3.yMinimum(), pt3.yMaximum(),pt3.xMinimum(), pt3.xMaximum()]
+						bounds2 = '[[' + str(pt3.yMinimum()) + ',' + str(pt3.xMinimum()) + '],[' + str(pt3.yMaximum()) + ',' + str(pt3.xMaximum()) +']]'
 						new_obj = """
-				var img_""" + safeLayerName + """= '""" + out_raster_name + """';
-				var img_bounds_""" + safeLayerName + """ = """+ bounds2 + """;
-				var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
-				raster_group.addLayer(overlay_""" + safeLayerName + """);"""
+					var img_""" + safeLayerName + """= '""" + out_raster_name + """';
+					var img_bounds_""" + safeLayerName + """ = """+ bounds2 + """;
+					var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
+					raster_group.addLayer(overlay_""" + safeLayerName + """);"""
+						
+					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
+							
 
 						f5_raster.write(new_obj)
 						f5_raster.close()
