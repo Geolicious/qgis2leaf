@@ -635,6 +635,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								if cluster_set == True:
 									new_obj += """
 				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
+				feature_group.addLayer(cluster_group"""+ safeLayerName + """JSON);
 				"""			
 									cluster_num += 1	
 								new_obj+="""}
@@ -659,9 +660,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					});
 				"""
 #add points to the cluster group
+							new_obj += """				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+"""
 							if cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
