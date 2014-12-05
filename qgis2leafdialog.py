@@ -283,6 +283,8 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
 		self.precision = self.ui.spinBox.value()
+		self.labels = self.ui.extract_labels.isChecked()
+		self.labelshover = self.ui.labelsonhover.isChecked()
 		print self.precision
 		#if len(self.basemapName) < 1:
 		#	QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
@@ -290,5 +292,5 @@ class qgis2leafDialog(QtGui.QDialog):
 		#print self.opacity
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision, self.labels, self.labelshover)
 		self.close()

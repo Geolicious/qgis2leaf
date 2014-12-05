@@ -43,7 +43,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend, locate, address, precision):
+def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend, locate, address, precision, labels, labelhover):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -62,11 +62,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'Autolinker.min.js', jsStore + os.sep + 'Autolinker.min.js')
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet-hash.js', jsStore + os.sep + 'leaflet-hash.js')
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet.markercluster.js', jsStore + os.sep + 'leaflet.markercluster.js')
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'label.js', jsStore + os.sep + 'label.js')
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
 	os.makedirs(dataStore)
 	cssStore = os.path.join(os.getcwd(),outputProjectFileName, 'css')
 	os.makedirs(cssStore)
 	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.css', cssStore + os.sep + 'MarkerCluster.css')
+	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'label.css', cssStore + os.sep + 'label.css')
 	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.Default.css', cssStore + os.sep + 'MarkerCluster.Default.css')
 	picturesStore = os.path.join(os.getcwd(),outputProjectFileName, 'pictures')
 	os.makedirs(picturesStore)
@@ -166,7 +168,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
 	<link rel="stylesheet" href="css/MarkerCluster.css" />
 	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
-	<link rel="stylesheet" type="text/css" href="css/own_style.css">"""
+	<link rel="stylesheet" type="text/css" href="css/own_style.css">
+	<link rel="stylesheet" href="css/label.css" />"""
 		if address == True:
 			base += """
         <link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	"""
@@ -181,7 +184,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 <body>
 	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
-	<script src="js/leaflet-hash.js"></script>"""
+	<script src="js/leaflet-hash.js"></script>
+	<script src="js/label.js"></script>"""
 		if address == True:
 			
 			base +="""
@@ -558,10 +562,27 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						field_names = [field.name() for field in fields]
 						html_prov = False
 						icon_prov = False
+						labeltext = ""
 						for field in field_names:
 							if str(field) == 'html_exp':
 								html_prov = True
 								table = 'feature.properties.html_exp'
+							if str(field) == 'label_exp' and labelhover == False:
+								label_exp = True
+								labeltext = """.bindLabel(feature.properties.label_exp, {noHide: true})"""
+							if str(field) == 'label_exp' and labelhover == True:
+								label_exp = True
+								labeltext = """.bindLabel(feature.properties.label_exp)"""
+							if labels == True and labelhover == False:
+								palyr = QgsPalLayerSettings()
+								palyr.readFromLayer(i)
+								f = palyr.fieldName
+								labeltext = """.bindLabel(feature.properties."""+str(f)+""", {noHide: true})"""
+							if labels == True and labelhover == True:
+								palyr = QgsPalLayerSettings()
+								palyr.readFromLayer(i)
+								f = palyr.fieldName
+								labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
 							if html_prov != True:
@@ -605,7 +626,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									weight: 1,
 									opacity: """+transp_str+""",
 									fillOpacity: """+transp_str2+"""
-									})
+									})"""+labeltext+"""
 								},
                                 onEachFeature : function (feature, layer) {
                                 """+popFuncs+"""
@@ -657,7 +678,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							weight: 1,
 							opacity: feature.properties.transp_qgis2leaf,
 							fillOpacity: feature.properties.transp_qgis2leaf
-							})
+							})"""+labeltext+"""
 						}
 					});
 				"""
@@ -826,7 +847,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								categoryStr += "}}"
 								stylestr="""
 								pointToLayer: function (feature, latlng) {  
-								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))
+								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
 								},
                                 onEachFeature : function (feature, layer) {
                                 """+popFuncs+"""
@@ -876,7 +897,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							weight: 1,
 							opacity: feature.properties.transp_qgis2leaf,
 							fillOpacity: feature.properties.transp_qgis2leaf
-							})
+							})"""+labeltext+"""
 						}
 					});
 				"""
@@ -1034,7 +1055,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								categoryStr += "}"
 								stylestr="""
 								pointToLayer: function (feature, latlng) {  
-								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))
+								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
 								},
                                 onEachFeature : function (feature, layer) {
                                 """+popFuncs+"""
@@ -1084,7 +1105,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							weight: 1,
 							opacity: feature.properties.transp_qgis2leaf,
 							fillOpacity: feature.properties.transp_qgis2leaf
-							})
+							})"""+labeltext+"""
 						}
 					});
 				"""
@@ -1222,7 +1243,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
 							popupAnchor:  [0, -14] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
 			 				})
-			 			})
+			 			})"""+labeltext+"""
 					}}
 				);
 				"""
@@ -1433,18 +1454,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
-							#new_layer = '"' + safeLayerName + '"' + ": exp_" + safeLayerName + """JSON,"""
-							new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
+							new_layer = '"' + safeLayerName + '"' + ": exp_" + safeLayerName + """JSON,"""
+							#new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
 						if cluster_set == True and i.geometryType() == 0:
-							#new_layer = '"' + safeLayerName + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
-							new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
+							new_layer = '"' + safeLayerName + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
+							#new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
 			elif i.type() == 1:
 				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
-						#new_layer = '"' + safeLayerName + '"' + ": overlay_" + safeLayerName + ""","""
-						new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + safeLayerName + ""","""
+						new_layer = '"' + safeLayerName + '"' + ": overlay_" + safeLayerName + ""","""
+						#new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + safeLayerName + ""","""
 						f7.write(new_layer)
 						f7.close()	
 	controlEnd = "},{collapsed:false}).addTo(map);"	

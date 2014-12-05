@@ -6,7 +6,8 @@ This plugin provides an easy way to distribute and show your qgis work as a leaf
 
 Your current QGIS project helds different data: vector, raster or plugin layers. QGIS2leaf exports the vector layer to GeoJSON and creates a basic webmap from it with the current leaflet version 0.7.2. Additionally we add your raster data as image overlays with a opacity slider.
 You can choose between several basemap styles and define the initial extent of the map as well as the dimension of the webmap in your html document. To support big data exports you may disable initial loading of the layers to the map. As the webmap has a layer control you can enable visibility of the layers afterwards.
-The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder). If you want to use a defined symbol in your webmap add an attribute `icon_exp` to your point shapefile and file it wit a relative path on your pc or an html statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in `places_few_1_EPSG3857_categorized.shp` in the `test_data` folder (Donkey designed by Gabriele Malaspina from the thenounproject.com).
+The popup for features is either a simple table with all your attributes or defined by the attribute `html_exp` in your QGIS vector layer (check `line_feature.shp` in the `test_data` folder). If you want to use a defined symbol in your webmap add an attribute `icon_exp` to your point shapefile and file it with a relative path on your pc or an html statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in `places_few_1_EPSG3857_categorized.shp` in the `test_data` folder (Donkey designed by Gabriele Malaspina from the thenounproject.com).
+You can also define the a label in the webmap by adding the column `label_exp` to your layer which will define the text to show in the label.
 For single, categorized and graduated symbol point feature layers we are exporting radius (not for polygons), color and opacity. Unfortunately the export of forms and svg is not embedded at the moment.
 If you would like to create a legend you need to add the attributes `legend_exp` (text to be shown) and `legend_ico` (icon to be shown) to the desired layer and fill in the link to the icon and the text. Check the test files for details.
 The 'locate' button will ask for acces to geolocate the browser and will add a marker where the webmap user is found
@@ -20,6 +21,7 @@ With version 0.98 you have the possibility to define your own basemap. Therefore
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2014/12/05 v.1.4: support for label export, embedment of remote WMS servers thanks to [tomchadwin](https://github.com/tomchadwin) and [mtravis](https://github.com/mtravis) for testing
 * 2014/12/02 v.1.3: support for blank backgrounds, minor bug fixing
 * 2014/12/02 v.1.2: precision export support thanks to [ndawson](http://gis.stackexchange.com/users/28443/ndawson)
 * 2014/11/30 v.1.1: multiple basemaps.
