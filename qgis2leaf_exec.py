@@ -562,8 +562,22 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						field_names = [field.name() for field in fields]
 						html_prov = False
 						icon_prov = False
+						#lets extract possible labels form the qgis map for each layer. 
 						labeltext = ""
+						if labels == True and labelhover == False:
+							palyr = QgsPalLayerSettings()
+							palyr.readFromLayer(i)
+							f = palyr.fieldName
+							label_exp = False
+							labeltext = """.bindLabel(feature.properties."""+str(f)+""", {noHide: true})"""
+						if labels == True and labelhover == True:
+							palyr = QgsPalLayerSettings()
+							palyr.readFromLayer(i)
+							f = palyr.fieldName
+							labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
+							label_exp = False
 						for field in field_names:
+							print f + "label field" + str(field)
 							if str(field) == 'html_exp':
 								html_prov = True
 								table = 'feature.properties.html_exp'
@@ -573,16 +587,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							if str(field) == 'label_exp' and labelhover == True:
 								label_exp = True
 								labeltext = """.bindLabel(feature.properties.label_exp)"""
-							if labels == True and labelhover == False:
-								palyr = QgsPalLayerSettings()
-								palyr.readFromLayer(i)
-								f = palyr.fieldName
-								labeltext = """.bindLabel(feature.properties."""+str(f)+""", {noHide: true})"""
-							if labels == True and labelhover == True:
-								palyr = QgsPalLayerSettings()
-								palyr.readFromLayer(i)
-								f = palyr.fieldName
-								labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
+							# we will use labels in leaflet only if a fieldname is equal to the label defining field:
+							if str(f) != "" and str(f) == str(field):
+								label_exp = True
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
 							if html_prov != True:
@@ -596,6 +603,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties['""" + str(field) + """'])) + '</td></tr>"""
 								tableend = """</table>'"""
 								table = tablestart + row +tableend
+						if label_exp == False:
+							labeltext = ""
 						popFuncs = """					
 	var popupContent = """ + table + """;
 	layer.bindPopup(popupContent);
