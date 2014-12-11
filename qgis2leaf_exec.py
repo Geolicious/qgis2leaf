@@ -562,8 +562,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						field_names = [field.name() for field in fields]
 						html_prov = False
 						icon_prov = False
+						label_exp = ''
 						#lets extract possible labels form the qgis map for each layer. 
 						labeltext = ""
+						f = ''
 						if labels == True and labelhover == False:
 							palyr = QgsPalLayerSettings()
 							palyr.readFromLayer(i)
@@ -577,7 +579,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
 							label_exp = False
 						for field in field_names:
-							print f + "label field" + str(field)
 							if str(field) == 'html_exp':
 								html_prov = True
 								table = 'feature.properties.html_exp'
@@ -588,7 +589,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								label_exp = True
 								labeltext = """.bindLabel(feature.properties.label_exp)"""
 							# we will use labels in leaflet only if a fieldname is equal to the label defining field:
-							if str(f) != "" and str(f) == str(field):
+							if str(f) != "" and str(f) == str(field) and f:
 								label_exp = True
 							if str(field) == 'icon_exp':
 								icon_prov = True #we need this later on for icon creation
