@@ -70,9 +70,11 @@ class qgis2leaf:
 		if (state==Qt.Checked):
 			print "checked"
 			self.dlg.ui.comboBox.setEnabled(False)
+			self.dlg.ui.createcluster.setEnabled(False)
 		else:
 			print "unchecked"
 			self.dlg.ui.comboBox.setEnabled(True)
+			self.dlg.ui.createcluster.setEnabled(True)
 
 	def unload(self):
 		# Remove the plugin menu item and icon

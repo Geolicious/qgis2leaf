@@ -287,10 +287,9 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.labelshover = self.ui.labelsonhover.isChecked()
 		self.matchCRS = self.ui.matchCRS.isChecked()
 		print self.precision
-		#if len(self.basemapName) < 1:
-		#	QtGui.QMessageBox.about(self, "Basemap is needed", "You need to choose at least one basemap!!! We will support blank backgrounds in the future")
-		#	return()
-		#print self.opacity
+		if self.matchCRS == True:
+			self.createcluster = False
+
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
 		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision, self.labels, self.labelshover, self.matchCRS)
