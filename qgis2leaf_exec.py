@@ -43,7 +43,7 @@ import sys #to use another print command without annoying newline characters
 def layerstyle_single(layer):
 	return color_code
 
-def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend, locate, address, precision, labels, labelhover):
+def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddress, width, height, extent, full, layer_list, visible, opacity_raster, encode2JSON, cluster_set, webpage_name, webmap_head,webmap_subhead, legend, locate, address, precision, labels, labelhover, matchCRS):
 	# supply path to where is your qgis installed
 	#QgsApplication.setPrefixPath("/path/to/qgis/installation", True)
 
@@ -63,6 +63,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet-hash.js', jsStore + os.sep + 'leaflet-hash.js')
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet.markercluster.js', jsStore + os.sep + 'leaflet.markercluster.js')
 	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'label.js', jsStore + os.sep + 'label.js')
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'proj4.js', jsStore + os.sep + 'proj4.js')
+	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'proj4leaflet.js', jsStore + os.sep + 'proj4leaflet.js')
 	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
 	os.makedirs(dataStore)
 	cssStore = os.path.join(os.getcwd(),outputProjectFileName, 'css')
@@ -150,6 +152,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		f_css.close()
 	
 	#the index file has an easy beginning. we will store it right away:
+	canvas = qgis.utils.iface.mapCanvas()
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'w') as f_html:
 		base = """
 <!DOCTYPE html>
@@ -193,12 +196,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		base +="""
 	<script src="js/leaflet.markercluster.js"></script>
 	"""
+		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+			base += """
+	<script src="js/proj4.js"></script>
+	<script src="js/proj4leaflet.js"></script>
+			
+			"""
 		if opacity_raster == True:
 			base += """<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">"""
   		f_html.write(base)
 		f_html.close()
 	# let's create the js files in the data folder of input vector files:
-	canvas = qgis.utils.iface.mapCanvas()
+
 	allLayers = canvas.layers()
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
@@ -511,13 +520,40 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
 		middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true }).fitBounds(""" + bounds + """);
+"""
+		#print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+			middle += """
+var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """',
+  '""" + canvas.mapRenderer().destinationCrs().toProj4() + """',
+  {
+    resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07], // 3 example zoom level resolutions
+  }
+);
+			"""
+		middle += """		var map = L.map('map', { """
+		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+			middle += "crs: crs, continuousWorld: false, worldCopyJump : false, "
+		middle += """zoomControl:true }).fitBounds(""" + bounds + """);
 		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	if extent == 'layer extent':
 		middle = """
 	<script>
-		var map = L.map('map', { zoomControl:true });
+"""
+		print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+			middle += """
+var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """',
+  '""" + canvas.mapRenderer().destinationCrs().toProj4() + """',
+  {
+    resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07], // 3 example zoom level resolutions
+  }
+);
+			"""
+		middle += """		var map = L.map('map', { zoomControl:true });
 		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	# we will start with the clustergroup
@@ -1319,7 +1355,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
     layers: '""" + wms_layer + """',
     format: '""" + wms_format + """',
 	transparent: true,
-	crs: L.CRS.EPSG4326,
+
+	continuousWorld : true,
 }).addTo(map);"""
 						
 						print d

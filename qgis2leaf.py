@@ -64,6 +64,16 @@ class qgis2leaf:
 		self.iface.addToolBarIcon(self.action)
 		self.iface.addPluginToWebMenu(u"&qgis2leaf", self.action)
 
+		QObject.connect(self.dlg.ui.matchCRS,SIGNAL("stateChanged(int)"),self.changeMatchCRS)
+
+	def changeMatchCRS(self,state):
+		if (state==Qt.Checked):
+			print "checked"
+			self.dlg.ui.comboBox.setEnabled(False)
+		else:
+			print "unchecked"
+			self.dlg.ui.comboBox.setEnabled(True)
+
 	def unload(self):
 		# Remove the plugin menu item and icon
 		self.iface.removePluginMenu(u"&qgis2leaf", self.action)

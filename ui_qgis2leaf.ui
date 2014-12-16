@@ -902,6 +902,19 @@
       <string>labels on hover</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="matchCRS">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>80</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Match project CRS</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_settings">
     <attribute name="title">
