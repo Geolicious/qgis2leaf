@@ -63,8 +63,6 @@ class qgis2leafDialog(QtGui.QDialog):
 					continue
 				else:
 					attrFields.append(key)
-		
-		#attrFields = ['OSM Standard', 'OSM Black & White', 'OSM DE', 'OSM HOT', 'OpenSeaMap', 'Thunderforest Cycle', 'Thunderforest Transport', 'Thunderforest Landscape', 'Thunderforest Outdoors', 'OpenMapSurfer Roads', 'OpenMapSurfer adminb', 'OpenMapSurfer roadsg', 'MapQuestOpen OSM', 'MapQuestOpen Aerial', 'Stamen Terrain','Stamen Toner', 'Stamen Watercolor', 'OpenWeatherMap Clouds', 'OpenWeatherMap Precipitation', 'OpenWeatherMap Rain', 'OpenWeatherMap Pressure','OpenWeatherMap Wind', 'OpenWeatherMap Temp', 'OpenWeatherMap Snow']
 		self.ui.comboBox.addItems(attrFields)
 		extFields = ['canvas extent', 'layer extent']
 		self.ui.comboBox_2.addItems(extFields)
@@ -181,9 +179,10 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.locate = self.ui.locate.isChecked()
 		self.address = self.ui.address.isChecked()
 		self.precision = self.ui.spinBox.value()
+		self.selected = self.ui.exp_selected.isChecked()
 		#due to multiple basemaps we don't store basemaps ATM
 		#my_settings = {"Foldername": self.outFileName, "Basemap": self.basemapname, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address}
-		my_settings = {"Foldername": self.outFileName, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address, "precision": self.precision}
+		my_settings = {"Foldername": self.outFileName, "Width": self.width, "Height": self.height, "Extent": self.extent, "Fullscreen": self.full_screen,  "Visibility": self.visible, "Opacity_Control": self.opacity, "Encoding_WFS": self.encode2JSON, "Cluster": self.createcluster, "Webpage_Name": self.webpage_name, "Webmap_Title": self.webmap_head, "Webmap_SubTitle": self.webmap_subhead, "Legend":  self.legend,"Locate": self.locate, "Address": self.address, "precision": self.precision, "selected": self.selected}
 
 		with open(str(self.ui.lineEdit_3.text()), 'wb') as f: 
    			w = csv.DictWriter(f, my_settings.keys())
@@ -232,6 +231,8 @@ class qgis2leafDialog(QtGui.QDialog):
 					self.ui.createcluster.setChecked(False)
 				if rows["Cluster"] == "True":
 					self.ui.createcluster.setChecked(True)
+				if rows["selected"] == "True":
+					self.ui.exp_selected.setChecked(True)
 				self.ui.webpage_name.setText(rows['Webpage_Name'])
 				self.ui.webmap_head.setText(rows['Webmap_Title'])
 				self.ui.webmap_subhead.setText(rows['Webmap_SubTitle'])
@@ -286,11 +287,12 @@ class qgis2leafDialog(QtGui.QDialog):
 		self.labels = self.ui.extract_labels.isChecked()
 		self.labelshover = self.ui.labelsonhover.isChecked()
 		self.matchCRS = self.ui.matchCRS.isChecked()
+		self.selected = self.ui.exp_selected.isChecked()
 		print self.precision
 		if self.matchCRS == True:
 			self.createcluster = False
 
 		for i in range(len(self.layer_list)): 
 			self.layer_list[i] = re.sub('[\W_]+', '', self.layer_list[i].text())
-		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision, self.labels, self.labelshover, self.matchCRS)
+		qgis2leaf_exec(self.outFileName, self.basemapName, self.basemapMeta, self.basemapAddress, self.width, self.height, self.extent, self.full_screen, self.layer_list, self.visible, self.opacity, self.encode2JSON,self.createcluster, self.webpage_name, self.webmap_head,self.webmap_subhead, self.legend,self.locate,self.address, self.precision, self.labels, self.labelshover, self.matchCRS, self.selected)
 		self.close()

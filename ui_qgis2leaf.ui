@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
+    <width>677</width>
     <height>688</height>
    </rect>
   </property>
@@ -57,7 +57,7 @@
     <rect>
      <x>10</x>
      <y>50</y>
-     <width>611</width>
+     <width>661</width>
      <height>16</height>
     </rect>
    </property>
@@ -70,7 +70,7 @@
     <rect>
      <x>10</x>
      <y>60</y>
-     <width>611</width>
+     <width>661</width>
      <height>621</height>
     </rect>
    </property>
@@ -96,7 +96,7 @@
       <rect>
        <x>10</x>
        <y>186</y>
-       <width>591</width>
+       <width>641</width>
        <height>401</height>
       </rect>
      </property>
@@ -325,7 +325,7 @@
       <rect>
        <x>10</x>
        <y>170</y>
-       <width>591</width>
+       <width>641</width>
        <height>16</height>
       </rect>
      </property>
@@ -815,7 +815,7 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>480</x>
        <y>100</y>
        <width>186</width>
        <height>21</height>
@@ -912,7 +912,29 @@
       </rect>
      </property>
      <property name="text">
-      <string>Match project CRS</string>
+      <string>Match project CRS*</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="exp_selected">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>100</y>
+       <width>186</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Export selected only</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
@@ -1033,7 +1055,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>531</width>
+       <width>641</width>
        <height>51</height>
       </rect>
      </property>
@@ -1055,7 +1077,7 @@ p, li { white-space: pre-wrap; }
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>531</width>
+       <width>641</width>
        <height>511</height>
       </rect>
      </property>
@@ -1067,16 +1089,18 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; text-decoration: underline;&quot;&gt;General help:&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;QGIS2leaf creates a webmap from your current QGIS vector features and rasters. Therefore it tries to copy the current vector styles to styles, leaflet will understand. If your data has an attribute called &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;html_exp&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;it will use this for the&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt; popup content. &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;Otherwise it will create a &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;simple table&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; from all of your attributes and values. &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;label_exp &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;will be used to fill labels if not defined by the label section itself. Furthermore you can define an &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;icon for your point&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; layers using an attribute called &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;icon_exp&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; Each feature should have an &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;absolute path&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; on your current system or provide a &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600;&quot;&gt;link to the image&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; (preferable *.svg or *.png). You may find suitable examples in the test_data folder.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;When you're interested in building a legend as well, you need to fill the column &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;legend_exp&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; with a text and &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; font-style:italic;&quot;&gt;legend_ico&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt; with the path to an icon which should be shown in the legend for the particular layer. This works only for local layers and non-raster layers. See the example files for details.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;Raster images will be tranlated to EPSG:4326/jpg using GDAL python bindings.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;Raster images will be translated to EPSG:4326/jpg using GDAL python bindings.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt;&quot;&gt;* The export with leaflet matching the project CRS is beta!!!&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:9pt; font-weight:600; text-decoration: underline;&quot;&gt;GUI help:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Press &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;get layers&lt;/span&gt;&amp;quot; to add/reload your vector layers to the plugin. You can select the layers to export.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;QGIS2leaf will export your QGIS data as geoJSON. Use &lt;span style=&quot; font-weight:600;&quot;&gt;Coordinate precision&lt;/span&gt; to define the needed precision of coordinates. Higher precision will enable sub-milimeter precision but also increased file sizes and lower webmap performance.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your QGIS project might have a WFS embedded. Check &lt;span style=&quot; font-weight:600;&quot;&gt;Encode to JSON &lt;/span&gt;to create a local copy of the WFS. If unchecked leaflet will use the same WFS in its map.&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Use &lt;span style=&quot; font-weight:600;&quot;&gt;Export selected only&lt;/span&gt; to restrict your data to selected items only. This applies to &lt;span style=&quot; text-decoration: underline;&quot;&gt;all&lt;/span&gt; layers!&lt;/li&gt;
+&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opacity of raster images in your map can be changed using the &lt;span style=&quot; font-weight:600;&quot;&gt;Opacity control&lt;/span&gt; which is a slider below your map.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Frame width&lt;/span&gt; defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser. Press &lt;span style=&quot; font-weight:600;&quot;&gt;Get Size &lt;/span&gt;to set the dimensions of the webmap according to your current QGIS map window.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Extent: &lt;span style=&quot; font-weight:600;&quot;&gt;canvas extent - &lt;/span&gt;QGIS canvas will influence initial leaflet view / choose &lt;span style=&quot; font-weight:600;&quot;&gt;layer extent&lt;/span&gt; to set the leaflet webmap extent to the extent of all vector layers. Check &lt;span style=&quot; font-weight:600;&quot;&gt;Locate &lt;/span&gt;to set the center of the webmap to the user position (determined by GPS/3G/IP).&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For large datasets set the &lt;span style=&quot; font-weight:600;&quot;&gt;visible layers&lt;/span&gt; to &amp;quot;show none&amp;quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose some of the available &lt;span style=&quot; font-weight:600;&quot;&gt;basemaps&lt;/span&gt;. If you select none, your layers will be exported with a blank background.&lt;/li&gt;
-&lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opacity of raster images in your map can be changed using the &lt;span style=&quot; font-weight:600;&quot;&gt;Opacity control&lt;/span&gt; which is a slider below your map.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;As &lt;span style=&quot; font-weight:600;&quot;&gt;output project folder&lt;/span&gt; you should choose a separate folder. There will be a designated folder in it with your current export files and folders.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Webpage name&lt;/span&gt; will be visible in the Tab-header of your webpage. It is extracted from your project title but you can alter it.&lt;/li&gt;
 &lt;li style=&quot; font-family:'Sans'; font-size:9pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Webmap heading&lt;/span&gt; will be displayed in an info box in your webmap. It is extracted from your project title but you can alter it.&lt;/li&gt;&lt;/ul&gt;

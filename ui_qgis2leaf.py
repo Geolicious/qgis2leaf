@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_qgis2leaf.ui'
 #
-# Created: Fri Dec  5 00:54:25 2014
+# Created: Tue Dec 16 22:28:14 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_qgis2leaf(object):
     def setupUi(self, qgis2leaf):
         qgis2leaf.setObjectName(_fromUtf8("qgis2leaf"))
-        qgis2leaf.resize(626, 688)
+        qgis2leaf.resize(677, 688)
         self.label = QtGui.QLabel(qgis2leaf)
         self.label.setGeometry(QtCore.QRect(10, 10, 131, 18))
         font = QtGui.QFont()
@@ -43,12 +43,12 @@ class Ui_qgis2leaf(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.line_3 = QtGui.QFrame(qgis2leaf)
-        self.line_3.setGeometry(QtCore.QRect(10, 50, 611, 16))
+        self.line_3.setGeometry(QtCore.QRect(10, 50, 661, 16))
         self.line_3.setFrameShape(QtGui.QFrame.HLine)
         self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_3.setObjectName(_fromUtf8("line_3"))
         self.tab_2 = QtGui.QTabWidget(qgis2leaf)
-        self.tab_2.setGeometry(QtCore.QRect(10, 60, 611, 621))
+        self.tab_2.setGeometry(QtCore.QRect(10, 60, 661, 621))
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.tab_app = QtGui.QWidget()
         self.tab_app.setObjectName(_fromUtf8("tab_app"))
@@ -56,7 +56,7 @@ class Ui_qgis2leaf(object):
         self.listWidget.setGeometry(QtCore.QRect(10, 10, 251, 161))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.gridLayoutWidget = QtGui.QWidget(self.tab_app)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 186, 591, 401))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 186, 641, 401))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setSpacing(10)
@@ -186,7 +186,7 @@ class Ui_qgis2leaf(object):
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.gridLayout.addWidget(self.comboBox, 4, 1, 1, 1)
         self.line_2 = QtGui.QFrame(self.tab_app)
-        self.line_2.setGeometry(QtCore.QRect(10, 170, 591, 16))
+        self.line_2.setGeometry(QtCore.QRect(10, 170, 641, 16))
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
@@ -344,7 +344,7 @@ class Ui_qgis2leaf(object):
         self.createlegend.setObjectName(_fromUtf8("createlegend"))
         self.checkBox = QtGui.QCheckBox(self.tab_app)
         self.checkBox.setEnabled(True)
-        self.checkBox.setGeometry(QtCore.QRect(270, 100, 186, 21))
+        self.checkBox.setGeometry(QtCore.QRect(480, 100, 186, 21))
         self.checkBox.setAutoFillBackground(False)
         self.checkBox.setChecked(False)
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
@@ -375,6 +375,12 @@ class Ui_qgis2leaf(object):
         self.matchCRS = QtGui.QCheckBox(self.tab_app)
         self.matchCRS.setGeometry(QtCore.QRect(480, 80, 161, 21))
         self.matchCRS.setObjectName(_fromUtf8("matchCRS"))
+        self.exp_selected = QtGui.QCheckBox(self.tab_app)
+        self.exp_selected.setEnabled(True)
+        self.exp_selected.setGeometry(QtCore.QRect(270, 100, 186, 21))
+        self.exp_selected.setAutoFillBackground(False)
+        self.exp_selected.setChecked(False)
+        self.exp_selected.setObjectName(_fromUtf8("exp_selected"))
         self.tab_2.addTab(self.tab_app, _fromUtf8(""))
         self.tab_settings = QtGui.QWidget()
         self.tab_settings.setObjectName(_fromUtf8("tab_settings"))
@@ -409,13 +415,13 @@ class Ui_qgis2leaf(object):
         self.label_13.setFont(font)
         self.label_13.setObjectName(_fromUtf8("label_13"))
         self.textBrowser_2 = QtGui.QTextBrowser(self.tab_settings)
-        self.textBrowser_2.setGeometry(QtCore.QRect(10, 10, 531, 51))
+        self.textBrowser_2.setGeometry(QtCore.QRect(10, 10, 641, 51))
         self.textBrowser_2.setObjectName(_fromUtf8("textBrowser_2"))
         self.tab_2.addTab(self.tab_settings, _fromUtf8(""))
         self.tab_help = QtGui.QWidget()
         self.tab_help.setObjectName(_fromUtf8("tab_help"))
         self.textBrowser = QtGui.QTextBrowser(self.tab_help)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 10, 531, 511))
+        self.textBrowser.setGeometry(QtCore.QRect(10, 10, 641, 511))
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
         self.tab_2.addTab(self.tab_help, _fromUtf8(""))
         self.actionLoadList = QtGui.QAction(qgis2leaf)
@@ -453,7 +459,8 @@ class Ui_qgis2leaf(object):
         self.label_14.setText(_translate("qgis2leaf", "Coordinate precision", None))
         self.extract_labels.setText(_translate("qgis2leaf", "extract labels", None))
         self.labelsonhover.setText(_translate("qgis2leaf", "labels on hover", None))
-        self.matchCRS.setText(_translate("qgis2leaf", "Match project CRS", None))
+        self.matchCRS.setText(_translate("qgis2leaf", "Match project CRS*", None))
+        self.exp_selected.setText(_translate("qgis2leaf", "Export selected only", None))
         self.tab_2.setTabText(self.tab_2.indexOf(self.tab_app), _translate("qgis2leaf", "Export", None))
         self.label_12.setText(_translate("qgis2leaf", "Setup File:", None))
         self.pushButton_3.setText(_translate("qgis2leaf", "...", None))
@@ -474,16 +481,18 @@ class Ui_qgis2leaf(object):
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; text-decoration: underline;\">General help:</span></p>\n"
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">QGIS2leaf creates a webmap from your current QGIS vector features and rasters. Therefore it tries to copy the current vector styles to styles, leaflet will understand. If your data has an attribute called </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; font-style:italic;\">html_exp</span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\"> </span><span style=\" font-family:\'Sans\'; font-size:9pt;\">it will use this for the</span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\"> popup content. </span><span style=\" font-family:\'Sans\'; font-size:9pt;\">Otherwise it will create a </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\">simple table</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> from all of your attributes and values. </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\"> </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; font-style:italic;\">label_exp </span><span style=\" font-family:\'Sans\'; font-size:9pt;\">will be used to fill labels if not defined by the label section itself. Furthermore you can define an </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\">icon for your point</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> layers using an attribute called </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; font-style:italic;\">icon_exp</span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\">.</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> Each feature should have an </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\">absolute path</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> on your current system or provide a </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600;\">link to the image</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> (preferable *.svg or *.png). You may find suitable examples in the test_data folder.</span></p>\n"
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">When you\'re interested in building a legend as well, you need to fill the column </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; font-style:italic;\">legend_exp</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> with a text and </span><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; font-style:italic;\">legend_ico</span><span style=\" font-family:\'Sans\'; font-size:9pt;\"> with the path to an icon which should be shown in the legend for the particular layer. This works only for local layers and non-raster layers. See the example files for details.</span></p>\n"
-"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">Raster images will be tranlated to EPSG:4326/jpg using GDAL python bindings.</span></p>\n"
+"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">Raster images will be translated to EPSG:4326/jpg using GDAL python bindings.</span></p>\n"
+"<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt;\">* The export with leaflet matching the project CRS is beta!!!</span></p>\n"
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:9pt; font-weight:600; text-decoration: underline;\">GUI help:</span></p>\n"
 "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Press &quot;<span style=\" font-weight:600;\">get layers</span>&quot; to add/reload your vector layers to the plugin. You can select the layers to export.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">QGIS2leaf will export your QGIS data as geoJSON. Use <span style=\" font-weight:600;\">Coordinate precision</span> to define the needed precision of coordinates. Higher precision will enable sub-milimeter precision but also increased file sizes and lower webmap performance.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Your QGIS project might have a WFS embedded. Check <span style=\" font-weight:600;\">Encode to JSON </span>to create a local copy of the WFS. If unchecked leaflet will use the same WFS in its map.</li>\n"
+"<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Use <span style=\" font-weight:600;\">Export selected only</span> to restrict your data to selected items only. This applies to <span style=\" text-decoration: underline;\">all</span> layers!</li>\n"
+"<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Opacity of raster images in your map can be changed using the <span style=\" font-weight:600;\">Opacity control</span> which is a slider below your map.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Frame width</span> defines the map dimension in the html page. Toggle between given pixel values or full screen which corresponds to 100% width of your browser. Press <span style=\" font-weight:600;\">Get Size </span>to set the dimensions of the webmap according to your current QGIS map window.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Extent: <span style=\" font-weight:600;\">canvas extent - </span>QGIS canvas will influence initial leaflet view / choose <span style=\" font-weight:600;\">layer extent</span> to set the leaflet webmap extent to the extent of all vector layers. Check <span style=\" font-weight:600;\">Locate </span>to set the center of the webmap to the user position (determined by GPS/3G/IP).</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">For large datasets set the <span style=\" font-weight:600;\">visible layers</span> to &quot;show none&quot;. Visibility can be toggled in the webmap afterwards as you have a nice layer switcher.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Choose some of the available <span style=\" font-weight:600;\">basemaps</span>. If you select none, your layers will be exported with a blank background.</li>\n"
-"<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Opacity of raster images in your map can be changed using the <span style=\" font-weight:600;\">Opacity control</span> which is a slider below your map.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">As <span style=\" font-weight:600;\">output project folder</span> you should choose a separate folder. There will be a designated folder in it with your current export files and folders.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Webpage name</span> will be visible in the Tab-header of your webpage. It is extracted from your project title but you can alter it.</li>\n"
 "<li style=\" font-family:\'Sans\'; font-size:9pt;\" align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Webmap heading</span> will be displayed in an info box in your webmap. It is extracted from your project title but you can alter it.</li></ul>\n"
