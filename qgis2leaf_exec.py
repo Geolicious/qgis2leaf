@@ -567,7 +567,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 	"""
 #here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 #basemap name	
-	if basemapName == 0:
+	if basemapName == 0 or matchCRS == True:
 		basemapText = """"""
 	else:
 		basemapText = """"""
@@ -1466,7 +1466,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 
 	# let's add layer control
 	print len(basemapName)
-	if len(basemapName) == 0:
+	if len(basemapName) == 0 or matchCRS == True:
 		controlStart = """"""
 	if len(basemapName) == 1:
 		controlStart = """
