@@ -822,13 +822,15 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 									radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 								transp_str2 = str(i.rendererV2().symbol().alpha())
+								if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
+									transp_str2 = "0"
 								stylestr="""
 							style: function (feature) {
 								return {color: '"""+borderColor_str+"""',
 										fillColor: '"""+color_str+"""',
 										weight: """+radius_str+""",
 										opacity: """+transp_str+""",
-										fillOpacity: """+transp_str+"""};
+										fillOpacity: """+transp_str2+"""};
 								},
                                 onEachFeature : function (feature, layer){
                                 """+popFuncs+"""
