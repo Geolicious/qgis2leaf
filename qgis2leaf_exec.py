@@ -260,6 +260,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
+							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
+								transp_str2 = "0"
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "border_color_qgis2leaf": '""" + borderColor_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
 								sys.stdout.write(line)		
@@ -864,7 +866,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								fillColor: feature.properties.color_qgis2leaf,
 								weight: feature.properties.radius_qgis2leaf,
 								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_qgis2leaf};
+								fillOpacity: feature.properties.transp_fill_qgis2leaf};
 						}
 					});
 				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
