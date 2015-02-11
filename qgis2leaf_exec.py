@@ -787,7 +787,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
@@ -874,7 +874,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
 				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
-					map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
 				"""	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
@@ -1009,7 +1009,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
@@ -1071,7 +1071,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
@@ -1210,7 +1210,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
@@ -1266,7 +1266,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
