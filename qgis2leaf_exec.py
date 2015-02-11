@@ -854,7 +854,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								}
 							});
 						for (index = 0; index < layerOrder.length; index++) {
-							map.removeLayer(layerOrder[index]);map.addLayer(layerOrder[index]);
+							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 						}
 					}
 				});
