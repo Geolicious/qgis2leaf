@@ -772,7 +772,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -839,7 +839,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -994,7 +994,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -1056,7 +1056,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -1195,7 +1195,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
@@ -1251,7 +1251,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 								new_obj="""
 			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""}).addTo(map);
+			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
 			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 			var """+layerName+"""ajax = $.ajax({
 					url : """+layerName+"""URL,
