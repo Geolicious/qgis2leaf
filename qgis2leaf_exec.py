@@ -330,6 +330,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							categories = i.rendererV2().categories()
 							color_str = []
 							radius_str = []
+							penStyle_str = []
 							transp_str2 = []
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							for feat in iter:
@@ -339,6 +340,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									radius_str.append(str(categories[catindex].symbol().width() * 5))
+									if categories[catindex].symbol().symbolLayer(0).penStyle() > 1:
+										if categories[catindex].symbol().symbolLayer(0).penStyle() == 2:
+											penStyle_str.append("10,5")
+										if categories[catindex].symbol().symbolLayer(0).penStyle() == 3:
+											penStyle_str.append("1,5")
+										if categories[catindex].symbol().symbolLayer(0).penStyle() == 4:
+											penStyle_str.append("15,5,1,5")
+										if categories[catindex].symbol().symbolLayer(0).penStyle() == 5:
+											penStyle_str.append("15,5,1,5,1,5")
 									transp_str2.append(str(categories[catindex].symbol().alpha()))
 								else: 
 									color_str.append('#FF00FF')
@@ -348,7 +358,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "pen_style_qgis2leaf": '""" + str(penStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
 								else:
 									line = line.replace(" "," ")
 								sys.stdout.write(line)
@@ -361,6 +371,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							categories = i.rendererV2().categories()
 							color_str = []
 							radius_str = []
+							borderStyle_str = []
 							transp_str2 = []
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							for feat in iter:
@@ -370,6 +381,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								if catindex != -1: 
 									color_str.append(str(categories[catindex].symbol().color().name()))
 									transp_str2.append(str(categories[catindex].symbol().alpha()))
+									if categories[catindex].symbol().symbolLayer(0).borderStyle() > 1:
+										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 2:
+											borderStyle_str.append("10,5")
+										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 3:
+											borderStyle_str.append("1,5")
+										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 4:
+											borderStyle_str.append("15,5,1,5")
+										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 5:
+											borderStyle_str.append("15,5,1,5,1,5")
 								else: 
 									color_str.append('#FF00FF')
 									transp_str2.append('1')
@@ -377,7 +397,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "border_style_qgis2leaf": '""" + str(borderStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
 								else:
 									line = line.replace(" "," ")
 								sys.stdout.write(line)
@@ -438,6 +458,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							color_str = []
 							radius_str = []
+							penStyle_str = []
 							transp_str2 = []
 							for feat in iter:
 								if str(feat.attributes()[attrvalindex]) != 'NULL':
@@ -448,6 +469,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
 										color_str.append(str(r.symbol().color().name()))
 										radius_str.append(str(r.symbol().width() * 5))
+										if r.symbol().symbolLayer(0).penStyle() > 1:
+											if r.symbol().symbolLayer(0).penStyle() == 2:
+												penStyle_str.append("10,5")
+											if r.symbol().symbolLayer(0).penStyle() == 3:
+												penStyle_str.append("1,5")
+											if r.symbol().symbolLayer(0).penStyle() == 4:
+												penStyle_str.append("15,5,1,5")
+											if r.symbol().symbolLayer(0).penStyle() == 5:
+												penStyle_str.append("15,5,1,5,1,5")
 										transp_str2.append(str(r.symbol().alpha()))
 										break
 									elif value == None:
@@ -459,7 +489,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "pen_style_qgis2leaf": '""" + str(penStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
 								else:
 									line = line.replace(" "," ")
 								sys.stdout.write(line)
@@ -474,6 +504,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							color_str = []
 							radius_str = []
+							borderStyle_str = []
 							transp_str2 = []
 							for feat in iter:
 								if str(feat.attributes()[attrvalindex]) != 'NULL':
@@ -483,6 +514,15 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								for r in i.rendererV2().ranges():
 									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
 										color_str.append(str(r.symbol().color().name()))
+										if r.symbol().symbolLayer(0).borderStyle() > 1:
+											if r.symbol().symbolLayer(0).borderStyle() == 2:
+												borderStyle_str.append("10,5")
+											if r.symbol().symbolLayer(0).borderStyle() == 3:
+												borderStyle_str.append("1,5")
+											if r.symbol().symbolLayer(0).borderStyle() == 4:
+												borderStyle_str.append("15,5,1,5")
+											if r.symbol().symbolLayer(0).borderStyle() == 5:
+												borderStyle_str.append("15,5,1,5,1,5")
 										transp_str2.append(str(r.symbol().alpha()))
 										break
 									elif value == None:
@@ -493,7 +533,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
 								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
+									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "border_style_qgis2leaf": '""" + str(borderStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
 								else:
 									line = line.replace(" "," ")
 								sys.stdout.write(line)
@@ -1041,6 +1081,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 						style: function (feature) {
 							return {weight: feature.properties.radius_qgis2leaf,
 									color: feature.properties.color_qgis2leaf,
+									dashArray: feature.properties.pen_style_qgis2leaf,
 									opacity: feature.properties.transp_qgis2leaf,
 									fillOpacity: feature.properties.transp_qgis2leaf};
 							}
@@ -1104,6 +1145,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 							return {fillColor: feature.properties.color_qgis2leaf,
 									color: '#000',
 									weight: 1,
+									dashArray: feature.properties.border_style_qgis2leaf,
 									opacity: feature.properties.transp_qgis2leaf,
 									fillOpacity: feature.properties.transp_qgis2leaf};
 							}
@@ -1241,8 +1283,9 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 					onEachFeature: pop_""" + safeLayerName + """,
 					style: function (feature) {
 						return {weight: feature.properties.radius_qgis2leaf,
-								fillColor: feature.properties.color_qgis2leaf,
-								color: '#000',
+								color: feature.properties.color_qgis2leaf,
+								//color: '#000',
+								dashArray: feature.properties.pen_style_qgis2leaf,
 								opacity: feature.properties.transp_qgis2leaf,
 								fillOpacity: feature.properties.transp_qgis2leaf};
 						}
@@ -1298,6 +1341,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 					style: function (feature) {
 						return {fillColor: feature.properties.color_qgis2leaf,
 								color: '#000',
+								dashArray: feature.properties.border_style_qgis2leaf,
 								weight: 1,
 								opacity: feature.properties.transp_qgis2leaf,
 								fillOpacity: feature.properties.transp_qgis2leaf};
