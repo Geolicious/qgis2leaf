@@ -253,6 +253,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									penStyle_str = "15,5,1,5"
 								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
 									penStyle_str = "15,5,1,5,1,5"
+							else:
+								penStyle_str = ""
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
@@ -278,6 +280,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										borderStyle_str = "15,5,1,5"
 									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 5:
 										borderStyle_str = "15,5,1,5,1,5"
+								else:
+									borderStyle_str = ""
 								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 							transp_str2 = str(i.rendererV2().symbol().alpha())
@@ -353,6 +357,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 											penStyle_str.append("15,5,1,5")
 										if categories[catindex].symbol().symbolLayer(0).penStyle() == 5:
 											penStyle_str.append("15,5,1,5,1,5")
+									else:
+										penStyle_str.append("")
 									transp_str2.append(str(categories[catindex].symbol().alpha()))
 								else: 
 									color_str.append('#FF00FF')
@@ -394,6 +400,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 											borderStyle_str.append("15,5,1,5")
 										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 5:
 											borderStyle_str.append("15,5,1,5,1,5")
+									else:
+										borderStyle_str.append("")
 								else: 
 									color_str.append('#FF00FF')
 									transp_str2.append('1')
@@ -482,6 +490,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 												penStyle_str.append("15,5,1,5")
 											if r.symbol().symbolLayer(0).penStyle() == 5:
 												penStyle_str.append("15,5,1,5,1,5")
+										else:
+											penStyle_str.append("")
 										transp_str2.append(str(r.symbol().alpha()))
 										break
 									elif value == None:
@@ -527,6 +537,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 												borderStyle_str.append("15,5,1,5")
 											if r.symbol().symbolLayer(0).borderStyle() == 5:
 												borderStyle_str.append("15,5,1,5,1,5")
+										else:
+											borderStyle_str.append("")
 										transp_str2.append(str(r.symbol().alpha()))
 										break
 									elif value == None:
@@ -827,6 +839,8 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 										penStyle_str = "15,5,1,5"
 									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
 										penStyle_str = "15,5,1,5,1,5"
+								else:
+									penStyle_str = ""
 								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 								transp_str2 = str(i.rendererV2().symbol().alpha())
 								stylestr="""
@@ -902,6 +916,8 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 										borderStyle_str = "15,5,1,5"
 									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 5:
 										borderStyle_str = "15,5,1,5,1,5"
+								else:
+									borderStyle_str = ""
 								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
 								transp_str2 = str(i.rendererV2().symbol().alpha())
 								if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
