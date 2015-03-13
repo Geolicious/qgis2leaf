@@ -363,6 +363,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								else: 
 									color_str.append('#FF00FF')
 									radius_str.append('4')
+									penStyle_str.append("")
 									transp_str2.append('1')
 							qgisLeafId = 0
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
@@ -405,6 +406,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								else: 
 									color_str.append('#FF00FF')
 									transp_str2.append('1')
+									borderStyle_str.append("")
 							qgisLeafId = 0
 							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
 								addOne = str(line).count(""""type": "Feature", "properties": { """)
@@ -497,6 +499,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 									elif value == None:
 										color_str.append('#FF00FF')
 										radius_str.append('4')
+										penStyle_str.append("")
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
@@ -543,6 +546,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										break
 									elif value == None:
 										color_str.append('#FF00FF')
+										borderStyle_str.append("")
 										transp_str2.append('1')
 										break
 							qgisLeafId = 0
