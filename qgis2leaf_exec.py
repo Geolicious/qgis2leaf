@@ -154,56 +154,54 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	#the index file has an easy beginning. we will store it right away:
 	canvas = qgis.utils.iface.mapCanvas()
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'w') as f_html:
-		base = """
-<!DOCTYPE html>
+		base = """<!DOCTYPE html>
 <html>
-<head> """
+	<head> """
 		if webpage_name == "":
 			base +="""
-	<title>QGIS2leaf webmap</title>
+		<title>QGIS2leaf webmap</title>
 	"""
 		else:
 			base +="""
-	<title>""" + (webpage_name).encode('utf-8') + """</title>
-	"""
+		<title>""" + (webpage_name).encode('utf-8') + """</title>"""
 		base += """
-	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" /> <!-- we will us e this as the styling script for our webmap-->
-	<link rel="stylesheet" href="css/MarkerCluster.css" />
-	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
-	<link rel="stylesheet" type="text/css" href="css/own_style.css">
-	<link rel="stylesheet" href="css/label.css" />"""
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+		<link rel="stylesheet" type="text/css" href="css/own_style.css">
+		<link rel="stylesheet" href="css/label.css" />"""
 		if address == True:
 			base += """
-        <link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	"""
+		<link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	"""
 		base +="""
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> <!-- this is the javascript file that does the magic-->
-	<script src="js/Autolinker.min.js"></script>"""
-		if full == 1:
-			base +="""
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />"""
-		base += """
-</head>
-<body>
-	<div id="map"></div> <!-- this is the initial look of the map. in most cases it is done externally using something like a map.css stylesheet were you can specify the look of map elements, like background color tables and so on.-->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script> <!-- this is the javascript file that does the magic-->
-	<script src="js/leaflet-hash.js"></script>
-	<script src="js/label.js"></script>"""
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+		<script src="js/leaflet-hash.js"></script>
+		<script src="js/label.js"></script>
+		<script src="js/Autolinker.min.js"></script>"""
 		if address == True:
 			
 			base +="""
-	<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>"""
+		<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>"""
 		base +="""
-	<script src="js/leaflet.markercluster.js"></script>
-	"""
+		<script src="js/leaflet.markercluster.js"></script>"""
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 			base += """
-	<script src="js/proj4.js"></script>
-	<script src="js/proj4leaflet.js"></script>
+		<script src="js/proj4.js"></script>
+		<script src="js/proj4leaflet.js"></script>
 			
 			"""
+		if full == 1:
+			base += """
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />"""
+		base += """
+	</head>
+	<body>
+		<div id="map"></div>"""
 		if opacity_raster == True:
-			base += """<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">"""
+			base += """
+		<input id="slide" type="range" min="0" max="1" step="0.1" value="1" onchange="updateOpacity(this.value)">"""
   		f_html.write(base)
 		f_html.close()
 	# let's create the js files in the data folder of input vector files:
@@ -227,70 +225,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							f2.seek(0) # rewind
 							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
-						#let's define style for the single marker points
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().size() * 2)
-							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "borderColor_qgis2leaf": '""" + borderColor_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
-								line = line.replace("""] ] } }""", """] } }""")
-								sys.stdout.write(line)
-						#let's define style for the single marker lines
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().width() * 5)
-
-							if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
-									penStyle_str = "10,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
-									penStyle_str = "1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
-									penStyle_str = "15,5,1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
-									penStyle_str = "15,5,1,5,1,5"
-							else:
-								penStyle_str = ""
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "pen_style_qgis2leaf": '""" + penStyle_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								sys.stdout.write(line)
-						#let's define style for the single marker polygons
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
-								color_str = 'none'
-								borderColor_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
-							else:
-
-
-								color_str = str(i.rendererV2().symbol().color().name())
-								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								if i.rendererV2().symbol().symbolLayer(0).borderStyle() > 1:
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 2:
-										borderStyle_str = "10,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 3:
-										borderStyle_str = "1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 4:
-										borderStyle_str = "15,5,1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 5:
-										borderStyle_str = "15,5,1,5,1,5"
-								else:
-									borderStyle_str = ""
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
-
-								transp_str2 = "0"
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "border_color_qgis2leaf": '""" + borderColor_str + """', "border_style_qgis2leaf": '""" + borderStyle_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								sys.stdout.write(line)		
 						#let's define style for categorized points
 						if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
 							iter = i.getFeatures()
@@ -562,8 +496,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						#now add the js files as data input for our map
 						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
 							new_src = """
-				<script src='""" + 'data' + """/exp_""" + safeLayerName + """.js' ></script>
-				"""
+		<script src=\"""" + 'data' + """/exp_""" + safeLayerName + """.js\"></script>"""
 							# store everything in the file
 							f3.write(new_src)
 							f3.close()
@@ -602,60 +535,57 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		bbox_canvas = [pt1.yMinimum(), pt1.yMaximum(),pt1.xMinimum(), pt1.xMaximum()]
 		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
 		middle = """
-	<script>
-"""
+		<script>"""
 		#print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
 			middle += """
-var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """',
-  '""" + canvas.mapRenderer().destinationCrs().toProj4() + """',
-  {
-    resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07], // 3 example zoom level resolutions
-  }
-);
-			"""
-		middle += """		var map = L.map('map', { """
+		var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """', '""" + canvas.mapRenderer().destinationCrs().toProj4() + """', {
+			resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+		});"""
+		middle += """
+		var map = L.map('map', {"""
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
-			middle += "crs: crs, continuousWorld: false, worldCopyJump : false, "
-		middle += """zoomControl:true }).fitBounds(""" + bounds + """);
-		var hash = new L.Hash(map); //add hashes to html address to easy share locations
+			middle += """
+			crs: crs,
+			continuousWorld: false,
+			worldCopyJump: false, """
+		middle += """
+			zoomControl:true
+		}).fitBounds(""" + bounds + """);
+		var hash = new L.Hash(map);
 		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	if extent == 'layer extent':
 		middle = """
-	<script>
+		<script>
 """
 		print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
 			middle += """
-var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """',
-  '""" + canvas.mapRenderer().destinationCrs().toProj4() + """',
-  {
-    resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07], // 3 example zoom level resolutions
-  }
-);
-			"""
-		middle += """		var map = L.map('map', { zoomControl:true });
+		var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """', '""" + canvas.mapRenderer().destinationCrs().toProj4() + """', {
+			resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+		});"""
+		middle += """
+		var map = L.map('map', { zoomControl:true });
 		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	# we will start with the clustergroup
 	middle += """
-	var feature_group = new L.featureGroup([]);
-
-	var raster_group = new L.LayerGroup([]);
-	"""
+		var feature_group = new L.featureGroup([]);
+		var raster_group = new L.LayerGroup([]);"""
 #here come the basemap (variants list thankfully provided by: "https://github.com/leaflet-extras/leaflet-providers") our geojsons will  looped after that
 #basemap name	
 	if basemapName == 0 or matchCRS == True:
-		basemapText = """"""
+		basemapText = ""
 	else:
-		basemapText = """"""
+		basemapText = ""
 		for l in range(0,len(basemapAddress)):
 			print basemapAddress[l]
 			basemapText += """
 		var basemap_""" + str(l) +""" = L.tileLayer('""" + basemapAddress[l] + """', { 
-			attribution: additional_attrib + '""" + str(basemapMeta[l]) + """'});"""
+			attribution: additional_attrib + '""" + str(basemapMeta[l]) + """'
+		});"""
 	#attribution	
 		#	basemapText += """
 		#map.attributionControl.addAttribution(additional_attrib + '""" + basemapMeta + """');"""
@@ -663,7 +593,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 				basemapText += """	
 		basemap_""" + str(l)+""".addTo(map);"""
 	layerOrder = """	
-	var layerOrder=new Array();"""
+		var layerOrder=new Array();"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
 			f4.write(middle)
 			f4.write(basemapText)
@@ -726,191 +656,190 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 						if label_exp == False:
 							labeltext = ""
 						popFuncs = """					
-	var popupContent = """ + table + """;
-	layer.bindPopup(popupContent);
-"""
+				var popupContent = """ + table + """;
+				layer.bindPopup(popupContent);"""
 						new_pop = """
-							function pop_""" + safeLayerName + """(feature, layer) {
-					"""+popFuncs+"""
-
-				}
-						"""
+		function pop_""" + safeLayerName + """(feature, layer) {"""+popFuncs+"""
+		}"""
 						#single marker points:
 						 
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
+							color_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().size() * 2)
+							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								color_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().size() * 2)
-								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
 								stylestr="""
-								pointToLayer: function (feature, latlng) {  
-								return L.circleMarker(latlng, {
-									radius: """+radius_str+""",
-									fillColor: '"""+color_str+"""',
+				pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: """+radius_str+""",
+					fillColor: '"""+color_str+"""',
+					color: '"""+borderColor_str+"""',
+					weight: 1,
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+					})"""+labeltext+"""
 
-									color: '"""+borderColor_str+"""',
-									weight: 1,
-									opacity: """+transp_str+""",
-									fillOpacity: """+transp_str2+"""
-									})"""+labeltext+"""
-								},
-                                onEachFeature : function (feature, layer) {
-                                """+popFuncs+"""
-                                }
-                                """
+				},
+				onEachFeature : function (feature, layer) {
+
+
+
+				"""+popFuncs+"""
+				}"""
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
 								if cluster_set == True:
 									new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
-								new_obj+="""var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}"""
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+
+						exp_"""+layerName+"""JSON.addData(feature)
+					}
+				});
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}"""
 								if cluster_set == True:
 									new_obj += """
 				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
 				feature_group.addLayer(cluster_group"""+ safeLayerName + """JSON);
 				"""			
 									cluster_num += 1	
-								new_obj+="""}
-				});
-			
+								new_obj+="""
+			}
+		});
 								"""
 							else:
 								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					pointToLayer: function (feature, latlng) {  
-						return L.circleMarker(latlng, {
-							radius: feature.properties.radius_qgis2leaf,
-							fillColor: feature.properties.color_qgis2leaf,
-
-							color: feature.properties.borderColor_qgis2leaf,
-							weight: 1,
-							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_qgis2leaf
-							})"""+labeltext+"""
-						}
-					});
-				"""
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: """ + radius_str + """,
+					fillColor: '""" + color_str + """',
+					color: '""" + borderColor_str + """',
+					weight: 1,
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
+				})"""+labeltext+"""
+			}
+		});"""
 #add points to the cluster group
-							new_obj += """				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-"""
+							new_obj += """
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""
 							if cluster_set == False:
 								new_obj += """
-				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-				for (index = 0; index < layerOrder.length; index++) {
-					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
-				"""
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		for (index = 0; index < layerOrder.length; index++) {
+			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+		}"""
 							else:
 								new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
 								new_obj += """
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
+		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
 
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
 							layerName=safeLayerName
+							color_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().width() * 5)
+							if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
+									penStyle_str = "10,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
+									penStyle_str = "1,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
+									penStyle_str = "15,5,1,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
+									penStyle_str = "15,5,1,5,1,5"
+							else:
+								penStyle_str = ""
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								color_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().width() * 5)
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
-										penStyle_str = "10,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
-										penStyle_str = "1,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
-										penStyle_str = "15,5,1,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
-										penStyle_str = "15,5,1,5,1,5"
-								else:
-									penStyle_str = ""
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
 								stylestr="""
-							style: function (feature) {
-								return {weight: """+radius_str+""",
-										color: '"""+color_str+"""',
-										dashArray: '"""+penStyle_str+"""',
-										opacity: """+transp_str+""",
-										fillOpacity: """+transp_str2+"""};
-								},
-                                onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-                                    }
-                                    """
+			style: function (feature) {
+				return {
+					weight: """+radius_str+""",
+					color: '"""+color_str+"""',
+					dashArray: '"""+penStyle_str+"""',
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+
+				};
+			},
+			onEachFeature : function (feature, layer) {
+				"""+popFuncs+"""
+
+
+			}"""
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
-							else:
-								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					style: function (feature) {
-						return {weight: feature.properties.radius_qgis2leaf,
-								color: feature.properties.color_qgis2leaf,
-								dashArray: feature.properties.pen_style_qgis2leaf,
-								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_qgis2leaf};
-						}
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
-				"""		
+			}
+		});"""
+							else:
+								new_obj = """
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: function (feature) {
+				return {
+					weight: """ + radius_str + """,
+					color: '""" + color_str + """',
+					dashArray: '""" + penStyle_str + """',
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
+				};
+			}
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		for (index = 0; index < layerOrder.length; index++) {
+			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+		}"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
 							layerName=safeLayerName
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
-									color_str = 'none'
-									borderColor_str = str(i.rendererV2().symbol().color().name())
-									radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
-								else:
-									color_str = str(i.rendererV2().symbol().color().name())
-									borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-									radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
+								color_str = 'none'
+								borderColor_str = str(i.rendererV2().symbol().color().name())
+								radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
+							else:
+								color_str = str(i.rendererV2().symbol().color().name())
+								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
 								if i.rendererV2().symbol().symbolLayer(0).borderStyle() > 1:
 									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 2:
 										borderStyle_str = "10,5"
@@ -922,65 +851,73 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 										borderStyle_str = "15,5,1,5,1,5"
 								else:
 									borderStyle_str = ""
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
-								if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
-									transp_str2 = "0"
+								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
+							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
+								borderStyle_str = "0"
+							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
-							style: function (feature) {
-								return {color: '"""+borderColor_str+"""',
-										fillColor: '"""+color_str+"""',
-										weight: """+radius_str+""",
-										dashArray: '"""+borderStyle_str+"""',
-										opacity: """+transp_str+""",
-										fillOpacity: """+transp_str2+"""};
-								},
-                                onEachFeature : function (feature, layer){
-                                """+popFuncs+"""
-                                }
-                                """
+			style: function (feature) {
+				return {
+					color: '"""+borderColor_str+"""',
+					fillColor: '"""+color_str+"""',
+					weight: """+radius_str+""",
+					dashArray: '"""+borderStyle_str+"""',
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+
+				};
+			},
+			onEachFeature : function (feature, layer){
+
+
+
+				"""+popFuncs+"""
+			}"""
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
-							else:
-								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					style: function (feature) {
-						return {color: feature.properties.border_color_qgis2leaf,
-								fillColor: feature.properties.color_qgis2leaf,
-								weight: feature.properties.radius_qgis2leaf,
-								dashArray: feature.properties.border_style_qgis2leaf,
-								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_fill_qgis2leaf};
-						}
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}
-				"""	
+			}
+		});"""
+							else:
+								new_obj = """
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: function (feature) {
+				return {
+					color: '""" + borderColor_str + """',
+					fillColor: '""" + color_str + """',
+					weight: """ + radius_str + """,
+					dashArray: '""" + borderStyle_str + """',
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
+				};
+			}
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		for (index = 0; index < layerOrder.length; index++) {
+			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+		}"""	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1011,65 +948,60 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
 								if cluster_set == True:
 									new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
-								new_obj+="""var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}"""
-								if cluster_set == True:
-									new_obj += """
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
-									cluster_num += 1	
-								new_obj+="""}
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						exp_"""+layerName+"""JSON.addData(feature)
+					}
 				});
-			
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}"""
+								if cluster_set == True:
+									new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
+									cluster_num += 1	
+								new_obj+="""
+			}
+		});"""
 							else:
 								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					pointToLayer: function (feature, latlng) {  
-						return L.circleMarker(latlng, {
-							radius: feature.properties.radius_qgis2leaf,
-							fillColor: feature.properties.color_qgis2leaf,
-
-							color: feature.properties.borderColor_qgis2leaf,
-							weight: 1,
-							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_qgis2leaf
-							})"""+labeltext+"""
-						}
-					});
-				"""
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: feature.properties.radius_qgis2leaf,
+					fillColor: feature.properties.color_qgis2leaf,
+					color: feature.properties.borderColor_qgis2leaf,
+					weight: 1,
+					opacity: feature.properties.transp_qgis2leaf,
+					fillOpacity: feature.properties.transp_qgis2leaf
+				})"""+labeltext+"""
+			}
+		});"""
 				#add points to the cluster group
 							if cluster_set == True:
 								
 								new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""		
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1105,42 +1037,42 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						"""+popFuncs+"""
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}
+			}
+		});"""
 							else:
 								new_obj = """
-					var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-						onEachFeature: pop_""" + safeLayerName + """,
-						style: function (feature) {
-							return {weight: feature.properties.radius_qgis2leaf,
-									color: feature.properties.color_qgis2leaf,
-									dashArray: feature.properties.pen_style_qgis2leaf,
-									opacity: feature.properties.transp_qgis2leaf,
-									fillOpacity: feature.properties.transp_qgis2leaf};
-							}
-						});
-					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-					"""		
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: function (feature) {
+				return {
+					weight: feature.properties.radius_qgis2leaf,
+					color: feature.properties.color_qgis2leaf,
+					dashArray: feature.properties.pen_style_qgis2leaf,
+					opacity: feature.properties.transp_qgis2leaf,
+					fillOpacity: feature.properties.transp_qgis2leaf
+				};
+			}
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1177,43 +1109,43 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						"""+popFuncs+"""
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}
+			}
+		});"""
 							else:
 								new_obj = """
-					var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-						onEachFeature: pop_""" + safeLayerName + """,
-						style: function (feature) {
-							return {fillColor: feature.properties.color_qgis2leaf,
-									color: '#000',
-									weight: 1,
-									dashArray: feature.properties.border_style_qgis2leaf,
-									opacity: feature.properties.transp_qgis2leaf,
-									fillOpacity: feature.properties.transp_qgis2leaf};
-							}
-						});
-					feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-					"""				
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: function (feature) {
+				return {
+					fillColor: feature.properties.color_qgis2leaf,
+					color: '#000',
+					weight: 1,
+					dashArray: feature.properties.border_style_qgis2leaf,
+					opacity: feature.properties.transp_qgis2leaf,
+					fillOpacity: feature.properties.transp_qgis2leaf
+				};
+			}
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1239,64 +1171,59 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;"""
 								if cluster_set == True:
 									new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
-								new_obj+="""var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}"""
-								if cluster_set == True:
-									new_obj += """
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
-									cluster_num += 1	
-								new_obj+="""}
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+								new_obj+="""
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						exp_"""+layerName+"""JSON.addData(feature)
+					}
 				});
-			
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}"""
+								if cluster_set == True:
+									new_obj += """
+				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
+									cluster_num += 1	
+								new_obj+="""
+			}
+		});"""
 							else:
 								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					pointToLayer: function (feature, latlng) {  
-						return L.circleMarker(latlng, {
-							radius: feature.properties.radius_qgis2leaf,
-							fillColor: feature.properties.color_qgis2leaf,
-
-							color: feature.properties.borderColor_qgis2leaf,
-							weight: 1,
-							opacity: feature.properties.transp_qgis2leaf,
-							fillOpacity: feature.properties.transp_qgis2leaf
-							})"""+labeltext+"""
-						}
-					});
-				"""
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: feature.properties.radius_qgis2leaf,
+					fillColor: feature.properties.color_qgis2leaf,
+					color: feature.properties.borderColor_qgis2leaf,
+					weight: 1,
+					opacity: feature.properties.transp_qgis2leaf,
+					fillOpacity: feature.properties.transp_qgis2leaf
+				})"""+labeltext+"""
+			}
+		});"""
 								#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""	
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1317,43 +1244,42 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						"""+popFuncs+"""
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}
+			}
+		});"""
 							else:
 								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					style: function (feature) {
-						return {weight: feature.properties.radius_qgis2leaf,
-								color: feature.properties.color_qgis2leaf,
-								//color: '#000',
-								dashArray: feature.properties.pen_style_qgis2leaf,
-								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_qgis2leaf};
-						}
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""	
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: function (feature) {
+				return {
+					weight: feature.properties.radius_qgis2leaf,
+					color: feature.properties.color_qgis2leaf,
+					dashArray: feature.properties.pen_style_qgis2leaf,
+					opacity: feature.properties.transp_qgis2leaf,
+					fillOpacity: feature.properties.transp_qgis2leaf
+				};
+			}
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							if i.providerType() == 'WFS' and encode2JSON == False:
@@ -1374,76 +1300,72 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
                                 }
                                 """
 								new_obj="""
-			var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-			"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-			var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
-			layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-			var """+layerName+"""ajax = $.ajax({
-					url : """+layerName+"""URL,
-					dataType : 'jsonp',
-					jsonpCallback : 'get"""+layerName+"""Json',
-					contentType : 'application/json',
-					success : function (response) {
-						L.geoJson(response, {
-								onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-									exp_"""+layerName+"""JSON.addData(feature)
-								}
-							});
-						for (index = 0; index < layerOrder.length; index++) {
-							feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-						}
+		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature : function (feature, layer) {
+						"""+popFuncs+"""
+						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
-								"""
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}
+			}
+		});"""
 							else:
 								new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					style: function (feature) {
-						return {fillColor: feature.properties.color_qgis2leaf,
-								color: '#000',
-								dashArray: feature.properties.border_style_qgis2leaf,
-								weight: 1,
-								opacity: feature.properties.transp_qgis2leaf,
-								fillOpacity: feature.properties.transp_qgis2leaf};
-						}
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""		
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+				style: function (feature) {
+					return {
+						fillColor: feature.properties.color_qgis2leaf,
+						color: '#000',
+						dashArray: feature.properties.border_style_qgis2leaf,
+						weight: 1,
+						opacity: feature.properties.transp_qgis2leaf,
+						fillOpacity: feature.properties.transp_qgis2leaf};
+					}
+				});
+				feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif icon_prov == True and i.geometryType() == 0:
 							new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					pointToLayer: function (feature, latlng) {
-						return L.marker(latlng, {icon: L.icon({
-							iconUrl: feature.properties.icon_exp,
-							iconSize:     [24, 24], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
-							iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
-							popupAnchor:  [0, -14] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
-			 				})
-			 			})"""+labeltext+"""
-					}}
-				);
-				"""
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			pointToLayer: function (feature, latlng) {
+				return L.marker(latlng, {
+					icon: L.icon({
+						iconUrl: feature.properties.icon_exp,
+						iconSize:     [24, 24], // size of the icon change this to scale your icon (first coordinate is x, second y from the upper left corner of the icon)
+						iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location (first coordinate is x, second y from the upper left corner of the icon)
+						popupAnchor:  [0, -14] // point from which the popup should open relative to the iconAnchor (first coordinate is x, second y from the upper left corner of the icon)
+					})
+				})"""+labeltext+"""
+			}}
+		);"""
 				#add points to the cluster group
 							if cluster_set == True:
 								new_obj += """
-				var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
-				cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);
-				"""			
+		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1
 							elif cluster_set == False:
 								new_obj += """
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""		
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						else:
 							new_obj = """
-				var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-					onEachFeature: pop_""" + safeLayerName + """,
-					});
-				feature_group.addLayer(exp_""" + safeLayerName + """JSON);
-				"""		
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 				
 						# store everything in the file
 						if i.providerType() != 'WFS' or encode2JSON == True:
@@ -1451,30 +1373,30 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 						f5.write(new_obj)
 						if visible == 'show all' and cluster_set == False:
 							f5.write("""
-						//add comment sign to hide this layer on the map in the initial view.
-						exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//add comment sign to hide this layer on the map in the initial view.
+		exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show all' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
-						//add comment sign to hide this layer on the map in the initial view.
-						cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
+		//add comment sign to hide this layer on the map in the initial view.
+		cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
 							if i.geometryType() != 0:
 								f5.write("""
-						//add comment sign to hide this layer on the map in the initial view.
-						exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//add comment sign to hide this layer on the map in the initial view.
+		exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == False:
 							f5.write("""
-						//delete comment sign to show this layer on the map in the initial view.
-						//exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//delete comment sign to show this layer on the map in the initial view.
+		//exp_""" + safeLayerName + """JSON.addTo(map);""")
 						if visible == 'show none' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
-						//delete comment sign to show this layer on the map in the initial view.
-						//cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
+		//delete comment sign to show this layer on the map in the initial view.
+		//cluster_group"""+ safeLayerName + """JSON.addTo(map);""")
 							if i.geometryType() != 0:
 								f5.write("""
-						//delete comment sign to show this layer on the map in the initial view.
-						//exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//delete comment sign to show this layer on the map in the initial view.
+		//exp_""" + safeLayerName + """JSON.addTo(map);""")
 						f5.close()
 				elif i.type() == 1:
 					if i.dataProvider().name() == "wms":
@@ -1484,13 +1406,13 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 						wms_format = d['format'][0]
 						wms_crs = d['crs'][0]
 						
-						new_obj = """var overlay_""" + safeLayerName + """ = L.tileLayer.wms('""" + wms_url + """', {
-    layers: '""" + wms_layer + """',
-    format: '""" + wms_format + """',
-	transparent: true,
-
-	continuousWorld : true,
-}).addTo(map);"""
+						new_obj = """
+		var overlay_""" + safeLayerName + """ = L.tileLayer.wms('""" + wms_url + """', {
+			layers: '""" + wms_layer + """',
+			format: '""" + wms_format + """',
+			transparent: true,
+			continuousWorld : true,
+		}).addTo(map);"""
 						
 						print d
 						#print i.source()
@@ -1504,10 +1426,10 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 						bbox_canvas2 = [pt3.yMinimum(), pt3.yMaximum(),pt3.xMinimum(), pt3.xMaximum()]
 						bounds2 = '[[' + str(pt3.yMinimum()) + ',' + str(pt3.xMinimum()) + '],[' + str(pt3.yMaximum()) + ',' + str(pt3.xMaximum()) +']]'
 						new_obj = """
-					var img_""" + safeLayerName + """= '""" + out_raster_name + """';
-					var img_bounds_""" + safeLayerName + """ = """+ bounds2 + """;
-					var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
-					raster_group.addLayer(overlay_""" + safeLayerName + """);"""
+		var img_""" + safeLayerName + """= '""" + out_raster_name + """';
+		var img_bounds_""" + safeLayerName + """ = """+ bounds2 + """;
+		var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
+		raster_group.addLayer(overlay_""" + safeLayerName + """);"""
 						
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
 							
@@ -1525,8 +1447,8 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
 			this.update();
 			return this._div;
-	    };
-	    title.update = function () {
+		};
+		title.update = function () {
 			this._div.innerHTML = '<h2>""" + webmap_head.encode('utf-8') + """</h2>""" + webmap_subhead.encode('utf-8') + """'
 		};
 		title.addTo(map);"""
@@ -1540,9 +1462,8 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
             collapsed: false,
             position: 'topright',
             text: 'Find!',
-			});
-		osmGeocoder.addTo(map);
-		"""
+		});
+		osmGeocoder.addTo(map);"""
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5addr:
 			f5addr.write(address_text)
 			f5addr.close()
@@ -1552,10 +1473,9 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 	if legend == True:
 		legendStart = """
 		var legend = L.control({position: 'bottomright'});
-		
 		legend.onAdd = function (map) {
-		var div = L.DomUtil.create('div', 'info legend');
-		div.innerHTML = "<h3>Legend</h3><table>"""
+			var div = L.DomUtil.create('div', 'info legend');
+			div.innerHTML = "<h3>Legend</h3><table>"""
 		for i in reversed(allLayers):
 			safeLayerName = re.sub('[\W_]+', '', i.name())
 			for j in layer_list:
@@ -1588,8 +1508,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 		legendStart += """</table>";
     		return div;
 		};
-		legend.addTo(map);
-"""
+		legend.addTo(map);"""
 		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5leg:
 			f5leg.write(legendStart)
 			f5leg.close()
@@ -1708,7 +1627,7 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 	"""
 	if extent == 'canvas extent':
 		end += """
-	L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
+		L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
 	</script>
 </body>
 </html>
@@ -1717,4 +1636,3 @@ var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() +
 		f12.write(end)
 		f12.close()
 	webbrowser.open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html')
-
