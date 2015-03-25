@@ -225,70 +225,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							f2.seek(0) # rewind
 							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
-						#let's define style for the single marker points
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0:
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().size() * 2)
-							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "borderColor_qgis2leaf": '""" + borderColor_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
-								line = line.replace("""] ] } }""", """] } }""")
-								sys.stdout.write(line)
-						#let's define style for the single marker lines
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().width() * 5)
-
-							if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
-									penStyle_str = "10,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
-									penStyle_str = "1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
-									penStyle_str = "15,5,1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
-									penStyle_str = "15,5,1,5,1,5"
-							else:
-								penStyle_str = ""
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "radius_qgis2leaf": """ + radius_str + """, "pen_style_qgis2leaf": '""" + penStyle_str + """', "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								sys.stdout.write(line)
-						#let's define style for the single marker polygons
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
-								color_str = 'none'
-								borderColor_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
-							else:
-
-
-								color_str = str(i.rendererV2().symbol().color().name())
-								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								if i.rendererV2().symbol().symbolLayer(0).borderStyle() > 1:
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 2:
-										borderStyle_str = "10,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 3:
-										borderStyle_str = "1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 4:
-										borderStyle_str = "15,5,1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 5:
-										borderStyle_str = "15,5,1,5,1,5"
-								else:
-									borderStyle_str = ""
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							transp_str2 = str(i.rendererV2().symbol().alpha())
-							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
-
-								transp_str2 = "0"
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "color_qgis2leaf": '""" + color_str + """', "border_color_qgis2leaf": '""" + borderColor_str + """', "border_style_qgis2leaf": '""" + borderStyle_str + """', "radius_qgis2leaf": """ + radius_str + """, "transp_qgis2leaf": """ + transp_str + """, "transp_fill_qgis2leaf": """ + transp_str2 + """, """ )
-								sys.stdout.write(line)		
 						#let's define style for categorized points
 						if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
 							iter = i.getFeatures()
@@ -729,22 +665,22 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						 
 						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
+							color_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().size() * 2)
+							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								color_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().size() * 2)
-								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
 								stylestr="""
 								pointToLayer: function (feature, latlng) {  
 								return L.circleMarker(latlng, {
 									radius: """+radius_str+""",
 									fillColor: '"""+color_str+"""',
-
 									color: '"""+borderColor_str+"""',
 									weight: 1,
-									opacity: """+transp_str+""",
-									fillOpacity: """+transp_str2+"""
+									opacity: """+opacity_str+""",
+									fillOpacity: """+opacity_str+"""
 									})"""+labeltext+"""
 								},
                                 onEachFeature : function (feature, layer) {
@@ -791,12 +727,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			onEachFeature: pop_""" + safeLayerName + """,
 			pointToLayer: function (feature, latlng) {  
 				return L.circleMarker(latlng, {
-					radius: feature.properties.radius_qgis2leaf,
-					fillColor: feature.properties.color_qgis2leaf,
-					color: feature.properties.borderColor_qgis2leaf,
+					radius: """ + radius_str + """,
+					fillColor: '""" + color_str + """',
+					color: '""" + borderColor_str + """',
 					weight: 1,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
 				})"""+labeltext+"""
 			}
 		});"""
@@ -818,29 +754,30 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
 							layerName=safeLayerName
+							color_str = str(i.rendererV2().symbol().color().name())
+							radius_str = str(i.rendererV2().symbol().width() * 5)
+							if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
+									penStyle_str = "10,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
+									penStyle_str = "1,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
+									penStyle_str = "15,5,1,5"
+								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
+									penStyle_str = "15,5,1,5,1,5"
+							else:
+								penStyle_str = ""
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								color_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().width() * 5)
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
-										penStyle_str = "10,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
-										penStyle_str = "1,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
-										penStyle_str = "15,5,1,5"
-									if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
-										penStyle_str = "15,5,1,5,1,5"
-								else:
-									penStyle_str = ""
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
 								stylestr="""
 							style: function (feature) {
 								return {weight: """+radius_str+""",
 										color: '"""+color_str+"""',
 										dashArray: '"""+penStyle_str+"""',
-										opacity: """+transp_str+""",
-										fillOpacity: """+transp_str2+"""};
+										opacity: """+opacity_str+""",
+										fillOpacity: """+opacity_str+"""};
 								},
                                 onEachFeature : function (feature, layer) {
 									"""+popFuncs+"""
@@ -874,11 +811,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			onEachFeature: pop_""" + safeLayerName + """,
 			style: function (feature) {
 				return {
-					weight: feature.properties.radius_qgis2leaf,
-					color: feature.properties.color_qgis2leaf,
-					dashArray: feature.properties.pen_style_qgis2leaf,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf
+					weight: """ + radius_str + """,
+					color: '""" + color_str + """',
+					dashArray: '""" + penStyle_str + """',
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
 				};
 			}
 		});
@@ -889,15 +826,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		}"""		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
 							layerName=safeLayerName
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
-									color_str = 'none'
-									borderColor_str = str(i.rendererV2().symbol().color().name())
-									radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
-								else:
-									color_str = str(i.rendererV2().symbol().color().name())
-									borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-									radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
+								color_str = 'none'
+								borderColor_str = str(i.rendererV2().symbol().color().name())
+								radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
+							else:
+								color_str = str(i.rendererV2().symbol().color().name())
+								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
 								if i.rendererV2().symbol().symbolLayer(0).borderStyle() > 1:
 									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 2:
 										borderStyle_str = "10,5"
@@ -909,18 +844,21 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 										borderStyle_str = "15,5,1,5,1,5"
 								else:
 									borderStyle_str = ""
-								transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-								transp_str2 = str(i.rendererV2().symbol().alpha())
-								if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
-									transp_str2 = "0"
+								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
+							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							symbol_transp_float = i.rendererV2().symbol().alpha()
+							opacity_str = str(layer_transp_float*symbol_transp_float)
+							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
+								borderStyle_str = "0"
+							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
 							style: function (feature) {
 								return {color: '"""+borderColor_str+"""',
 										fillColor: '"""+color_str+"""',
 										weight: """+radius_str+""",
 										dashArray: '"""+borderStyle_str+"""',
-										opacity: """+transp_str+""",
-										fillOpacity: """+transp_str2+"""};
+										opacity: """+opacity_str+""",
+										fillOpacity: """+opacity_str+"""};
 								},
                                 onEachFeature : function (feature, layer){
                                 """+popFuncs+"""
@@ -954,12 +892,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			onEachFeature: pop_""" + safeLayerName + """,
 			style: function (feature) {
 				return {
-					color: feature.properties.border_color_qgis2leaf,
-					fillColor: feature.properties.color_qgis2leaf,
-					weight: feature.properties.radius_qgis2leaf,
-					dashArray: feature.properties.border_style_qgis2leaf,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_fill_qgis2leaf
+					color: '""" + borderColor_str + """',
+					fillColor: '""" + color_str + """',
+					weight: """ + radius_str + """,
+					dashArray: '""" + borderStyle_str + """',
+					opacity: """ + opacity_str + """,
+					fillOpacity: """ + opacity_str + """
 				};
 			}
 		});
