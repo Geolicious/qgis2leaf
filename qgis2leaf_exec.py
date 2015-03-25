@@ -673,20 +673,23 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
-								pointToLayer: function (feature, latlng) {  
-								return L.circleMarker(latlng, {
-									radius: """+radius_str+""",
-									fillColor: '"""+color_str+"""',
-									color: '"""+borderColor_str+"""',
-									weight: 1,
-									opacity: """+opacity_str+""",
-									fillOpacity: """+opacity_str+"""
-									})"""+labeltext+"""
-								},
-                                onEachFeature : function (feature, layer) {
-                                """+popFuncs+"""
-                                }
-                                """
+				pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: """+radius_str+""",
+					fillColor: '"""+color_str+"""',
+					color: '"""+borderColor_str+"""',
+					weight: 1,
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+					})"""+labeltext+"""
+
+				},
+				onEachFeature : function (feature, layer) {
+
+
+
+				"""+popFuncs+"""
+				}"""
 								new_obj="""
 		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
@@ -704,7 +707,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-						"""+popFuncs+"""
+
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
@@ -772,17 +775,21 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
-							style: function (feature) {
-								return {weight: """+radius_str+""",
-										color: '"""+color_str+"""',
-										dashArray: '"""+penStyle_str+"""',
-										opacity: """+opacity_str+""",
-										fillOpacity: """+opacity_str+"""};
-								},
-                                onEachFeature : function (feature, layer) {
-									"""+popFuncs+"""
-                                    }
-                                    """
+			style: function (feature) {
+				return {
+					weight: """+radius_str+""",
+					color: '"""+color_str+"""',
+					dashArray: '"""+penStyle_str+"""',
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+
+				};
+			},
+			onEachFeature : function (feature, layer) {
+				"""+popFuncs+"""
+
+
+			}"""
 								new_obj="""
 		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
@@ -796,7 +803,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-						"""+popFuncs+"""
+
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
@@ -852,18 +859,23 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								borderStyle_str = "0"
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
-							style: function (feature) {
-								return {color: '"""+borderColor_str+"""',
-										fillColor: '"""+color_str+"""',
-										weight: """+radius_str+""",
-										dashArray: '"""+borderStyle_str+"""',
-										opacity: """+opacity_str+""",
-										fillOpacity: """+opacity_str+"""};
-								},
-                                onEachFeature : function (feature, layer){
-                                """+popFuncs+"""
-                                }
-                                """
+			style: function (feature) {
+				return {
+					color: '"""+borderColor_str+"""',
+					fillColor: '"""+color_str+"""',
+					weight: """+radius_str+""",
+					dashArray: '"""+borderStyle_str+"""',
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+
+				};
+			},
+			onEachFeature : function (feature, layer){
+
+
+
+				"""+popFuncs+"""
+			}"""
 								new_obj="""
 		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');
@@ -877,7 +889,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-						"""+popFuncs+"""
+
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
