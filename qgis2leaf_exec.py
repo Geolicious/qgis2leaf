@@ -225,131 +225,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							f2.seek(0) # rewind
 							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
-						#let's define style for categorized points
-						if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0:
-							iter = i.getFeatures()
-							provider = i.dataProvider()
-							attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
-							categories = i.rendererV2().categories()
-							color_str = []
-							radius_str = []
-							borderColor_str = []
-							transp_str2 = []
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							for feat in iter:
-								fid = feat.id()
-								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
-								if catindex != -1: 
-									color_str.append(str(categories[catindex].symbol().color().name()))
-									radius_str.append(str(categories[catindex].symbol().size() * 2))
-									borderColor_str.append(str(categories[catindex].symbol().symbolLayer(0).borderColor().name()))
-									transp_str2.append(str(categories[catindex].symbol().alpha()))
-								else: 
-									color_str.append('#FF00FF')
-									radius_str.append('4')
-									borderColor_str.append('#000')
-									transp_str2.append('1')
-							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								addOne = str(line).count(""""type": "Feature", "properties": { """)
-								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "borderColor_qgis2leaf": '""" + str(borderColor_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
-									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
-									line = line.replace("""] ] } }""", """] } }""")
-								else:
-									line = line.replace(" "," ")
-									line = line.replace(""""type": "MultiPoint", "coordinates": [ [ """, """"type": "Point", "coordinates": [ """)
-									line = line.replace("""] ] } }""", """] } }""")
-								sys.stdout.write(line)
-								qgisLeafId = qgisLeafId+addOne
-							
-						#let's define style for categorized lines
-						if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
-							iter = i.getFeatures()
-							provider = i.dataProvider()
-							attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
-							categories = i.rendererV2().categories()
-							color_str = []
-							radius_str = []
-							penStyle_str = []
-							transp_str2 = []
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							for feat in iter:
-								fid = feat.id()
-								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
-								if catindex != -1: 
-									color_str.append(str(categories[catindex].symbol().color().name()))
-									radius_str.append(str(categories[catindex].symbol().width() * 5))
-									if categories[catindex].symbol().symbolLayer(0).penStyle() > 1:
-										if categories[catindex].symbol().symbolLayer(0).penStyle() == 2:
-											penStyle_str.append("10,5")
-										if categories[catindex].symbol().symbolLayer(0).penStyle() == 3:
-											penStyle_str.append("1,5")
-										if categories[catindex].symbol().symbolLayer(0).penStyle() == 4:
-											penStyle_str.append("15,5,1,5")
-										if categories[catindex].symbol().symbolLayer(0).penStyle() == 5:
-											penStyle_str.append("15,5,1,5,1,5")
-									else:
-										penStyle_str.append("")
-									transp_str2.append(str(categories[catindex].symbol().alpha()))
-								else: 
-									color_str.append('#FF00FF')
-									radius_str.append('4')
-									penStyle_str.append("")
-									transp_str2.append('1')
-							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								addOne = str(line).count(""""type": "Feature", "properties": { """)
-								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "radius_qgis2leaf": """ + str(radius_str[qgisLeafId]) + """, "pen_style_qgis2leaf": '""" + str(penStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
-								else:
-									line = line.replace(" "," ")
-								sys.stdout.write(line)
-								qgisLeafId = qgisLeafId+addOne
-						#let's define style for categorized polygons
-						if i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
-							iter = i.getFeatures()
-							provider = i.dataProvider()
-							attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())
-							categories = i.rendererV2().categories()
-							color_str = []
-							radius_str = []
-							borderStyle_str = []
-							transp_str2 = []
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							for feat in iter:
-								fid = feat.id()
-								attribute_map = feat.attributes()
-								catindex = i.rendererV2().categoryIndexForValue(unicode(attribute_map[attrvalindex]))
-								if catindex != -1: 
-									color_str.append(str(categories[catindex].symbol().color().name()))
-									transp_str2.append(str(categories[catindex].symbol().alpha()))
-									if categories[catindex].symbol().symbolLayer(0).borderStyle() > 1:
-										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 2:
-											borderStyle_str.append("10,5")
-										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 3:
-											borderStyle_str.append("1,5")
-										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 4:
-											borderStyle_str.append("15,5,1,5")
-										if categories[catindex].symbol().symbolLayer(0).borderStyle() == 5:
-											borderStyle_str.append("15,5,1,5,1,5")
-									else:
-										borderStyle_str.append("")
-								else: 
-									color_str.append('#FF00FF')
-									transp_str2.append('1')
-									borderStyle_str.append("")
-							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								addOne = str(line).count(""""type": "Feature", "properties": { """)
-								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "border_style_qgis2leaf": '""" + str(borderStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
-								else:
-									line = line.replace(" "," ")
-								sys.stdout.write(line)
-								qgisLeafId = qgisLeafId+addOne	
 						#let's define style for the graduaded marker points
 						if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0:
 							# every json entry needs a unique id:
@@ -682,12 +557,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
 					})"""+labeltext+"""
-
 				},
 				onEachFeature : function (feature, layer) {
-
-
-
 				"""+popFuncs+"""
 				}"""
 								new_obj="""
@@ -707,7 +578,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
@@ -782,13 +652,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					dashArray: '"""+penStyle_str+"""',
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
-
 				};
 			},
 			onEachFeature : function (feature, layer) {
 				"""+popFuncs+"""
-
-
 			}"""
 								new_obj="""
 		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
@@ -803,7 +670,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
@@ -867,13 +733,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					dashArray: '"""+borderStyle_str+"""',
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
-
 				};
 			},
 			onEachFeature : function (feature, layer){
-
-
-
 				"""+popFuncs+"""
 			}"""
 								new_obj="""
@@ -889,7 +751,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			success : function (response) {
 				L.geoJson(response, {
 					onEachFeature : function (feature, layer) {
-
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
@@ -920,25 +781,28 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		}"""	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								categories = i.rendererV2().categories()
-								valueAttr = i.rendererV2().classAttribute()
-								categoryStr = "			function doStyle" + layerName + "(feature) {"
-								categoryStr += "			switch (feature.properties." + valueAttr + ") {"
-								for cat in categories:
-									if not cat.value():
-										categoryStr += "default: return {"
-									else:
+							categories = i.rendererV2().categories()
+							valueAttr = i.rendererV2().classAttribute()
+							categoryStr = "			function doStyle" + layerName + "(feature) {"
+							categoryStr += "			switch (feature.properties." + valueAttr + ") {"
+							for cat in categories:
+								if not cat.value():
+									categoryStr += "default: return {"
+								else:
+									if isinstance(cat.value(), basestring):
 										categoryStr += "case '" + unicode(cat.value()) + "': return {"
-									categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
-									categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
-									categoryStr += "color: '" + unicode(cat.symbol().symbolLayer(0).borderColor().name())+ "',"
-									categoryStr += "weight: 1,"
-									#categoryStr += "opacity: '" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + "',"
-									categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
-									categoryStr +="};"
-									categoryStr += "break;"
-								categoryStr += "}}"
+									else:
+										categoryStr += "case " + unicode(cat.value()) + ": return {"
+								categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
+								categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
+								categoryStr += "color: '" + unicode(cat.symbol().symbolLayer(0).borderColor().name())+ "',"
+								categoryStr += "weight: 1,"
+								#categoryStr += "opacity: '" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + "',"
+								categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
+								categoryStr +="};"
+								categoryStr += "break;"
+							categoryStr += "}}"
+							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""
 								pointToLayer: function (feature, latlng) {  
 								return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
@@ -978,18 +842,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}
 		});"""
 							else:
-								new_obj = """
+								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
 			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, {
-					radius: feature.properties.radius_qgis2leaf,
-					fillColor: feature.properties.color_qgis2leaf,
-					color: feature.properties.borderColor_qgis2leaf,
-					weight: 1,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf
-				})"""+labeltext+"""
+				return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
 			}
 		});"""
 				#add points to the cluster group
@@ -1004,38 +861,41 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
 							layerName=safeLayerName
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								categories = i.rendererV2().categories()
-								valueAttr = i.rendererV2().classAttribute()
-								categoryStr = "			function doStyle" + layerName + "(feature) {"
-								categoryStr += "			switch (feature.properties." + valueAttr + ") {"
-								for cat in categories:
-									if not cat.value():
-										categoryStr += "default: return {"
-									else:
+							categories = i.rendererV2().categories()
+							valueAttr = i.rendererV2().classAttribute()
+							categoryStr = "			function doStyle" + layerName + "(feature) {"
+							categoryStr += "			switch (feature.properties." + valueAttr + ") {"
+							for cat in categories:
+								if not cat.value():
+									categoryStr += "default: return {"
+								else:
+									if isinstance(cat.value(), basestring):
 										categoryStr += "case '" + unicode(cat.value()) + "': return {"
-									#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
-									categoryStr += "color: '" + unicode(cat.symbol().color().name()) + "',"
-									categoryStr += "weight: '" + unicode(cat.symbol().width() * 5) + "',"
-									if cat.symbol().symbolLayer(0).penStyle() > 1:
-										if cat.symbol().symbolLayer(0).penStyle() == 2:
-											categoryStr += "dashArray: '10,5',"
-										if cat.symbol().symbolLayer(0).penStyle() == 3:
-											categoryStr += "dashArray: '1,5',"
-										if cat.symbol().symbolLayer(0).penStyle() == 4:
-											categoryStr += "dashArray: '15,5,1,5',"
-										if cat.symbol().symbolLayer(0).penStyle() == 5:
-											categoryStr += "dashArray: '15,5,1,5,1,5',"
-									categoryStr += "opacity: '" + str(cat.symbol().alpha()) + "',"
-									#categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
-									categoryStr +="};"
-									categoryStr += "break;"
-								categoryStr += "}}"
-								stylestr="""style:doStyle""" + layerName + """,
-                                onEachFeature : function (feature, layer) {
-                                """+popFuncs+"""
-                                }
-                                """
+									else:
+										categoryStr += "case " + unicode(cat.value()) + ": return {"
+								#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
+								categoryStr += "color: '" + unicode(cat.symbol().color().name()) + "',"
+								categoryStr += "weight: '" + unicode(cat.symbol().width() * 5) + "',"
+								if cat.symbol().symbolLayer(0).penStyle() > 1:
+									if cat.symbol().symbolLayer(0).penStyle() == 2:
+										categoryStr += "dashArray: '10,5',"
+									if cat.symbol().symbolLayer(0).penStyle() == 3:
+										categoryStr += "dashArray: '1,5',"
+									if cat.symbol().symbolLayer(0).penStyle() == 4:
+										categoryStr += "dashArray: '15,5,1,5',"
+									if cat.symbol().symbolLayer(0).penStyle() == 5:
+										categoryStr += "dashArray: '15,5,1,5,1,5',"
+								categoryStr += "opacity: '" + str(cat.symbol().alpha()) + "',"
+								#categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
+								categoryStr +="};"
+								categoryStr += "break;"
+							categoryStr += "}}"
+							stylestr="""style:doStyle""" + layerName + """,
+							onEachFeature : function (feature, layer) {
+							"""+popFuncs+"""
+							}
+							"""
+							if i.providerType() == 'WFS' and encode2JSON == False:
 								new_obj="""
 		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
@@ -1059,50 +919,45 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}
 		});"""
 							else:
-								new_obj = """
+								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
-			style: function (feature) {
-				return {
-					weight: feature.properties.radius_qgis2leaf,
-					color: feature.properties.color_qgis2leaf,
-					dashArray: feature.properties.pen_style_qgis2leaf,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf
-				};
-			}
+			style: doStyle""" + safeLayerName + """
 		});
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							layerName=safeLayerName
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								categories = i.rendererV2().categories()
-								valueAttr = i.rendererV2().classAttribute()
-								categoryStr = "			function doStyle" + layerName + "(feature) {"
-								categoryStr += "			switch (feature.properties." + valueAttr + ") {"
-								for cat in categories:
-									if not cat.value():
-										categoryStr += "default: return {"
-									else:
+							categories = i.rendererV2().categories()
+							valueAttr = i.rendererV2().classAttribute()
+							categoryStr = "			function doStyle" + layerName + "(feature) {"
+							categoryStr += "			switch (feature.properties." + valueAttr + ") {"
+							for cat in categories:
+								if not cat.value():
+									categoryStr += "default: return {"
+								else:
+									if isinstance(cat.value(), basestring):
 										categoryStr += "case '" + unicode(cat.value()) + "': return {"
-									categoryStr += "weight: '" + unicode(cat.symbol().symbolLayer(0).borderWidth() * 5) + "',"
-									categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
-									categoryStr += "color: '" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + "',"
-									categoryStr += "weight: '1',"
-									if cat.symbol().symbolLayer(0).borderStyle() > 1:
-										if cat.symbol().symbolLayer(0).borderStyle() == 2:
-											categoryStr += "dashArray: '10,5',"
-										if cat.symbol().symbolLayer(0).borderStyle() == 3:
-											categoryStr += "dashArray: '1,5',"
-										if cat.symbol().symbolLayer(0).borderStyle() == 4:
-											categoryStr += "dashArray: '15,5,1,5',"
-										if cat.symbol().symbolLayer(0).borderStyle() == 5:
-											categoryStr += "dashArray: '15,5,1,5,1,5',"
-									categoryStr += "opacity: '" + str(cat.symbol().alpha()) + "',"
-									categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
-									categoryStr +="};"
-									categoryStr += "break;"
-								categoryStr += "}}"
+									else:
+										categoryStr += "case " + unicode(cat.value()) + ": return {"
+								categoryStr += "weight: '" + unicode(cat.symbol().symbolLayer(0).borderWidth() * 5) + "',"
+								categoryStr += "fillColor: '" + unicode(cat.symbol().color().name()) + "',"
+								categoryStr += "color: '" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + "',"
+								categoryStr += "weight: '1',"
+								if cat.symbol().symbolLayer(0).borderStyle() > 1:
+									if cat.symbol().symbolLayer(0).borderStyle() == 2:
+										categoryStr += "dashArray: '10,5',"
+									if cat.symbol().symbolLayer(0).borderStyle() == 3:
+										categoryStr += "dashArray: '1,5',"
+									if cat.symbol().symbolLayer(0).borderStyle() == 4:
+										categoryStr += "dashArray: '15,5,1,5',"
+									if cat.symbol().symbolLayer(0).borderStyle() == 5:
+										categoryStr += "dashArray: '15,5,1,5,1,5',"
+								categoryStr += "opacity: '" + str(cat.symbol().alpha()) + "',"
+								categoryStr += "fillOpacity: '" + str(cat.symbol().alpha()) + "',"
+								categoryStr +="};"
+								categoryStr += "break;"
+							categoryStr += "}}"
+							if i.providerType() == 'WFS' and encode2JSON == False:
 								stylestr="""style:doStyle""" + layerName + """,
                                 onEachFeature : function (feature, layer) {
                                 """+popFuncs+"""
@@ -1131,19 +986,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}
 		});"""
 							else:
-								new_obj = """
+								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
-			style: function (feature) {
-				return {
-					fillColor: feature.properties.color_qgis2leaf,
-					color: '#000',
-					weight: 1,
-					dashArray: feature.properties.border_style_qgis2leaf,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf
-				};
-			}
+			style: doStyle"""+ safeLayerName + """
 		});
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""				
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
