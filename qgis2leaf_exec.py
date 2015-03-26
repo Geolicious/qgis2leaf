@@ -225,53 +225,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							f2.seek(0) # rewind
 							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
-						#let's define style for the graduaded marker polygon
-						if i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
-							# every json entry needs a unique id:
-							iter = i.getFeatures()
-							#what is the value based on:
-							provider = i.dataProvider()
-							attrvalindex = provider.fieldNameIndex(i.rendererV2().classAttribute())	
-							transp_str = str(1 - ( float(i.layerTransparency()) / 100 ) )
-							color_str = []
-							radius_str = []
-							borderStyle_str = []
-							transp_str2 = []
-							for feat in iter:
-								if str(feat.attributes()[attrvalindex]) != 'NULL':
-									value = feat.attributes()[attrvalindex]
-								elif str(feat.attributes()[attrvalindex]) == 'NULL':
-									value = None
-								for r in i.rendererV2().ranges():
-									if value >= r.lowerValue() and value <= r.upperValue() and value != None:
-										color_str.append(str(r.symbol().color().name()))
-										if r.symbol().symbolLayer(0).borderStyle() > 1:
-											if r.symbol().symbolLayer(0).borderStyle() == 2:
-												borderStyle_str.append("10,5")
-											if r.symbol().symbolLayer(0).borderStyle() == 3:
-												borderStyle_str.append("1,5")
-											if r.symbol().symbolLayer(0).borderStyle() == 4:
-												borderStyle_str.append("15,5,1,5")
-											if r.symbol().symbolLayer(0).borderStyle() == 5:
-												borderStyle_str.append("15,5,1,5,1,5")
-										else:
-											borderStyle_str.append("")
-										transp_str2.append(str(r.symbol().alpha()))
-										break
-									elif value == None:
-										color_str.append('#FF00FF')
-										borderStyle_str.append("")
-										transp_str2.append('1')
-										break
-							qgisLeafId = 0
-							for line in fileinput.FileInput(dataStore + os.sep + 'exp_' + safeLayerName + '.js',inplace=1):
-								addOne = str(line).count(""""type": "Feature", "properties": { """)
-								if qgisLeafId < len(color_str):
-									line = line.replace(""""type": "Feature", "properties": { """,""""type": "Feature", "properties": { "id_qgis2leaf": """ + str(qgisLeafId) + """, "color_qgis2leaf": '""" + str(color_str[qgisLeafId]) + """', "border_style_qgis2leaf": '""" + str(borderStyle_str[qgisLeafId]) + """', "transp_qgis2leaf": """ + str(transp_str) + """, "transp_fill_qgis2leaf": """ + str(transp_str2[qgisLeafId]) + """, """ )
-								else:
-									line = line.replace(" "," ")
-								sys.stdout.write(line)
-								qgisLeafId = qgisLeafId+addOne						
 							
 						#now add the js files as data input for our map
 						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
@@ -1059,20 +1012,25 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 							layerName=safeLayerName
+							valueAttr = i.rendererV2().classAttribute()
+							categoryStr = """
+		function doStyle""" + layerName + "(feature) {"
+							for r in i.rendererV2().ranges():
+								categoryStr += """
+			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
+				return {
+					color: '""" + unicode(r.symbol().symbolLayer(0).borderColor().name())+ """',
+					weight: '""" + unicode(r.symbol().symbolLayer(0).borderWidth() * 5) + """',
+					fillColor: '""" + unicode(r.symbol().color().name())+ """',
+					opacity: '""" + str(r.symbol().alpha()) + """',
+					fillOpacity: '""" + str(r.symbol().alpha()) + """',
+				}
+			}"""
+							categoryStr += """
+		}"""
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								valueAttr = i.rendererV2().classAttribute()
-								categoryStr = "			function doStyle" + layerName + "(feature) {"
-								for r in i.rendererV2().ranges():
-									categoryStr += "if (feature.properties." + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + ") { return {"
-									categoryStr += "color: '" + unicode(r.symbol().symbolLayer(0).borderColor().name())+ "',"
-									categoryStr += "weight: '" + unicode(r.symbol().symbolLayer(0).borderWidth() * 5) + "',"
-									categoryStr += "fillColor: '" + unicode(r.symbol().color().name())+ "',"
-									categoryStr += "opacity: '" + str(r.symbol().alpha()) + "',"
-									categoryStr += "fillOpacity: '" + str(r.symbol().alpha()) + "',"
-									categoryStr +="}}"
-								categoryStr += "}"
 								stylestr="""
-			style:doStyle""" + layerName + """,
+			style: doStyle""" + layerName + """,
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
 								new_obj="""
@@ -1098,20 +1056,12 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}
 		});"""
 							else:
-								new_obj = """
+								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
-			style: function (feature) {
-				return {
-					fillColor: feature.properties.color_qgis2leaf,
-					color: '#000',
-					dashArray: feature.properties.border_style_qgis2leaf,
-					weight: 1,
-					opacity: feature.properties.transp_qgis2leaf,
-					fillOpacity: feature.properties.transp_qgis2leaf};
-				}
-			});
-			feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
+			style: doStyle""" + safeLayerName + """
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif icon_prov == True and i.geometryType() == 0:
 							new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -1314,10 +1264,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	#for l in range(0,len(basemapName)):
 	if len(basemapName) == 0:
 		controlStart += """
-	L.control.layers({},{"""
+		L.control.layers({},{"""
 	else:
 		controlStart += """
-	L.control.layers(baseMaps,{"""
+		L.control.layers(baseMaps,{"""
 	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
 		f6.write(controlStart)
 		f6.close()
