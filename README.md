@@ -29,6 +29,7 @@ To define your own basemaps, you need to alter the file qgis2leaf_layerlist and 
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2015/03/26 v.1.5.0: Major code refactor; tidy output
 * 2015/03/17 v.1.4.2: fixed hidden polygon layers; added pen styles
 * 2014/12/11 v.1.4.1: bugs for labels fixes. style issue for labels solved
 * 2014/12/05 v.1.4: support for label export, embedding of remote WMS servers thanks to [tomchadwin](https://github.com/tomchadwin) and [mtravis](https://github.com/mtravis) for testing
