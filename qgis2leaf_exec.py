@@ -775,28 +775,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								new_obj="""
-		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
-		});
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		var """+layerName+"""ajax = $.ajax({
-			url : """+layerName+"""URL,
-			dataType : 'jsonp',
-			jsonpCallback : 'get"""+layerName+"""Json',
-			contentType : 'application/json',
-			success : function (response) {
-				L.geoJson(response, {
-					onEachFeature: function (feature, layer) {"""+popFuncs+"""
-						exp_"""+layerName+"""JSON.addData(feature)
-					}
-				});
-				for (index = 0; index < layerOrder.length; index++) {
-					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
-			}
-		});"""
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -857,28 +836,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			style:doStyle""" + layerName + """,
 			onEachFeature : function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj="""
-		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
-		});
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		var """+layerName+"""ajax = $.ajax({
-			url : """+layerName+"""URL,
-			dataType : 'jsonp',
-			jsonpCallback : 'get"""+layerName+"""Json',
-			contentType : 'application/json',
-			success : function (response) {
-				L.geoJson(response, {
-					onEachFeature: function (feature, layer) {"""+popFuncs+"""
-						exp_"""+layerName+"""JSON.addData(feature)
-					}
-				});
-				for (index = 0; index < layerOrder.length; index++) {
-					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
-			}
-		});"""
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -981,28 +939,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			style:doStyle""" + layerName + """,
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj="""
-		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
-		});
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		var """+layerName+"""ajax = $.ajax({
-			url : """+layerName+"""URL,
-			dataType : 'jsonp',
-			jsonpCallback : 'get"""+layerName+"""Json',
-			contentType : 'application/json',
-			success : function (response) {
-				L.geoJson(response, {
-					onEachFeature: function (feature, layer) {"""+popFuncs+"""
-						exp_"""+layerName+"""JSON.addData(feature)
-					}
-				});
-				for (index = 0; index < layerOrder.length; index++) {
-					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
-			}
-		});"""
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -1033,28 +970,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			style: doStyle""" + layerName + """,
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj="""
-		var """+layerName+"""URL='"""+i.source()+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
-		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
-		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
-		});
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		var """+layerName+"""ajax = $.ajax({
-			url : """+layerName+"""URL,
-			dataType : 'jsonp',
-			jsonpCallback : 'get"""+layerName+"""Json',
-			contentType : 'application/json',
-			success : function (response) {
-				L.geoJson(response, {
-					onEachFeature: function (feature, layer) {"""+popFuncs+"""
-						exp_"""+layerName+"""JSON.addData(feature)
-					}
-				});
-				for (index = 0; index < layerOrder.length; index++) {
-					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
-			}
-		});"""
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -1362,3 +1278,28 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		f12.write(end)
 		f12.close()
 	webbrowser.open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html')
+
+def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
+	new_obj="""
+		var """+layerName+"""URL='"""+layerSource+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
+		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
+		var exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
+		});
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		var """+layerName+"""ajax = $.ajax({
+			url : """+layerName+"""URL,
+			dataType : 'jsonp',
+			jsonpCallback : 'get"""+layerName+"""Json',
+			contentType : 'application/json',
+			success : function (response) {
+				L.geoJson(response, {
+					onEachFeature: function (feature, layer) {"""+popFuncs+"""
+						exp_"""+layerName+"""JSON.addData(feature)
+					}
+				});
+				for (index = 0; index < layerOrder.length; index++) {
+					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+				}
+			}
+		});"""
+	return new_obj
