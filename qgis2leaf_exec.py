@@ -474,19 +474,17 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: function (feature) {
-				return {
-					weight: """ + radius_str + """,
-					color: '""" + color_str + """',
-					dashArray: '""" + penStyle_str + """',
-					opacity: """ + opacity_str + """,
-					fillOpacity: """ + opacity_str + """
-				};
-			}
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+		function doStyle""" + safeLayerName + """(feature) {
+			return {
+					weight: """+radius_str+""",
+					color: '"""+color_str+"""',
+					dashArray: '"""+penStyle_str+"""',
+					opacity: """+opacity_str+""",
+					fillOpacity: """+opacity_str+"""
+			};	
+		}"""
+								new_obj += buildNonPointJSON("", safeLayerName)
+								new_obj += """
 		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 		for (index = 0; index < layerOrder.length; index++) {
 			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
@@ -524,20 +522,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: function (feature) {
-				return {
-					color: '""" + borderColor_str + """',
-					fillColor: '""" + color_str + """',
-					weight: """ + radius_str + """,
-					dashArray: '""" + borderStyle_str + """',
-					opacity: """ + opacity_str + """,
-					fillOpacity: """ + opacity_str + """
-				};
-			}
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);
+		function doStyle""" + safeLayerName + """(feature) {
+			return {
+				color: '""" + borderColor_str + """',
+				fillColor: '""" + color_str + """',
+				weight: """ + radius_str + """,
+				dashArray: '""" + borderStyle_str + """',
+				opacity: """ + opacity_str + """,
+				fillOpacity: """ + opacity_str + """
+			};	
+		}"""
+								new_obj += buildNonPointJSON("", safeLayerName)
+								new_obj += """
 		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 		for (index = 0; index < layerOrder.length; index++) {
 			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
@@ -640,7 +636,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = buildPointJSON(categoryStr, safeLayerName)
+								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							categories = i.rendererV2().categories()
@@ -683,7 +679,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = buildPointJSON(categoryStr, safeLayerName)
+								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
 							valueAttr = i.rendererV2().classAttribute()
@@ -751,7 +747,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = buildPointJSON(categoryStr, safeLayerName)
+								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							valueAttr = i.rendererV2().classAttribute()
@@ -777,7 +773,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = buildPointJSON(categoryStr, safeLayerName)
+								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif icon_prov == True and i.geometryType() == 0:
 							new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -1113,7 +1109,7 @@ def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set):
 		});"""
 	return new_obj
 
-def buildPointJSON(categoryStr, safeLayerName):
+def buildNonPointJSON(categoryStr, safeLayerName):
 	new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
