@@ -554,7 +554,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			},
 			onEachFeature: function (feature, layer){"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
