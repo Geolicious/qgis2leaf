@@ -487,17 +487,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							layerName=safeLayerName
 							color_str = str(i.rendererV2().symbol().color().name())
 							radius_str = str(i.rendererV2().symbol().width() * 5)
-							if i.rendererV2().symbol().symbolLayer(0).penStyle() > 1:
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 2:
-									penStyle_str = "10,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 3:
-									penStyle_str = "1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 4:
-									penStyle_str = "15,5,1,5"
-								if i.rendererV2().symbol().symbolLayer(0).penStyle() == 5:
-									penStyle_str = "15,5,1,5,1,5"
-							else:
-								penStyle_str = ""
+							penStyle_str = getLineStyle(i.rendererV2().symbol().symbolLayer(0).penStyle())
 							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
 							symbol_transp_float = i.rendererV2().symbol().alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
@@ -514,7 +504,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -543,17 +533,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							else:
 								color_str = str(i.rendererV2().symbol().color().name())
 								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								if i.rendererV2().symbol().symbolLayer(0).borderStyle() > 1:
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 2:
-										borderStyle_str = "10,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 3:
-										borderStyle_str = "1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 4:
-										borderStyle_str = "15,5,1,5"
-									if i.rendererV2().symbol().symbolLayer(0).borderStyle() == 5:
-										borderStyle_str = "15,5,1,5,1,5"
-								else:
-									borderStyle_str = ""
+								borderStyle_str = getLineStyle(i.rendererV2().symbol().symbolLayer(0).borderStyle())
 								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
 							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
 							symbol_transp_float = i.rendererV2().symbol().alpha()
@@ -709,19 +689,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								categoryStr += """
 						color: '""" + unicode(cat.symbol().color().name()) + """',
 						weight: '""" + unicode(cat.symbol().width() * 5) + "',"
-								if cat.symbol().symbolLayer(0).penStyle() > 1:
-									if cat.symbol().symbolLayer(0).penStyle() == 2:
-										categoryStr += """
-						dashArray: '10,5',"""
-									if cat.symbol().symbolLayer(0).penStyle() == 3:
-										categoryStr += """
-						dashArray: '1,5',"""
-									if cat.symbol().symbolLayer(0).penStyle() == 4:
-										categoryStr += """
-						dashArray: '15,5,1,5',"""
-									if cat.symbol().symbolLayer(0).penStyle() == 5:
-										categoryStr += """
-						dashArray: '15,5,1,5,1,5',"""
+								categoryStr += """
+						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).penStyle()) + "'"
 								categoryStr += """opacity: '""" + str(cat.symbol().alpha()) + """',
 					};
 					break;"""
@@ -768,19 +737,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						fillColor: '""" + unicode(cat.symbol().color().name()) + """',
 						color: '""" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + """',
 						weight: '1',"""
-								if cat.symbol().symbolLayer(0).borderStyle() > 1:
-									if cat.symbol().symbolLayer(0).borderStyle() == 2:
-										categoryStr += """
-						dashArray: '10,5',"""
-									if cat.symbol().symbolLayer(0).borderStyle() == 3:
-										categoryStr += """
-						dashArray: '1,5',"""
-									if cat.symbol().symbolLayer(0).borderStyle() == 4:
-										categoryStr += """
-						dashArray: '15,5,1,5',"""
-									if cat.symbol().symbolLayer(0).borderStyle() == 5:
-										categoryStr += """
-						dashArray: '15,5,1,5,1,5',"""
+								categoryStr += """
+						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).borderStyle()) + "',"
 								categoryStr += """
 						opacity: '""" + str(cat.symbol().alpha()) + """',
 						fillOpacity: '""" + str(cat.symbol().alpha()) + """',
@@ -1261,3 +1219,17 @@ def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
 			}
 		});"""
 	return new_obj
+
+def getLineStyle(penType):
+	if penType > 1:
+		if penType == 2:
+			penStyle_str = "10,5"
+		if penType == 3:
+			penStyle_str = "1,5"
+		if penType == 4:
+			penStyle_str = "15,5,1,5"
+		if penType == 5:
+			penStyle_str = "15,5,1,5,1,5"
+	else:
+		penStyle_str = ""
+	return penStyle_str
