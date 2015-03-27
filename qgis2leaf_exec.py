@@ -3,7 +3,7 @@
 /***************************************************************************
  qgis2leaf
                                  A QGIS plugin
- QGIS to Leaflet creation programm
+ QGIS to Leaflet creation program
                              -------------------
         begin                : 2014-04-29
         copyright            : (C) 2013 by Riccardo Klinger
@@ -404,8 +404,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
 							symbol_transp_float = i.rendererV2().symbol().alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
+							pointToLayer_str = """
 			pointToLayer: function (feature, latlng) {  
 				return L.circleMarker(latlng, {
 					radius: """+radius_str+""",
@@ -414,7 +413,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					weight: 1,
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
-				})"""+labeltext+"""
+				})"""+labeltext
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								stylestr = pointToLayer_str + """
 			},
 			onEachFeature: function (feature, layer) {""" + popFuncs + """
 			}"""
@@ -422,16 +423,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							else:
 								new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, {
-					radius: """ + radius_str + """,
-					fillColor: '""" + color_str + """',
-					color: '""" + borderColor_str + """',
-					weight: 1,
-					opacity: """ + opacity_str + """,
-					fillOpacity: """ + opacity_str + """
-				})"""+labeltext+"""
+			onEachFeature: pop_""" + safeLayerName + "," + pointToLayer_str + """
 			}
 		});"""
 #add points to the cluster group
