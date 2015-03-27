@@ -625,10 +625,9 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 								#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
 								categoryStr += """
 						color: '""" + unicode(cat.symbol().color().name()) + """',
-						weight: '""" + unicode(cat.symbol().width() * 5) + "',"
-								categoryStr += """
-						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).penStyle()) + "'"
-								categoryStr += """opacity: '""" + str(cat.symbol().alpha()) + """',
+						weight: '""" + unicode(cat.symbol().width() * 5) + """',
+						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).penStyle()) + """',
+						opacity: '""" + str(cat.symbol().alpha()) + """',
 					};
 					break;"""
 							categoryStr += """
@@ -641,12 +640,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							if i.providerType() == 'WFS' and encode2JSON == False:
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: doStyle""" + safeLayerName + """
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
+								new_obj = buildPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							categories = i.rendererV2().categories()
@@ -673,10 +667,8 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						weight: '""" + unicode(cat.symbol().symbolLayer(0).borderWidth() * 5) + """',
 						fillColor: '""" + unicode(cat.symbol().color().name()) + """',
 						color: '""" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + """',
-						weight: '1',"""
-								categoryStr += """
-						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).borderStyle()) + "',"
-								categoryStr += """
+						weight: '1',
+						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).borderStyle()) + """',
 						opacity: '""" + str(cat.symbol().alpha()) + """',
 						fillOpacity: '""" + str(cat.symbol().alpha()) + """',
 					};
@@ -691,12 +683,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: doStyle"""+ safeLayerName + """
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""				
+								new_obj = buildPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
 							valueAttr = i.rendererV2().classAttribute()
@@ -764,12 +751,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: doStyle""" + safeLayerName + """
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
+								new_obj = buildPointJSON(categoryStr, safeLayerName)
 						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
 							layerName=safeLayerName
 							valueAttr = i.rendererV2().classAttribute()
@@ -795,12 +777,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			style: doStyle""" + safeLayerName + """
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
+								new_obj = buildPointJSON(categoryStr, safeLayerName)
 						elif icon_prov == True and i.geometryType() == 0:
 							new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -1134,6 +1111,15 @@ def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set):
 	new_obj+="""
 			}
 		});"""
+	return new_obj
+
+def buildPointJSON(categoryStr, safeLayerName):
+	new_obj = categoryStr + """
+		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+			onEachFeature: pop_""" + safeLayerName + """,
+			style: doStyle""" + safeLayerName + """
+		});
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""
 	return new_obj
 
 def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
