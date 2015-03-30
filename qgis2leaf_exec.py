@@ -450,30 +450,24 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
 							symbol_transp_float = i.rendererV2().symbol().alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style: function (feature) {
+							lineStyle_str = """
 				return {
 					weight: """+radius_str+""",
 					color: '"""+color_str+"""',
 					dashArray: '"""+penStyle_str+"""',
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
-				};
+				};"""
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								stylestr="""
+			style: function (feature) {""" + lineStyle_str + """
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
-		function doStyle""" + safeLayerName + """(feature) {
-			return {
-					weight: """+radius_str+""",
-					color: '"""+color_str+"""',
-					dashArray: '"""+penStyle_str+"""',
-					opacity: """+opacity_str+""",
-					fillOpacity: """+opacity_str+"""
-			};	
+		function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
 								new_obj += """
@@ -497,9 +491,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							opacity_str = str(layer_transp_float*symbol_transp_float)
 							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
 								borderStyle_str = "0"
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style: function (feature) {
+							polyStyle_str = """
 				return {
 					color: '"""+borderColor_str+"""',
 					fillColor: '"""+color_str+"""',
@@ -508,21 +500,17 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
 				};
+"""
+							if i.providerType() == 'WFS' and encode2JSON == False:
+								stylestr="""
+			style: function (feature) {""" + polyStyle_str + """
 			},
 			onEachFeature: function (feature, layer){"""+popFuncs+"""
 			}"""
 								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
 							else:
 								new_obj = """
-		function doStyle""" + safeLayerName + """(feature) {
-			return {
-				color: '""" + borderColor_str + """',
-				fillColor: '""" + color_str + """',
-				weight: """ + radius_str + """,
-				dashArray: '""" + borderStyle_str + """',
-				opacity: """ + opacity_str + """,
-				fillOpacity: """ + opacity_str + """
-			};	
+		function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
 								new_obj += """
