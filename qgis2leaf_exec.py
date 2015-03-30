@@ -983,10 +983,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
-							new_layer = '"' + safeLayerName + '"' + ": exp_" + safeLayerName + """JSON,"""
+							new_layer = '"' + i.name() + '"' + ": exp_" + safeLayerName + """JSON,"""
 							#new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
 						if cluster_set == True and i.geometryType() == 0:
-							new_layer = '"' + safeLayerName + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
+							new_layer = '"' + i.name() + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
 							#new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
