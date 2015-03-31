@@ -57,103 +57,98 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	print layer_list
 	# let's create the overall folder structure:
 	outputProjectFileName = os.path.join(outputProjectFileName, 'export_' + str(time.strftime("%Y_%m_%d")) + '_' + str(time.strftime("%I_%M_%S")))
-	jsStore = os.path.join(os.getcwd(),outputProjectFileName, 'js')
+	outputProjectFileName = os.path.join(os.getcwd(),outputProjectFileName)
+	jsStore = os.path.join(outputProjectFileName, 'js')
 	os.makedirs(jsStore)
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'Autolinker.min.js', jsStore + os.sep + 'Autolinker.min.js')
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet-hash.js', jsStore + os.sep + 'leaflet-hash.js')
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'leaflet.markercluster.js', jsStore + os.sep + 'leaflet.markercluster.js')
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'label.js', jsStore + os.sep + 'label.js')
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'proj4.js', jsStore + os.sep + 'proj4.js')
-	shutil.copyfile(pluginDir + os.sep + 'js' + os.sep + 'proj4leaflet.js', jsStore + os.sep + 'proj4leaflet.js')
-	dataStore = os.path.join(os.getcwd(),outputProjectFileName, 'data')
+	jsStore += os.sep
+	jsDir = pluginDir + os.sep + 'js' + os.sep
+	shutil.copyfile(jsDir + 'Autolinker.min.js', jsStore + 'Autolinker.min.js')
+	shutil.copyfile(jsDir + 'leaflet-hash.js', jsStore + 'leaflet-hash.js')
+	shutil.copyfile(jsDir + 'leaflet.markercluster.js', jsStore + 'leaflet.markercluster.js')
+	shutil.copyfile(jsDir + 'label.js', jsStore + 'label.js')
+	shutil.copyfile(jsDir + 'proj4.js', jsStore + 'proj4.js')
+	shutil.copyfile(jsDir + 'proj4leaflet.js', jsStore + 'proj4leaflet.js')
+	dataStore = os.path.join(outputProjectFileName, 'data')
 	os.makedirs(dataStore)
-	cssStore = os.path.join(os.getcwd(),outputProjectFileName, 'css')
+	cssStore = os.path.join(outputProjectFileName, 'css')
 	os.makedirs(cssStore)
-	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.css', cssStore + os.sep + 'MarkerCluster.css')
-	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'label.css', cssStore + os.sep + 'label.css')
-	shutil.copyfile(pluginDir + os.sep + 'css' + os.sep + 'MarkerCluster.Default.css', cssStore + os.sep + 'MarkerCluster.Default.css')
-	picturesStore = os.path.join(os.getcwd(),outputProjectFileName, 'pictures')
+	cssStore += os.sep
+	cssDir = pluginDir + os.sep + 'css' + os.sep
+	shutil.copyfile(cssDir + 'MarkerCluster.css', cssStore + 'MarkerCluster.css')
+	shutil.copyfile(cssDir + 'label.css', cssStore + 'label.css')
+	shutil.copyfile(cssDir + 'MarkerCluster.Default.css', cssStore + 'MarkerCluster.Default.css')
+	picturesStore = os.path.join(outputProjectFileName, 'pictures')
 	os.makedirs(picturesStore)
-	miscStore = os.path.join(os.getcwd(),outputProjectFileName, 'misc')
+	miscStore = os.path.join(outputProjectFileName, 'misc')
 	os.makedirs(miscStore)
 	#lets create a css file for own css:
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'css' + os.sep + 'own_style.css', 'w') as f_css:
+	with open(cssStore + 'own_style.css', 'w') as f_css:
 		if full == 1:
 			text = """
-<style>
-	body {
-		padding: 0;
-		margin: 0;
-	}
-	html, body, #map {
-		height: 100%;
-		width: 100%;
-		padding: 0;
-		margin: 0;
-	}
-	th {
-		text-align: left;
-		vertical-align: top;
-	}
-"""
+body {
+	padding: 0;
+	margin: 0;
+}
+html, body, #map {
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+th {
+	text-align: left;
+	vertical-align: top;
+}"""
 		elif full == 0:
 			text = """
-<style>
-	body {
-		padding: 0;
-		margin: 0;
-	}
-	html, body, #map {
-		height: """+str(height)+"""px;
-		width: """+str(width)+"""px;
-	}
-	th {
-		text-align: left;
-		vertical-align: top;
-	}
-"""
+body {
+	padding: 0;
+	margin: 0;
+}
+html, body, #map {
+	height: """+str(height)+"""px;
+	width: """+str(width)+"""px;
+}
+th {
+	text-align: left;
+	vertical-align: top;
+}"""
 		if opacity_raster == True and full == 1:
 			text += """
-	html, body, #slide {
-		width: 100%;
-		padding: 0;
-		margin: 0;
-	}
-"""
+html, body, #slide {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}"""
 		elif opacity_raster == True and full== 0:
 			text += """	
-		html, body, #slide {
-		width: """+str(width)+"""px;
-		padding: 0;
-		margin: 0;
-	}
-
-"""
-		elif opacity_raster == False:
-			text += """
-		"""
+html, body, #slide {
+	width: """+str(width)+"""px;
+	padding: 0;
+	margin: 0;
+}"""
 		text += """
-		.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-        }
-    .info h2 {
-    margin: 0 0 5px;
-    color: #777;
+.info {
+	padding: 6px 8px;
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
 }
-		.leaflet-container {
-    background: #FFF;
-</style>"""
+.info h2 {
+	margin: 0 0 5px;
+	color: #777;
+}
+.leaflet-container {
+	background: #fff;"""
 		f_css.write(text)
 		f_css.close()
 	
 	#the index file has an easy beginning. we will store it right away:
 	canvas = qgis.utils.iface.mapCanvas()
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'w') as f_html:
+	outputIndex = outputProjectFileName + os.sep + 'index.html'
+	with open(outputIndex, 'w') as f_html:
 		base = """<!DOCTYPE html>
 <html>
 	<head> """
@@ -181,7 +176,6 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		<script src="js/label.js"></script>
 		<script src="js/Autolinker.min.js"></script>"""
 		if address == True:
-			
 			base +="""
 		<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>"""
 		base +="""
@@ -189,9 +183,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 			base += """
 		<script src="js/proj4.js"></script>
-		<script src="js/proj4leaflet.js"></script>
-			
-			"""
+		<script src="js/proj4leaflet.js"></script>"""
 		if full == 1:
 			base += """
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />"""
@@ -210,24 +202,22 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
 	for i in allLayers: 
 		safeLayerName = re.sub('[\W_]+', '', i.name())
+		layerFileName = dataStore + os.sep + 'exp_' + safeLayerName + '.js'
 		for j in layer_list:
 			if safeLayerName == re.sub('[\W_]+', '', j):
 				if i.providerType() != 'WFS' or encode2JSON == True and i:
 					if i.type() ==0:
-						if selected == 1:
-							qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + safeLayerName + '.js', 'utf-8', exp_crs, 'GeoJson', 1, layerOptions=["COORDINATE_PRECISION="+str(precision)])
-						if selected == 0:
-							qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,dataStore + os.sep + 'exp_' + safeLayerName + '.js', 'utf-8', exp_crs, 'GeoJson', 0, layerOptions=["COORDINATE_PRECISION="+str(precision)])
+						qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,layerFileName, 'utf-8', exp_crs, 'GeoJson', selected, layerOptions=["COORDINATE_PRECISION="+str(precision)])
 						#now change the data structure to work with leaflet:
 
-						with open(dataStore + os.sep + 'exp_' + safeLayerName + '.js', "r+") as f2:
+						with open(layerFileName, "r+") as f2:
 							old = f2.read() # read everything in the file
 							f2.seek(0) # rewind
 							f2.write("var exp_" + str(safeLayerName) + " = " + old) # write the new line before
 							f2.close
 							
 						#now add the js files as data input for our map
-						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f3:
+						with open(outputIndex, 'a') as f3:
 							new_src = """
 		<script src=\"""" + 'data' + """/exp_""" + safeLayerName + """.js\"></script>"""
 							# store everything in the file
@@ -259,9 +249,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	if extent == 'canvas extent':
 		pt0	= canvas.extent()
 		try:
-			crsSrc = qgis.utils.iface.mapCanvas().mapSettings().destinationCrs() # WGS 84
+			crsSrc = canvas.mapSettings().destinationCrs() # WGS 84
 		except:
-			crsSrc = qgis.utils.iface.mapCanvas().mapRenderer().destinationCrs() # WGS 84
+			crsSrc = canvas.mapRenderer().destinationCrs() # WGS 84
+		crsAuthId = crsSrc.authid()
+		crsProj4 = crsSrc.toProj4()
 		crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
 		xform = QgsCoordinateTransform(crsSrc, crsDest)
 		pt1 = xform.transform(pt0)
@@ -269,16 +261,16 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		bounds = '[[' + str(pt1.yMinimum()) + ',' + str(pt1.xMinimum()) + '],[' + str(pt1.yMaximum()) + ',' + str(pt1.xMaximum()) +']]'
 		middle = """
 		<script>"""
-		#print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
-		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
-			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+		#print '>> ' + crsProj4
+		if matchCRS == True and crsAuthId != 'EPSG:4326':
+			print '>> ' + crsProj4
 			middle += """
-		var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """', '""" + canvas.mapRenderer().destinationCrs().toProj4() + """', {
+		var crs = new L.Proj.CRS('""" + crsAuthId + """', '""" + crsProj4 + """', {
 			resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
 		});"""
 		middle += """
 		var map = L.map('map', {"""
-		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+		if matchCRS == True and crsAuthId != 'EPSG:4326':
 			middle += """
 			crs: crs,
 			continuousWorld: false,
@@ -292,11 +284,11 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		middle = """
 		<script>
 """
-		print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
-		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
-			print '>> ' + canvas.mapRenderer().destinationCrs().toProj4()
+		print '>> ' + crsProj4
+		if matchCRS == True and crsAuthId != 'EPSG:4326':
+			print '>> ' + crsProj4
 			middle += """
-		var crs = new L.Proj.CRS('""" + canvas.mapRenderer().destinationCrs().authid() + """', '""" + canvas.mapRenderer().destinationCrs().toProj4() + """', {
+		var crs = new L.Proj.CRS('""" + crsAuthId + """', '""" + crsProj4 + """', {
 			resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
 		});"""
 		middle += """
@@ -327,7 +319,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		basemap_""" + str(l)+""".addTo(map);"""
 	layerOrder = """	
 		var layerOrder=new Array();"""
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f4:
+	with open(outputIndex, 'a') as f4:
 			f4.write(middle)
 			f4.write(basemapText)
 			f4.write(layerOrder)
@@ -337,7 +329,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		for j in layer_list:
 			if safeLayerName == j:
 				if i.type()==0:
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5:
+					with open(outputIndex, 'a') as f5:
 						#here comes the layer style
 						#here comes the html popup content
 						fields = i.pendingFields() 
@@ -430,11 +422,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 							new_obj += """
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""
 							if cluster_set == False:
-								new_obj += """
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		for (index = 0; index < layerOrder.length; index++) {
-			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-		}"""
+								new_obj += restackLayers(layerName)
 							else:
 								new_obj += """
 		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
@@ -470,11 +458,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += """
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		for (index = 0; index < layerOrder.length; index++) {
-			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-		}"""		
+								new_obj += restackLayers(layerName)		
 						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
 							layerName=safeLayerName
 							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
@@ -513,11 +497,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += """
-		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
-		for (index = 0; index < layerOrder.length; index++) {
-			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-		}"""	
+								new_obj += restackLayers(layerName)	
 						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							layerName=safeLayerName
 							categories = i.rendererV2().categories()
@@ -849,7 +829,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		var overlay_""" + safeLayerName + """ = new L.imageOverlay(img_""" + safeLayerName + """, img_bounds_""" + safeLayerName + """).addTo(map);
 		raster_group.addLayer(overlay_""" + safeLayerName + """);"""
 						
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5_raster:
+					with open(outputIndex, 'a') as f5_raster:
 							
 
 						f5_raster.write(new_obj)
@@ -870,7 +850,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			this._div.innerHTML = '<h2>""" + webmap_head.encode('utf-8') + """</h2>""" + webmap_subhead.encode('utf-8') + """'
 		};
 		title.addTo(map);"""
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5contr:
+		with open(outputIndex, 'a') as f5contr:
 			f5contr.write(titleStart)
 			f5contr.close()
 			#here comes the address search:
@@ -882,7 +862,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
             text: 'Find!',
 		});
 		osmGeocoder.addTo(map);"""
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5addr:
+		with open(outputIndex, 'a') as f5addr:
 			f5addr.write(address_text)
 			f5addr.close()
 
@@ -927,7 +907,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
     		return div;
 		};
 		legend.addTo(map);"""
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f5leg:
+		with open(outputIndex, 'a') as f5leg:
 			f5leg.write(legendStart)
 			f5leg.close()
 
@@ -960,7 +940,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	else:
 		controlStart += """
 		L.control.layers(baseMaps,{"""
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f6:
+	with open(outputIndex, 'a') as f6:
 		f6.write(controlStart)
 		f6.close()
 
@@ -969,7 +949,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		for j in layer_list:
 			if i.type() == 0:
 				if safeLayerName == re.sub('[\W_]+', '', j):
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
+					with open(outputIndex, 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
 							new_layer = '"' + i.name() + '"' + ": exp_" + safeLayerName + """JSON,"""
 							#new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
@@ -980,7 +960,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 						f7.close()
 			elif i.type() == 1:
 				if safeLayerName == re.sub('[\W_]+', '', j):
-					with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f7:
+					with open(outputIndex, 'a') as f7:
 						new_layer = '"' + safeLayerName + '"' + ": overlay_" + safeLayerName + ""","""
 						#new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + safeLayerName + ""","""
 						f7.write(new_layer)
@@ -989,7 +969,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	
 
 
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f8:
+	with open(outputIndex, 'rb+') as f8:
 		f8.seek(-1, os.SEEK_END)
 		f8.truncate()
 		f8.write(controlEnd)
@@ -998,7 +978,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		opacityStart = """
 		function updateOpacity(value) {
 		"""
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f9:
+		with open(outputIndex, 'a') as f9:
 			f9.write(opacityStart)
 			f9.close()
 
@@ -1007,13 +987,13 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 			for j in layer_list:
 				if i.type() == 1:
 					if safeLayerName == re.sub('[\W_]+', '', j):
-						with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f10:
+						with open(outputIndex, 'a') as f10:
 							new_opc = """
 							overlay_""" + safeLayerName + """.setOpacity(value);"""
 							f10.write(new_opc)
 							f10.close()	
 		opacityEnd = """}"""	
-		with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'rb+') as f11:
+		with open(outputIndex, 'rb+') as f11:
 			f11.seek(-1, os.SEEK_END)
 			f11.truncate()
 			f11.write(opacityEnd)
@@ -1038,22 +1018,18 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	# let's close the file but ask for the extent of all layers if the user wants to show only this extent:
 	if extent == 'layer extent':
 		end += """
-		map.fitBounds(feature_group.getBounds());
-	</script>
-</body>
-</html>
-	"""
+		map.fitBounds(feature_group.getBounds());"""
 	if extent == 'canvas extent':
 		end += """
-		L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
+		L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);"""
+	end += """
 	</script>
 </body>
-</html>
-	"""
-	with open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html', 'a') as f12:
+</html>"""
+	with open(outputIndex, 'a') as f12:
 		f12.write(end)
 		f12.close()
-	webbrowser.open(os.path.join(os.getcwd(),outputProjectFileName) + os.sep + 'index.html')
+	webbrowser.open(outputIndex)
 
 def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set):
 	new_obj="""
@@ -1136,3 +1112,10 @@ def getLineStyle(penType):
 	else:
 		penStyle_str = ""
 	return penStyle_str
+
+def restackLayers(layerName):
+	return """
+		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
+		for (index = 0; index < layerOrder.length; index++) {
+			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+		}"""
