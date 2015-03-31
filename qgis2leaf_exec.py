@@ -345,13 +345,10 @@ html, body, #slide {
 							palyr.readFromLayer(i)
 							f = palyr.fieldName
 							label_exp = False
-							labeltext = """.bindLabel(feature.properties."""+str(f)+""", {noHide: true})"""
-						if labels == True and labelhover == True:
-							palyr = QgsPalLayerSettings()
-							palyr.readFromLayer(i)
-							f = palyr.fieldName
-							labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
-							label_exp = False
+							if labelhover == False:
+								labeltext = """.bindLabel(feature.properties."""+str(f)+""", {noHide: true})"""
+							else:
+								labeltext = """.bindLabel(feature.properties."""+str(f)+""")"""
 						for field in field_names:
 							if str(field) == 'html_exp':
 								html_prov = True
@@ -373,11 +370,11 @@ html, body, #slide {
 								for field in field_names:
 									if str(field) == "icon_exp":
 										row += ""
-									else: 
-										if i.editorWidgetV2(fields.indexFromName(field)) != QgsVectorLayer.Hidden:
+									else:
+										if i.editorWidgetV2(fields.indexFromName(field)) != QgsVectorLayer.Hidden and i.editorWidgetV2(fields.indexFromName(field)) != 'Hidden':
 											row += """<tr><th scope="row">""" + i.attributeDisplayName(fields.indexFromName(str(field))) + """</th><td>' + Autolinker.link(String(feature.properties['""" + str(field) + """'])) + '</td></tr>"""
 								tableend = """</table>'"""
-								table = tablestart + row +tableend
+								table = tablestart + row + tableend
 						if label_exp == False:
 							labeltext = ""
 						popFuncs = """					
