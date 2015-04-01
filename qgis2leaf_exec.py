@@ -208,8 +208,8 @@ html, body, #slide {
 				if i.providerType() != 'WFS' or encode2JSON == True and i:
 					if i.type() ==0:
 						qgis.core.QgsVectorFileWriter.writeAsVectorFormat(i,layerFileName, 'utf-8', exp_crs, 'GeoJson', selected, layerOptions=["COORDINATE_PRECISION="+str(precision)])
-						#now change the data structure to work with leaflet:
 
+						#now change the data structure to work with leaflet:
 						with open(layerFileName, "r+") as f2:
 							old = f2.read() # read everything in the file
 							f2.seek(0) # rewind
@@ -223,6 +223,7 @@ html, body, #slide {
 							# store everything in the file
 							f3.write(new_src)
 							f3.close()
+
 					#here comes the raster layers. you need an installed version of gdal
 					elif i.type() == 1:
 						if i.dataProvider().name() != "wms":
@@ -385,19 +386,24 @@ html, body, #slide {
 		}"""
 						#single marker points:
 						 
-						if i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
-							layerName=safeLayerName
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().size() * 2)
-							borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
+						layerName = safeLayerName
+						renderer = i.rendererV2()
+						rendererDump = renderer.dump()
+						if rendererDump[0:6] == 'SINGLE':
+							symbol = renderer.symbol()
+							colorName = symbol.color().name()
+							alpha = symbol.alpha()
 							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
-							symbol_transp_float = i.rendererV2().symbol().alpha()
+							symbol_transp_float = symbol.alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
+						if rendererDump[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
+							radius_str = str(symbol.size() * 2)
+							borderColor_str = str(symbol.symbolLayer(0).borderColor().name())
 							pointToLayer_str = """
 			pointToLayer: function (feature, latlng) {  
 				return L.circleMarker(latlng, {
 					radius: """+radius_str+""",
-					fillColor: '"""+color_str+"""',
+					fillColor: '"""+colorName+"""',
 					color: '"""+borderColor_str+"""',
 					weight: 1,
 					opacity: """+opacity_str+""",
@@ -427,18 +433,13 @@ html, body, #slide {
 		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
 
-						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 1:
-							layerName=safeLayerName
-							color_str = str(i.rendererV2().symbol().color().name())
-							radius_str = str(i.rendererV2().symbol().width() * 5)
-							penStyle_str = getLineStyle(i.rendererV2().symbol().symbolLayer(0).penStyle())
-							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
-							symbol_transp_float = i.rendererV2().symbol().alpha()
-							opacity_str = str(layer_transp_float*symbol_transp_float)
+						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 1:
+							radius_str = str(symbol.width() * 5)
+							penStyle_str = getLineStyle(symbol.symbolLayer(0).penStyle())
 							lineStyle_str = """
 				return {
 					weight: """+radius_str+""",
-					color: '"""+color_str+"""',
+					color: '"""+colorName+"""',
 					dashArray: '"""+penStyle_str+"""',
 					opacity: """+opacity_str+""",
 					fillOpacity: """+opacity_str+"""
@@ -456,26 +457,21 @@ html, body, #slide {
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
 								new_obj += restackLayers(layerName)		
-						elif i.rendererV2().dump()[0:6] == 'SINGLE' and i.geometryType() == 2:
-							layerName=safeLayerName
-							if i.rendererV2().symbol().symbolLayer(0).layerType() == 'SimpleLine':
-								color_str = 'none'
-								borderColor_str = str(i.rendererV2().symbol().color().name())
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).width() * 5)
+						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 2:
+							if symbol.symbolLayer(0).layerType() == 'SimpleLine':
+								colorName = 'none'
+								borderColor_str = str(symbol.color().name())
+								radius_str = str(symbol.symbolLayer(0).width() * 5)
 							else:
-								color_str = str(i.rendererV2().symbol().color().name())
-								borderColor_str = str(i.rendererV2().symbol().symbolLayer(0).borderColor().name())
-								borderStyle_str = getLineStyle(i.rendererV2().symbol().symbolLayer(0).borderStyle())
-								radius_str = str(i.rendererV2().symbol().symbolLayer(0).borderWidth() * 5)
-							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
-							symbol_transp_float = i.rendererV2().symbol().alpha()
-							opacity_str = str(layer_transp_float*symbol_transp_float)
-							if i.rendererV2().symbol().symbolLayer(0).brushStyle() == 0:
+								borderColor_str = str(symbol.symbolLayer(0).borderColor().name())
+								borderStyle_str = getLineStyle(symbol.symbolLayer(0).borderStyle())
+								radius_str = str(symbol.symbolLayer(0).borderWidth() * 5)
+							if symbol.symbolLayer(0).brushStyle() == 0:
 								borderStyle_str = "0"
 							polyStyle_str = """
 				return {
 					color: '"""+borderColor_str+"""',
-					fillColor: '"""+color_str+"""',
+					fillColor: '"""+colorName+"""',
 					weight: """+radius_str+""",
 					dashArray: '"""+borderStyle_str+"""',
 					opacity: """+opacity_str+""",
@@ -495,10 +491,9 @@ html, body, #slide {
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
 								new_obj += restackLayers(layerName)	
-						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
-							layerName=safeLayerName
-							categories = i.rendererV2().categories()
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
+							categories = renderer.categories()
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + """(feature) {
 			switch (feature.properties.""" + valueAttr + """) {"""
@@ -553,10 +548,9 @@ html, body, #slide {
 							elif cluster_set == False:
 								new_obj += """
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
-						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
-							layerName=safeLayerName
-							categories = i.rendererV2().categories()
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
+							categories = renderer.categories()
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + """(feature) {"""
 							categoryStr += """
@@ -594,10 +588,9 @@ html, body, #slide {
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif i.rendererV2().dump()[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
-							layerName=safeLayerName
-							categories = i.rendererV2().categories()
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
+							categories = renderer.categories()
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
 							categoryStr += """
@@ -637,12 +630,11 @@ html, body, #slide {
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
-							layerName=safeLayerName
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
-							for r in i.rendererV2().ranges():
+							for r in renderer.ranges():
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
@@ -680,12 +672,11 @@ html, body, #slide {
 							elif cluster_set == False:
 								new_obj += """
 		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
-						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 1:
-							layerName=safeLayerName
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 1:
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
-							for r in i.rendererV2().ranges():
+							for r in renderer.ranges():
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {"""
@@ -705,12 +696,11 @@ html, body, #slide {
 								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif i.rendererV2().dump()[0:9] == 'GRADUATED' and i.geometryType() == 2:
-							layerName=safeLayerName
-							valueAttr = i.rendererV2().classAttribute()
+						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 2:
+							valueAttr = renderer.classAttribute()
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
-							for r in i.rendererV2().ranges():
+							for r in renderer.ranges():
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
