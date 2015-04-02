@@ -200,8 +200,9 @@ html, body, #slide {
 
 	allLayers = canvas.layers()
 	exp_crs = QgsCoordinateReferenceSystem(4326, QgsCoordinateReferenceSystem.EpsgCrsId)
-	for i in allLayers: 
-		safeLayerName = re.sub('[\W_]+', '', i.name())
+	for i in allLayers:
+		rawLayerName = i.name()
+		safeLayerName = re.sub('[\W_]+', '', rawLayerName)
 		layerFileName = dataStore + os.sep + 'exp_' + safeLayerName + '.js'
 		for j in layer_list:
 			if safeLayerName == re.sub('[\W_]+', '', j):
@@ -277,7 +278,7 @@ html, body, #slide {
 			continuousWorld: false,
 			worldCopyJump: false, """
 		middle += """
-			zoomControl:true
+			zoomControl:true, maxZoom:19
 		}).fitBounds(""" + bounds + """);
 		var hash = new L.Hash(map);
 		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
@@ -293,7 +294,7 @@ html, body, #slide {
 			resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
 		});"""
 		middle += """
-		var map = L.map('map', { zoomControl:true });
+		var map = L.map('map', { zoomControl:true, maxZoom:19 });
 		var hash = new L.Hash(map); //add hashes to html address to easy share locations
 		var additional_attrib = 'created with <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';"""
 	# we will start with the clustergroup
@@ -326,7 +327,8 @@ html, body, #slide {
 			f4.write(layerOrder)
 			f4.close()
 	for i in reversed(allLayers):
-		safeLayerName = re.sub('[\W_]+', '', i.name())
+		rawLayerName = i.name()
+		safeLayerName = re.sub('[\W_]+', '', rawLayerName)
 		for j in layer_list:
 			if safeLayerName == j:
 				if i.type()==0:
@@ -393,7 +395,7 @@ html, body, #slide {
 							symbol = renderer.symbol()
 							colorName = symbol.color().name()
 							alpha = symbol.alpha()
-							layer_transp_float = 1 - ( float(i.layerTransparency()) / 100 )
+							layer_transp_float = 1 - (float(i.layerTransparency()) / 100)
 							symbol_transp_float = symbol.alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
 						if rendererDump[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
@@ -414,7 +416,7 @@ html, body, #slide {
 			},
 			onEachFeature: function (feature, layer) {""" + popFuncs + """
 			}"""
-								new_obj = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set, cluster_num)
 							else:
 								new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -508,15 +510,16 @@ html, body, #slide {
 				case '""" + unicode(cat.value()) + """':
 					return {"""
 									else:
+										symbol = cat.symbol()
 										categoryStr += """
 				case """ + unicode(cat.value()) + """:
 					return {"""
 								categoryStr += """
-						radius: '""" + unicode(cat.symbol().size() * 2) + """',
-						fillColor: '""" + unicode(cat.symbol().color().name()) + """',
-						color: '""" + unicode(cat.symbol().symbolLayer(0).borderColor().name())+ """',
+						radius: '""" + unicode(symbol.size() * 2) + """',
+						fillColor: '""" + unicode(symbol.color().name()) + """',
+						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 						weight: 1,
-						fillOpacity: '""" + str(cat.symbol().alpha()) + """',
+						fillOpacity: '""" + str(symbol.alpha()) + """',
 					};
 					break;"""
 							categoryStr += """
@@ -529,7 +532,7 @@ html, body, #slide {
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj=buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -570,11 +573,12 @@ html, body, #slide {
 				case """ + unicode(cat.value()) + """:
 					return {"""
 								#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
+								symbol = cat.symbol()
 								categoryStr += """
-						color: '""" + unicode(cat.symbol().color().name()) + """',
-						weight: '""" + unicode(cat.symbol().width() * 5) + """',
-						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).penStyle()) + """',
-						opacity: '""" + str(cat.symbol().alpha()) + """',
+						color: '""" + unicode(symbol.color().name()) + """',
+						weight: '""" + unicode(symbol.width() * 5) + """',
+						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).penStyle()) + """',
+						opacity: '""" + str(symbol.alpha()) + """',
 					};
 					break;"""
 							categoryStr += """
@@ -609,14 +613,15 @@ html, body, #slide {
 										categoryStr += """
 				case """ + unicode(cat.value()) + """:
 					return {"""
+								symbol = cat.symbol()
 								categoryStr += """
-						weight: '""" + unicode(cat.symbol().symbolLayer(0).borderWidth() * 5) + """',
-						fillColor: '""" + unicode(cat.symbol().color().name()) + """',
-						color: '""" + unicode(cat.symbol().symbolLayer(0).borderColor().name()) + """',
+						weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
+						fillColor: '""" + unicode(symbol.color().name()) + """',
+						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name()) + """',
 						weight: '1',
-						dashArray: '""" + getLineStyle(cat.symbol().symbolLayer(0).borderStyle()) + """',
-						opacity: '""" + str(cat.symbol().alpha()) + """',
-						fillOpacity: '""" + str(cat.symbol().alpha()) + """',
+						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).borderStyle()) + """',
+						opacity: '""" + str(symbol.alpha()) + """',
+						fillOpacity: '""" + str(symbol.alpha()) + """',
 					};
 					break;"""
 							categoryStr += """
@@ -635,14 +640,15 @@ html, body, #slide {
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
+								symbol = r.symbol()
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
-					radius: '""" + unicode(r.symbol().size() * 2) + """',
-					fillColor: '""" + unicode(r.symbol().color().name()) + """',
-					color: '""" + unicode(r.symbol().symbolLayer(0).borderColor().name())+ """',
+					radius: '""" + unicode(symbol.size() * 2) + """',
+					fillColor: '""" + unicode(symbol.color().name()) + """',
+					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 					weight: 1,
-					fillOpacity: '""" + str(r.symbol().alpha()) + """',
+					fillOpacity: '""" + str(symbol.alpha()) + """',
 				}
 			}"""
 							categoryStr += """
@@ -654,7 +660,7 @@ html, body, #slide {
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -677,12 +683,13 @@ html, body, #slide {
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
+								symbol = r.symbol()
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {"""
 								categoryStr += """
-					color: '""" + unicode(r.symbol().symbolLayer(0).color().name())+ """',
-					weight: '""" + unicode(r.symbol().width() * 5) + """',
+					color: '""" + unicode(symbol.symbolLayer(0).color().name())+ """',
+					weight: '""" + unicode(symbol.width() * 5) + """',
 					opacity: '""" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + """',
 				}
 			}"""
@@ -701,14 +708,15 @@ html, body, #slide {
 							categoryStr = """
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
+								symbol = r.symbol()
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
-					color: '""" + unicode(r.symbol().symbolLayer(0).borderColor().name())+ """',
-					weight: '""" + unicode(r.symbol().symbolLayer(0).borderWidth() * 5) + """',
-					fillColor: '""" + unicode(r.symbol().color().name())+ """',
-					opacity: '""" + str(r.symbol().alpha()) + """',
-					fillOpacity: '""" + str(r.symbol().alpha()) + """',
+					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
+					weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
+					fillColor: '""" + unicode(symbol.color().name())+ """',
+					opacity: '""" + str(symbol.alpha()) + """',
+					fillOpacity: '""" + str(symbol.alpha()) + """',
 				}
 			}"""
 							categoryStr += """
@@ -862,7 +870,8 @@ html, body, #slide {
 			var div = L.DomUtil.create('div', 'info legend');
 			div.innerHTML = "<h3>Legend</h3><table>"""
 		for i in reversed(allLayers):
-			safeLayerName = re.sub('[\W_]+', '', i.name())
+			rawLayerName = i.name()
+			safeLayerName = re.sub('[\W_]+', '', rawLayerName)
 			for j in layer_list:
 				if safeLayerName == j:
 					if i.type() == 0:
@@ -931,25 +940,23 @@ html, body, #slide {
 		f6.write(controlStart)
 		f6.close()
 
-	for i in allLayers: 
-		safeLayerName = re.sub('[\W_]+', '', i.name())
+	for i in allLayers:
+		rawLayerName = i.name()
+		safeLayerName = re.sub('[\W_]+', '', rawLayerName)
 		for j in layer_list:
 			if i.type() == 0:
 				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(outputIndex, 'a') as f7:
 						if cluster_set == False or i.geometryType() != 0:
-							new_layer = '"' + i.name() + '"' + ": exp_" + safeLayerName + """JSON,"""
-							#new_layer = '"' + unicode(i.name()) + '"' + ": exp_" + safeLayerName + """JSON,"""
+							new_layer = '"' + safeLayerName + '"' + ": exp_" + safeLayerName + """JSON,"""
 						if cluster_set == True and i.geometryType() == 0:
-							new_layer = '"' + i.name() + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
-							#new_layer = '"' + unicode(i.name()) + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
+							new_layer = '"' + safeLayerName + '"' + ": cluster_group"""+ safeLayerName + """JSON,"""
 						f7.write(new_layer)
 						f7.close()
 			elif i.type() == 1:
 				if safeLayerName == re.sub('[\W_]+', '', j):
 					with open(outputIndex, 'a') as f7:
 						new_layer = '"' + safeLayerName + '"' + ": overlay_" + safeLayerName + ""","""
-						#new_layer = '"' + unicode(i.name()) + '"' + ": overlay_" + safeLayerName + ""","""
 						f7.write(new_layer)
 						f7.close()	
 	controlEnd = "},{collapsed:false}).addTo(map);"	
@@ -970,7 +977,8 @@ html, body, #slide {
 			f9.close()
 
 		for i in allLayers: 
-			safeLayerName = re.sub('[\W_]+', '', i.name())
+			rawLayerName = i.name()
+			safeLayerName = re.sub('[\W_]+', '', rawLayerName)
 			for j in layer_list:
 				if i.type() == 1:
 					if safeLayerName == re.sub('[\W_]+', '', j):
@@ -1018,7 +1026,7 @@ html, body, #slide {
 		f12.close()
 	webbrowser.open(outputIndex)
 
-def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set):
+def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set, cluster_num):
 	new_obj="""
 		var """+layerName+"""URL='"""+layerSource+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
@@ -1047,10 +1055,11 @@ def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set):
 		new_obj += """
 				cluster_group"""+ layerName + """JSON.addLayer(exp_""" + layerName + """JSON);"""			
 		cluster_num += 1	
+		print "cluster_num: " + str(cluster_num)
 	new_obj+="""
 			}
 		});"""
-	return new_obj
+	return new_obj, cluster_num
 
 def buildNonPointJSON(categoryStr, safeLayerName):
 	new_obj = categoryStr + """
