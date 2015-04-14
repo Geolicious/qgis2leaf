@@ -64,54 +64,62 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	jsDir = pluginDir + os.sep + 'js' + os.sep
 	shutil.copyfile(jsDir + 'Autolinker.min.js', jsStore + 'Autolinker.min.js')
 	shutil.copyfile(jsDir + 'leaflet-hash.js', jsStore + 'leaflet-hash.js')
-	shutil.copyfile(jsDir + 'leaflet.markercluster.js', jsStore + 'leaflet.markercluster.js')
-	shutil.copyfile(jsDir + 'label.js', jsStore + 'label.js')
-	shutil.copyfile(jsDir + 'proj4.js', jsStore + 'proj4.js')
-	shutil.copyfile(jsDir + 'proj4leaflet.js', jsStore + 'proj4leaflet.js')
+	if cluster_set:
+		shutil.copyfile(jsDir + 'leaflet.markercluster.js', jsStore + 'leaflet.markercluster.js')
+	if labels:
+		shutil.copyfile(jsDir + 'label.js', jsStore + 'label.js')
+	if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
+		shutil.copyfile(jsDir + 'proj4.js', jsStore + 'proj4.js')
+		shutil.copyfile(jsDir + 'proj4leaflet.js', jsStore + 'proj4leaflet.js')
 	dataStore = os.path.join(outputProjectFileName, 'data')
 	os.makedirs(dataStore)
 	cssStore = os.path.join(outputProjectFileName, 'css')
 	os.makedirs(cssStore)
 	cssStore += os.sep
 	cssDir = pluginDir + os.sep + 'css' + os.sep
-	shutil.copyfile(cssDir + 'MarkerCluster.css', cssStore + 'MarkerCluster.css')
-	shutil.copyfile(cssDir + 'label.css', cssStore + 'label.css')
-	shutil.copyfile(cssDir + 'MarkerCluster.Default.css', cssStore + 'MarkerCluster.Default.css')
+	if cluster_set:
+		shutil.copyfile(cssDir + 'MarkerCluster.css', cssStore + 'MarkerCluster.css')
+		shutil.copyfile(cssDir + 'MarkerCluster.Default.css', cssStore + 'MarkerCluster.Default.css')
+	if labels:
+		shutil.copyfile(cssDir + 'label.css', cssStore + 'label.css')
 	picturesStore = os.path.join(outputProjectFileName, 'pictures')
 	os.makedirs(picturesStore)
 	miscStore = os.path.join(outputProjectFileName, 'misc')
 	os.makedirs(miscStore)
 	#lets create a css file for own css:
 	with open(cssStore + 'own_style.css', 'w') as f_css:
-		if full == 1:
-			text = """
+
+		text = """
 body {
 	padding: 0;
 	margin: 0;
-}
+
+}"""
+		if full == 1:
+			text += """
 html, body, #map {
 	height: 100%;
 	width: 100%;
 	padding: 0;
 	margin: 0;
-}
-th {
-	text-align: left;
-	vertical-align: top;
+
+
+
+
 }"""
 		elif full == 0:
-			text = """
-body {
-	padding: 0;
-	margin: 0;
-}
+			text += """
+
+
+
+
 html, body, #map {
 	height: """+str(height)+"""px;
 	width: """+str(width)+"""px;
-}
-th {
-	text-align: left;
-	vertical-align: top;
+
+
+
+
 }"""
 		if opacity_raster == True and full == 1:
 			text += """
@@ -128,6 +136,10 @@ html, body, #slide {
 	margin: 0;
 }"""
 		text += """
+th {
+	text-align: left;
+	vertical-align: top;
+}
 .info {
 	padding: 6px 8px;
 	font: 14px/16px Arial, Helvetica, sans-serif;
@@ -151,7 +163,7 @@ html, body, #slide {
 	with open(outputIndex, 'w') as f_html:
 		base = """<!DOCTYPE html>
 <html>
-	<head> """
+	<head>"""
 		if webpage_name == "":
 			base +="""
 		<title>QGIS2leaf webmap</title>
@@ -161,10 +173,15 @@ html, body, #slide {
 		<title>""" + (webpage_name).encode('utf-8') + """</title>"""
 		base += """
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />"""
+		if cluster_set:
+			base+= """
 		<link rel="stylesheet" href="css/MarkerCluster.css" />
-		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
-		<link rel="stylesheet" type="text/css" href="css/own_style.css">
+		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />"""
+		base+= """
+		<link rel="stylesheet" type="text/css" href="css/own_style.css">"""
+		if labels:
+			base+= """
 		<link rel="stylesheet" href="css/label.css" />"""
 		if address == True:
 			base += """
@@ -172,13 +189,17 @@ html, body, #slide {
 		base +="""
 		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-		<script src="js/leaflet-hash.js"></script>
-		<script src="js/label.js"></script>
+		<script src="js/leaflet-hash.js"></script>"""
+		if labels:
+			base += """
+		<script src="js/label.js"></script>"""
+		base += """
 		<script src="js/Autolinker.min.js"></script>"""
 		if address == True:
 			base +="""
 		<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>"""
-		base +="""
+		if cluster_set:
+			base +="""
 		<script src="js/leaflet.markercluster.js"></script>"""
 		if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 			base += """
