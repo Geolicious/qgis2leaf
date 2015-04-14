@@ -68,6 +68,7 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 		shutil.copyfile(jsDir + 'leaflet.markercluster.js', jsStore + 'leaflet.markercluster.js')
 	if labels:
 		shutil.copyfile(jsDir + 'label.js', jsStore + 'label.js')
+	canvas = qgis.utils.iface.mapCanvas()
 	if matchCRS == True and canvas.mapRenderer().destinationCrs().authid() != 'EPSG:4326':
 		shutil.copyfile(jsDir + 'proj4.js', jsStore + 'proj4.js')
 		shutil.copyfile(jsDir + 'proj4leaflet.js', jsStore + 'proj4leaflet.js')
