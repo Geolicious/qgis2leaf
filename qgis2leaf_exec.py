@@ -763,7 +763,8 @@ html, body, #slide {
 						# store everything in the file
 						if i.providerType() != 'WFS' or encode2JSON == True:
 							f5.write(new_pop)
-						f5.write(new_obj)
+						f5.write("""
+""" + new_obj)
 						if visible == 'show all' and cluster_set == False:
 							f5.write("""
 		//add comment sign to hide this layer on the map in the initial view.
@@ -1084,7 +1085,7 @@ def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
 			contentType : 'application/json',
 			success : function (response) {
 				L.geoJson(response, {
-					onEachFeature: function (feature, layer) {"""+popFuncs+"""
+					onEachFeature: function (feature, layer) {
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
 				});
