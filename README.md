@@ -10,11 +10,13 @@ You can choose between several basemap styles and define the initial extent of t
 
 The popup for features is either a simple table with all your attributes or defined by the attribute 'html_exp' in your QGIS vector layer (check 'line_feature.shp' in the 'test_data' folder). If you want to use a defined symbol in your webmap add an attribute 'icon_exp' to your point shapefile and file it with a relative path on your PC or an HTML statement. You can define different icons for each feature. Please check index.html of the webmap to customize popup position regarding your chosen icon. You may find testdata in 'places_few_1_EPSG3857_categorized.shp' in the 'test_data' folder (Donkey designed by Gabriele Malaspina from the thenounproject.com).
 
+If you want to export raster files keep in mind to save them as rendered images prior exporting (values must be integers in the range of 0 to 255).
+
 You can also define a label in the webmap by adding the column 'label_exp' to your layer which will define the text to show in the label.
 
 For single, categorized and graduated symbol point feature layers we are exporting radius (not for polygons), color and opacity. Unfortunately the export of forms and SVG is not embedded at the moment.
 
-If you would like to create a legend you need to add the attributes 'legend_exp' (text to be shown) and 'legend_ico' (icon to be shown) to the desired layer and fill in the link to the icon and the text. Check the test files for details.
+If you would like to create a legend you need to add the attributes 'legend_exp' (text to be shown) and 'legend_ico' (icon to be shown) to the desired layer and fill in the link to the icon and a text. Check the test files for details.
 
 The 'locate' button will ask for access to geolocate the browser and will add a marker where the webmap user is found.
 
@@ -29,6 +31,8 @@ To define your own basemaps, you need to alter the file qgis2leaf_layerlist and 
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
+* 2015/04/14 v.1.5.2: solved raster export issues
+* 2015/04/14 v.1.5.1: Added https://github.com/tomchadwin to authors
 * 2015/03/26 v.1.5.0: Major code refactor; tidy output
 * 2015/03/17 v.1.4.2: fixed hidden polygon layers; added pen styles
 * 2014/12/11 v.1.4.1: bugs for labels fixes. style issue for labels solved
@@ -61,11 +65,11 @@ To define your own basemaps, you need to alter the file qgis2leaf_layerlist and 
 ## Tests
 
 You may find testdata in the "test_data" folder.
-It was tested on Linux Mint/Ubuntu and Windows 7 with QGIS 2.6 and Python 2.7.5+ 
+It was tested on Linux Mint/Ubuntu and Windows 7 with QGIS 2.8.1 and Python 2.7.5+ 
 
 ## Contributors
 
-Currently we are working on this project as part of the blog [digital-geography.com](http://www.digital-geography.com 'digital-geography') and [geolicious.](http://www.geolicious.de 'geolicious')
+Currently we are working on this project as part of the blog [digital-geography.com](http://www.digital-geography.com 'digital-geography'), [geolicious.](http://www.geolicious.de 'geolicious') and the [Northumberland National Park Authority](https://www.gov.uk/government/organisations/northumberland-national-park-authority 'NNPA.org.uk')
 You find additional contributors in the changelog.
 
 ## License

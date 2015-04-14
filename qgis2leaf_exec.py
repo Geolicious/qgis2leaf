@@ -250,23 +250,17 @@ th {
 					elif i.type() == 1:
 						if i.dataProvider().name() != "wms":
 							in_raster = str(i.dataProvider().dataSourceUri())
-							prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + 'prov.tif'
-							out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.jpg'
-
-							if str(i.dataProvider().metadata()[0:4]) == 'JPEG' and str(i.crs().authid()) == 'EPSG:4326':
-								shutil.copyfile(in_raster+".aux.xml", out_raster + ".aux.xml")
-								shutil.copyfile(in_raster, out_raster)
-							else:
-								processing.runalg("gdalogr:warpreproject",str(in_raster),str(i.crs().authid()),"EPSG:4326",0,1,"",prov_raster)
-								format = "jpeg"
-								driver = gdal.GetDriverByName( format )
-								src_ds = gdal.Open(prov_raster)
-								dst_ds = driver.CreateCopy( out_raster, src_ds, 0 ) 
-								dst_ds = None #free the dataset	
-								src_ds = None #free the dataset				
-								#ret = subprocess.check_call(['gdal_translate -of jpeg -outsize 100% 100% -a_srs EPSG:4326 ' + filename_raster + " " +  out_raster_name], shell=True)
-								#ret2 = subprocess.check_call(['cp ' + filename_raster + ".aux.xml " +  out_raster_name + ".aux.xml"], shell=True)
-
+							prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + '_prov.tif'
+							out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.png'
+							crsSrc = i.crs()
+							crsDest = QgsCoordinateReferenceSystem(4326)
+							xform = QgsCoordinateTransform(crsSrc, crsDest)
+							extentRep = xform.transform(i.extent())
+							extentRepNew = ','.join([str(extentRep.xMinimum()), str(extentRep.xMaximum()),str(extentRep.yMinimum()), str(extentRep.yMaximum())])
+							processing.runalg("gdalogr:warpreproject",in_raster,i.crs().authid(),"EPSG:4326","",0,1,0,-1,75,6,1,False,0,False,"",prov_raster)
+							print extentRepNew
+							processing.runalg("gdalogr:translate",prov_raster,100,True,"",0,"",extentRepNew,False,0,0,75,6,1,False,0,False,"",out_raster)
+							
 	#now determine the canvas bounding box
 	#####now with viewcontrol
 	if extent == 'canvas extent':
@@ -307,7 +301,7 @@ th {
 		middle = """
 		<script>
 """
-		print '>> ' + crsProj4
+		#print '>> ' + crsProj4
 		if matchCRS == True and crsAuthId != 'EPSG:4326':
 			print '>> ' + crsProj4
 			middle += """
@@ -832,7 +826,7 @@ th {
 						print d
 						#print i.source()
 					else:
-						out_raster_name = 'data/' + 'exp_' + safeLayerName + '.jpg'
+						out_raster_name = 'data/' + 'exp_' + safeLayerName + '.png'
 						pt2	= i.extent()
 						crsSrc = i.crs()    # WGS 84
 						crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
