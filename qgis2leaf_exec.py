@@ -89,12 +89,10 @@ def qgis2leaf_exec(outputProjectFileName, basemapName, basemapMeta, basemapAddre
 	os.makedirs(miscStore)
 	#lets create a css file for own css:
 	with open(cssStore + 'own_style.css', 'w') as f_css:
-
 		text = """
 body {
 	padding: 0;
 	margin: 0;
-
 }"""
 		if full == 1:
 			text += """
@@ -103,24 +101,12 @@ html, body, #map {
 	width: 100%;
 	padding: 0;
 	margin: 0;
-
-
-
-
 }"""
 		elif full == 0:
 			text += """
-
-
-
-
 html, body, #map {
 	height: """+str(height)+"""px;
 	width: """+str(width)+"""px;
-
-
-
-
 }"""
 		if opacity_raster == True and full == 1:
 			text += """
@@ -159,7 +145,6 @@ th {
 		f_css.close()
 	
 	#the index file has an easy beginning. we will store it right away:
-	canvas = qgis.utils.iface.mapCanvas()
 	outputIndex = outputProjectFileName + os.sep + 'index.html'
 	with open(outputIndex, 'w') as f_html:
 		base = """<!DOCTYPE html>
@@ -261,7 +246,7 @@ th {
 							processing.runalg("gdalogr:warpreproject",in_raster,i.crs().authid(),"EPSG:4326","",0,1,0,-1,75,6,1,False,0,False,"",prov_raster)
 							print extentRepNew
 							processing.runalg("gdalogr:translate",prov_raster,100,True,"",0,"",extentRepNew,False,0,0,75,6,1,False,0,False,"",out_raster)
-							
+
 	#now determine the canvas bounding box
 	#####now with viewcontrol
 	if extent == 'canvas extent':
@@ -302,7 +287,7 @@ th {
 		middle = """
 		<script>
 """
-		#print '>> ' + crsProj4
+		print '>> ' + crsProj4
 		if matchCRS == True and crsAuthId != 'EPSG:4326':
 			print '>> ' + crsProj4
 			middle += """
@@ -432,7 +417,7 @@ th {
 			},
 			onEachFeature: function (feature, layer) {""" + popFuncs + """
 			}"""
-								new_obj, cluster_num = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set, cluster_num)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set, cluster_num, visible)
 							else:
 								new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -440,11 +425,7 @@ th {
 			}
 		});"""
 #add points to the cluster group
-							new_obj += """
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""
-							if cluster_set == False:
-								new_obj += restackLayers(layerName)
-							else:
+							if cluster_set:
 								new_obj += """
 		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
 								new_obj += """
@@ -468,13 +449,13 @@ th {
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
 							else:
 								new_obj = """
 		function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName)		
+								new_obj += restackLayers(layerName, visible)		
 						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 2:
 							if symbol.symbolLayer(0).layerType() == 'SimpleLine':
 								colorName = 'none'
@@ -502,13 +483,13 @@ th {
 			},
 			onEachFeature: function (feature, layer){"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
 							else:
 								new_obj = """
 		function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName)	
+								new_obj += restackLayers(layerName, visible)	
 						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							categories = renderer.categories()
 							valueAttr = renderer.classAttribute()
@@ -548,7 +529,7 @@ th {
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -564,9 +545,6 @@ th {
 		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
 		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
-							elif cluster_set == False:
-								new_obj += """
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
 							categories = renderer.categories()
 							valueAttr = renderer.classAttribute()
@@ -605,7 +583,7 @@ th {
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
 							if i.providerType() == 'WFS' and encode2JSON == False:
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
@@ -648,7 +626,7 @@ th {
 			style:doStyle""" + layerName + """,
 			onEachFeature : function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
@@ -676,7 +654,7 @@ th {
 			},
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num)
+								new_obj, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
 							else:
 								new_obj = categoryStr + """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
@@ -691,9 +669,6 @@ th {
 		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
 		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1	
-							elif cluster_set == False:
-								new_obj += """
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""	
 						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 1:
 							valueAttr = renderer.classAttribute()
 							categoryStr = """
@@ -716,7 +691,7 @@ th {
 			style:doStyle""" + layerName + """,
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 2:
@@ -742,7 +717,7 @@ th {
 			style: doStyle""" + layerName + """,
 			onEachFeature: function (feature, layer) {"""+popFuncs+"""
 			}"""
-								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs)
+								new_obj = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
 							else:
 								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 						elif icon_prov == True and i.geometryType() == 0:
@@ -766,15 +741,11 @@ th {
 		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
 		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
 								cluster_num += 1
-							elif cluster_set == False:
-								new_obj += """
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
 						else:
 							new_obj = """
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""		
+		});"""		
 				
 						# store everything in the file
 						if i.providerType() != 'WFS' or encode2JSON == True:
@@ -784,7 +755,7 @@ th {
 						if visible == 'show all' and cluster_set == False:
 							f5.write("""
 		//add comment sign to hide this layer on the map in the initial view.
-		exp_""" + safeLayerName + """JSON.addTo(map);""")
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);""")
 						if visible == 'show all' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
@@ -793,11 +764,11 @@ th {
 							if i.geometryType() != 0:
 								f5.write("""
 		//add comment sign to hide this layer on the map in the initial view.
-		exp_""" + safeLayerName + """JSON.addTo(map);""")
+		feature_group.addLayer(exp_""" + safeLayerName + """JSON);""")
 						if visible == 'show none' and cluster_set == False:
 							f5.write("""
 		//delete comment sign to show this layer on the map in the initial view.
-		//exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//feature_group.addLayer(exp_""" + safeLayerName + """JSON);""")
 						if visible == 'show none' and cluster_set == True:
 							if i.geometryType() == 0:
 								f5.write("""
@@ -806,7 +777,7 @@ th {
 							if i.geometryType() != 0:
 								f5.write("""
 		//delete comment sign to show this layer on the map in the initial view.
-		//exp_""" + safeLayerName + """JSON.addTo(map);""")
+		//feature_group.addLayer(exp_""" + safeLayerName + """JSON);""")
 						f5.close()
 				elif i.type() == 1:
 					if i.dataProvider().name() == "wms":
@@ -847,7 +818,11 @@ th {
 						f5_raster.write(new_obj)
 						f5_raster.close()
 	
+	with open(outputIndex, 'a') as f5fgroup:
+		f5fgroup.write("""
 
+		feature_group.addTo(map);""")
+		f5fgroup.close()
 
 	#let's add a Title and a subtitle
 	if webmap_head != "": 
@@ -1043,7 +1018,7 @@ th {
 		f12.close()
 	webbrowser.open(outputIndex)
 
-def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set, cluster_num):
+def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set, cluster_num, visible):
 	new_obj="""
 		var """+layerName+"""URL='"""+layerSource+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
@@ -1064,7 +1039,9 @@ def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set, cl
 					onEachFeature: function (feature, layer) {
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
-				});
+				});"""
+	if visible == 'show all':
+		new_obj+="""
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 				}"""
@@ -1083,11 +1060,10 @@ def buildNonPointJSON(categoryStr, safeLayerName):
 		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
 			onEachFeature: pop_""" + safeLayerName + """,
 			style: doStyle""" + safeLayerName + """
-		});
-		feature_group.addLayer(exp_""" + safeLayerName + """JSON);"""
+		});"""
 	return new_obj
 
-def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
+def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs, visible):
 	new_obj="""
 		var """+layerName+"""URL='"""+layerSource+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json';
 		"""+layerName+"""URL="""+layerName+"""URL.replace(/SRSNAME\=EPSG\:\d+/, 'SRSNAME=EPSG:4326');""" + categoryStr + """
@@ -1104,10 +1080,13 @@ def buildNonPointWFS(layerName, layerSource, categoryStr, stylestr, popFuncs):
 					onEachFeature: function (feature, layer) {
 						exp_"""+layerName+"""JSON.addData(feature)
 					}
-				});
+				});"""
+	if visible == 'show all':
+		new_obj+="""
 				for (index = 0; index < layerOrder.length; index++) {
 					feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
-				}
+				}"""
+	new_obj+="""
 			}
 		});"""
 	return new_obj
@@ -1126,9 +1105,12 @@ def getLineStyle(penType):
 		penStyle_str = ""
 	return penStyle_str
 
-def restackLayers(layerName):
-	return """
+def restackLayers(layerName, visible):
+	if visible == 'show all':
+		return """
 		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 		for (index = 0; index < layerOrder.length; index++) {
 			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 		}"""
+	else:
+		return ""
