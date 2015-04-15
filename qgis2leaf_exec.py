@@ -455,7 +455,7 @@ th {
 		function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName)		
+								new_obj += restackLayers(layerName, visible)		
 						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 2:
 							if symbol.symbolLayer(0).layerType() == 'SimpleLine':
 								colorName = 'none'
@@ -489,7 +489,7 @@ th {
 		function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
 		}"""
 								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName)	
+								new_obj += restackLayers(layerName, visible)	
 						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
 							categories = renderer.categories()
 							valueAttr = renderer.classAttribute()
@@ -1105,9 +1105,12 @@ def getLineStyle(penType):
 		penStyle_str = ""
 	return penStyle_str
 
-def restackLayers(layerName):
-	return """
+def restackLayers(layerName, visible):
+	if visible == 'show all':
+		return """
 		layerOrder[layerOrder.length] = exp_"""+layerName+"""JSON;
 		for (index = 0; index < layerOrder.length; index++) {
 			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
 		}"""
+	else:
+		return ""
