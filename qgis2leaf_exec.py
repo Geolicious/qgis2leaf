@@ -238,7 +238,6 @@ th {
 							in_raster = str(i.dataProvider().dataSourceUri())
 							prov_raster = tempfile.gettempdir() + os.sep + 'exp_' + safeLayerName + '_prov.tif'
 							out_raster = dataStore + os.sep + 'exp_' + safeLayerName + '.png'
-
 							crsSrc = i.crs()
 							crsDest = QgsCoordinateReferenceSystem(4326)
 							xform = QgsCoordinateTransform(crsSrc, crsDest)
@@ -247,6 +246,7 @@ th {
 							processing.runalg("gdalogr:warpreproject",in_raster,i.crs().authid(),"EPSG:4326","",0,1,0,-1,75,6,1,False,0,False,"",prov_raster)
 							print extentRepNew
 							processing.runalg("gdalogr:translate",prov_raster,100,True,"",0,"",extentRepNew,False,0,0,75,6,1,False,0,False,"",out_raster)
+
 	#now determine the canvas bounding box
 	#####now with viewcontrol
 	if extent == 'canvas extent':
@@ -798,7 +798,7 @@ th {
 						print d
 						#print i.source()
 					else:
-						out_raster_name = 'data/' + 'exp_' + safeLayerName + '.jpg'
+						out_raster_name = 'data/' + 'exp_' + safeLayerName + '.png'
 						pt2	= i.extent()
 						crsSrc = i.crs()    # WGS 84
 						crsDest = QgsCoordinateReferenceSystem(4326)  # WGS 84 / UTM zone 33N
