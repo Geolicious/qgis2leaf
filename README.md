@@ -31,7 +31,7 @@ To define your own basemaps, you need to alter the file qgis2leaf_layerlist and 
 * Import the plugin using the normal "add plugin" method described [here](http://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins.html#managing-plugins 'qgis plugins').
 
 ## Version_changes
-* 2015/04/14 v.1.5.2: solved raster export issues and other issues
+* 2015/04/16 v.1.5.2: solved raster export issues, layer stacking order, and layer visibility
 * 2015/04/14 v.1.5.1: Added https://github.com/tomchadwin to authors
 * 2015/03/26 v.1.5.0: Major code refactor; tidy output
 * 2015/03/17 v.1.4.2: fixed hidden polygon layers; added pen styles
