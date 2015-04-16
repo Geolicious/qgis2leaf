@@ -173,7 +173,6 @@ th {
 			base += """
 		<link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	"""
 		base +="""
-		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 		<script src="js/leaflet-hash.js"></script>"""
 		if labels:
