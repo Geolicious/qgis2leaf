@@ -400,11 +400,12 @@ th {
 						layerName = safeLayerName
 						renderer = i.rendererV2()
 						rendererDump = renderer.dump()
+						layer_transp_float = 1 - (float(i.layerTransparency()) / 100)
+
 						if rendererDump[0:6] == 'SINGLE':
 							symbol = renderer.symbol()
 							colorName = symbol.color().name()
 							alpha = symbol.alpha()
-							layer_transp_float = 1 - (float(i.layerTransparency()) / 100)
 							symbol_transp_float = symbol.alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
 						if rendererDump[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
@@ -521,16 +522,19 @@ th {
 				case '""" + unicode(cat.value()) + """':
 					return {"""
 									else:
-										symbol = cat.symbol()
 										categoryStr += """
 				case """ + unicode(cat.value()) + """:
 					return {"""
+								symbol = cat.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 						radius: '""" + unicode(symbol.size() * 2) + """',
 						fillColor: '""" + unicode(symbol.color().name()) + """',
 						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 						weight: 1,
-						fillOpacity: '""" + str(symbol.alpha()) + """',
+						fillOpacity: '""" + opacity_str + """',
 					};
 					break;"""
 							categoryStr += """
@@ -584,11 +588,14 @@ th {
 					return {"""
 								#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
 								symbol = cat.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 						color: '""" + unicode(symbol.color().name()) + """',
 						weight: '""" + unicode(symbol.width() * 5) + """',
 						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).penStyle()) + """',
-						opacity: '""" + str(symbol.alpha()) + """',
+						opacity: '""" + opacity_str + """',
 					};
 					break;"""
 							categoryStr += """
@@ -626,6 +633,9 @@ th {
 				case """ + unicode(cat.value()) + """:
 					return {"""
 								symbol = cat.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 						weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
 						fillColor: '""" + unicode(symbol.color().name()) + """',
@@ -633,7 +643,7 @@ th {
 						weight: '1',
 						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).borderStyle()) + """',
 						opacity: '""" + str(symbol.alpha()) + """',
-						fillOpacity: '""" + str(symbol.alpha()) + """',
+						fillOpacity: '""" + opacity_str + """',
 					};
 					break;"""
 							categoryStr += """
