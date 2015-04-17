@@ -642,7 +642,7 @@ th {
 						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name()) + """',
 						weight: '1',
 						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).borderStyle()) + """',
-						opacity: '""" + str(symbol.alpha()) + """',
+						opacity: '""" + opacity_str + """',
 						fillOpacity: '""" + opacity_str + """',
 					};
 					break;"""
@@ -665,6 +665,9 @@ th {
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
 								symbol = r.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
@@ -672,7 +675,7 @@ th {
 					fillColor: '""" + unicode(symbol.color().name()) + """',
 					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 					weight: 1,
-					fillOpacity: '""" + str(symbol.alpha()) + """',
+					fillOpacity: '""" + opacity_str + """',
 				}
 			}"""
 							categoryStr += """
@@ -707,13 +710,17 @@ th {
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
 								symbol = r.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {"""
 								categoryStr += """
 					color: '""" + unicode(symbol.symbolLayer(0).color().name())+ """',
 					weight: '""" + unicode(symbol.width() * 5) + """',
-					opacity: '""" + str(1 - ( float(i.layerTransparency()) / 100 ) ) + """',
+
+					opacity: '""" + opacity_str + """',
 				}
 			}"""
 							categoryStr += """
@@ -734,14 +741,17 @@ th {
 		function doStyle""" + layerName + "(feature) {"
 							for r in renderer.ranges():
 								symbol = r.symbol()
+								symbol_transp_float = symbol.alpha()
+								opacity_str = str(layer_transp_float*symbol_transp_float)
+								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
 								categoryStr += """
 			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
 				return {
 					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 					weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
 					fillColor: '""" + unicode(symbol.color().name())+ """',
-					opacity: '""" + str(symbol.alpha()) + """',
-					fillOpacity: '""" + str(symbol.alpha()) + """',
+					opacity: '""" + opacity_str + """',
+					fillOpacity: '""" + opacity_str + """',
 				}
 			}"""
 							categoryStr += """
