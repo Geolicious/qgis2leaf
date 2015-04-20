@@ -405,367 +405,566 @@ th {
 						if rendererDump[0:6] == 'SINGLE':
 							symbol = renderer.symbol()
 							colorName = symbol.color().name()
-							alpha = symbol.alpha()
+
 							symbol_transp_float = symbol.alpha()
 							opacity_str = str(layer_transp_float*symbol_transp_float)
-						if rendererDump[0:6] == 'SINGLE' and i.geometryType() == 0 and icon_prov != True:
-							radius_str = str(symbol.size() * 2)
-							borderColor_str = str(symbol.symbolLayer(0).borderColor().name())
-							pointToLayer_str = """
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, {
-					radius: """+radius_str+""",
-					fillColor: '"""+colorName+"""',
-					color: '"""+borderColor_str+"""',
-					weight: 1,
-					opacity: """+opacity_str+""",
-					fillOpacity: """+opacity_str+"""
-				})"""+labeltext
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr = pointToLayer_str + """
-			},
-			onEachFeature: function (feature, layer) {""" + popFuncs + """
-			}"""
-								new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set, cluster_num, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + "," + pointToLayer_str + """
-			}
-		});"""
-#add points to the cluster group
-							if cluster_set:
-								new_obj += """
-		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
-								new_obj += """
-		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
-								cluster_num += 1	
-
-						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 1:
-							radius_str = str(symbol.width() * 5)
-							penStyle_str = getLineStyle(symbol.symbolLayer(0).penStyle())
-							lineStyle_str = """
-				return {
-					weight: """+radius_str+""",
-					color: '"""+colorName+"""',
-					dashArray: '"""+penStyle_str+"""',
-					opacity: """+opacity_str+""",
-					fillOpacity: """+opacity_str+"""
-				};"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style: function (feature) {""" + lineStyle_str + """
-			},
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = """
-		function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
-		}"""
-								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName, visible)		
-						elif rendererDump[0:6] == 'SINGLE' and i.geometryType() == 2:
-							if symbol.symbolLayer(0).layerType() == 'SimpleLine':
-								colorName = 'none'
-								borderColor_str = str(symbol.color().name())
-								radius_str = str(symbol.symbolLayer(0).width() * 5)
-							else:
+							if i.geometryType() == 0 and icon_prov != True:
+								radius_str = str(symbol.size() * 2)
 								borderColor_str = str(symbol.symbolLayer(0).borderColor().name())
-								borderStyle_str = getLineStyle(symbol.symbolLayer(0).borderStyle())
-								radius_str = str(symbol.symbolLayer(0).borderWidth() * 5)
-							if symbol.symbolLayer(0).brushStyle() == 0:
-								borderStyle_str = "0"
-							polyStyle_str = """
-				return {
-					color: '"""+borderColor_str+"""',
-					fillColor: '"""+colorName+"""',
-					weight: """+radius_str+""",
-					dashArray: '"""+borderStyle_str+"""',
-					opacity: """+opacity_str+""",
-					fillOpacity: """+opacity_str+"""
-				};
-"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style: function (feature) {""" + polyStyle_str + """
-			},
-			onEachFeature: function (feature, layer){"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = """
-		function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
-		}"""
-								new_obj += buildNonPointJSON("", safeLayerName)
-								new_obj += restackLayers(layerName, visible)	
-						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 0 and icon_prov != True:
-							categories = renderer.categories()
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + """(feature) {
-			switch (feature.properties.""" + valueAttr + """) {"""
-							for cat in categories:
-								if not cat.value():
-									categoryStr += """
-				default:
-					return {"""
+
+								pointToLayer_str = """
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, {
+						radius: """+radius_str+""",
+						fillColor: '"""+colorName+"""',
+						color: '"""+borderColor_str+"""',
+						weight: 1,
+						opacity: """+opacity_str+""",
+						fillOpacity: """+opacity_str+"""
+					})"""+labeltext
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr = pointToLayer_str + """
+				},
+
+				onEachFeature: function (feature, layer) {""" + popFuncs + """
+				}"""
+									new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), "", stylestr, cluster_set, cluster_num, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
 								else:
-									if isinstance(cat.value(), basestring):
+									new_obj = """
+			var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+				onEachFeature: pop_""" + safeLayerName + "," + pointToLayer_str + """
+				}
+
+			});"""
+	#add points to the cluster group
+								if cluster_set:
+									new_obj += """
+			var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});"""				
+									new_obj += """
+			cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
+									cluster_num += 1	
+
+							elif i.geometryType() == 1:
+								radius_str = str(symbol.width() * 5)
+								penStyle_str = getLineStyle(symbol.symbolLayer(0).penStyle())
+								lineStyle_str = """
+					return {
+						weight: """+radius_str+""",
+						color: '"""+colorName+"""',
+						dashArray: '"""+penStyle_str+"""',
+						opacity: """+opacity_str+""",
+						fillOpacity: """+opacity_str+"""
+					};"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				style: function (feature) {""" + lineStyle_str + """
+				},
+
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = """
+			function doStyle""" + safeLayerName + """(feature) {""" + lineStyle_str + """
+			}"""
+
+
+
+
+
+
+
+									new_obj += buildNonPointJSON("", safeLayerName)
+									new_obj += restackLayers(layerName, visible)		
+							elif i.geometryType() == 2:
+								if symbol.symbolLayer(0).layerType() == 'SimpleLine':
+									colorName = 'none'
+									borderColor_str = str(symbol.color().name())
+									radius_str = str(symbol.symbolLayer(0).width() * 5)
+								else:
+									borderColor_str = str(symbol.symbolLayer(0).borderColor().name())
+
+									borderStyle_str = getLineStyle(symbol.symbolLayer(0).borderStyle())
+									radius_str = str(symbol.symbolLayer(0).borderWidth() * 5)
+								if symbol.symbolLayer(0).brushStyle() == 0:
+									borderStyle_str = "0"
+								polyStyle_str = """
+					return {
+						color: '"""+borderColor_str+"""',
+						fillColor: '"""+colorName+"""',
+						weight: """+radius_str+""",
+						dashArray: '"""+borderStyle_str+"""',
+						opacity: """+opacity_str+""",
+						fillOpacity: """+opacity_str+"""
+					};
+
+	"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				style: function (feature) {""" + polyStyle_str + """
+				},
+
+				onEachFeature: function (feature, layer){"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), "", stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = """
+			function doStyle""" + safeLayerName + """(feature) {""" + polyStyle_str + """
+			}"""
+
+
+
+
+
+
+
+									new_obj += buildNonPointJSON("", safeLayerName)
+									new_obj += restackLayers(layerName, visible)	
+						elif rendererDump[0:11] == 'CATEGORIZED':
+							if i.geometryType() == 0 and icon_prov != True:
+								categories = renderer.categories()
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + """(feature) {
+				switch (feature.properties.""" + valueAttr + """) {"""
+								for cat in categories:
+									if not cat.value():
 										categoryStr += """
-				case '""" + unicode(cat.value()) + """':
-					return {"""
+					default:
+						return {"""
 									else:
-										categoryStr += """
-				case """ + unicode(cat.value()) + """:
-					return {"""
-								symbol = cat.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+										if isinstance(cat.value(), basestring):
+											categoryStr += """
+					case '""" + unicode(cat.value()) + """':
+						return {"""
+										else:
+											categoryStr += """
+					case """ + unicode(cat.value()) + """:
+						return {"""
+									symbol = cat.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+									categoryStr += """
+							radius: '""" + unicode(symbol.size() * 2) + """',
+							fillColor: '""" + unicode(symbol.color().name()) + """',
+							color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
+							weight: 1,
+							fillOpacity: '""" + opacity_str + """',
+						};
+						break;"""
 								categoryStr += """
+				}
+			}"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
+				},
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+
+
+								else:
+									new_obj = categoryStr + """
+			var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+				onEachFeature: pop_""" + safeLayerName + """,
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
+				}
+			});"""
+					#add points to the cluster group
+								if cluster_set == True:
+									
+									new_obj += """
+			var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+			cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
+									cluster_num += 1	
+							elif i.geometryType() == 1:
+								categories = renderer.categories()
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + """(feature) {"""
+								categoryStr += """
+				switch (feature.properties.""" + valueAttr + ") {"
+								for cat in categories:
+									if not cat.value():
+
+										categoryStr += """
+					default:
+
+						return {"""
+									else:
+										if isinstance(cat.value(), basestring):
+											categoryStr += """
+					case '""" + unicode(cat.value()) + """':
+						return {"""
+										else:
+											categoryStr += """
+					case """ + unicode(cat.value()) + """:
+						return {"""
+									#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
+									symbol = cat.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+									categoryStr += """
+							color: '""" + unicode(symbol.color().name()) + """',
+							weight: '""" + unicode(symbol.width() * 5) + """',
+							dashArray: '""" + getLineStyle(symbol.symbolLayer(0).penStyle()) + """',
+							opacity: '""" + opacity_str + """',
+						};
+						break;"""
+								categoryStr += """
+				}
+			}"""
+								stylestr="""
+				style:doStyle""" + layerName + """,
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = buildNonPointJSON(categoryStr, safeLayerName)
+							elif i.geometryType() == 2:
+								categories = renderer.categories()
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + "(feature) {"
+								categoryStr += """
+				switch (feature.properties.""" + valueAttr + ") {"
+								for cat in categories:
+									if not cat.value():
+										categoryStr += """
+					default:
+						return {"""
+									else:
+										if isinstance(cat.value(), basestring):
+											categoryStr += """
+					case '""" + unicode(cat.value()) + """':
+						return {"""
+										else:
+											categoryStr += """
+					case """ + unicode(cat.value()) + """:
+						return {"""
+									symbol = cat.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+									categoryStr += """
+							weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
+							fillColor: '""" + unicode(symbol.color().name()) + """',
+							color: '""" + unicode(symbol.symbolLayer(0).borderColor().name()) + """',
+							weight: '1',
+							dashArray: '""" + getLineStyle(symbol.symbolLayer(0).borderStyle()) + """',
+							opacity: '""" + opacity_str + """',
+							fillOpacity: '""" + opacity_str + """',
+						};
+						break;"""
+								categoryStr += """
+				}
+			}"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				style:doStyle""" + layerName + """,
+				onEachFeature : function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = buildNonPointJSON(categoryStr, safeLayerName)
+						elif rendererDump[0:9] == 'GRADUATED':
+							if i.geometryType() == 0 and icon_prov != True:
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + "(feature) {"
+								for r in renderer.ranges():
+									symbol = r.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+									categoryStr += """
+				if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
+					return {
 						radius: '""" + unicode(symbol.size() * 2) + """',
 						fillColor: '""" + unicode(symbol.color().name()) + """',
 						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
 						weight: 1,
 						fillOpacity: '""" + opacity_str + """',
-					};
-					break;"""
-							categoryStr += """
-			}
-		}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
-			},
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
-			}
-		});"""
-				#add points to the cluster group
-							if cluster_set == True:
-								
-								new_obj += """
-		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
-		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
-								cluster_num += 1	
-						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 1:
-							categories = renderer.categories()
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + """(feature) {"""
-							categoryStr += """
-			switch (feature.properties.""" + valueAttr + ") {"
-							for cat in categories:
-								if not cat.value():
-									categoryStr += """
-				default:
-					return {"""
-								else:
-									if isinstance(cat.value(), basestring):
-										categoryStr += """
-				case '""" + unicode(cat.value()) + """':
-					return {"""
-									else:
-										categoryStr += """
-				case """ + unicode(cat.value()) + """:
-					return {"""
-								#categoryStr += "radius: '" + unicode(cat.symbol().size() * 2) + "',"
-								symbol = cat.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+					}
+
+
+
+
+				}"""
 								categoryStr += """
-						color: '""" + unicode(symbol.color().name()) + """',
+
+
+
+
+
+
+			}"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
+				},
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = categoryStr + """
+			var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
+				onEachFeature: pop_""" + safeLayerName + """,
+				pointToLayer: function (feature, latlng) {  
+					return L.circleMarker(latlng, doStyle""" + safeLayerName + """(feature))"""+labeltext+"""
+				}
+
+			});"""
+									#add points to the cluster group
+								if cluster_set == True:
+
+									new_obj += """
+			var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
+			cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
+									cluster_num += 1	
+							elif i.geometryType() == 1:
+
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + "(feature) {"
+								for r in renderer.ranges():
+									symbol = r.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+
+
+
+
+									categoryStr += """
+				if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
+
+					return {"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+									categoryStr += """
+						color: '""" + unicode(symbol.symbolLayer(0).color().name())+ """',
 						weight: '""" + unicode(symbol.width() * 5) + """',
-						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).penStyle()) + """',
+
 						opacity: '""" + opacity_str + """',
-					};
-					break;"""
-							categoryStr += """
-			}
-		}"""
-							stylestr="""
-			style:doStyle""" + layerName + """,
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif rendererDump[0:11] == 'CATEGORIZED' and i.geometryType() == 2:
-							categories = renderer.categories()
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + "(feature) {"
-							categoryStr += """
-			switch (feature.properties.""" + valueAttr + ") {"
-							for cat in categories:
-								if not cat.value():
-									categoryStr += """
-				default:
-					return {"""
-								else:
-									if isinstance(cat.value(), basestring):
-										categoryStr += """
-				case '""" + unicode(cat.value()) + """':
-					return {"""
-									else:
-										categoryStr += """
-				case """ + unicode(cat.value()) + """:
-					return {"""
-								symbol = cat.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+					}
+				}"""
+
+
 								categoryStr += """
+
+
+
+
+
+			}"""
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+				style:doStyle""" + layerName + """,
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = buildNonPointJSON(categoryStr, safeLayerName)
+							elif i.geometryType() == 2:
+
+								valueAttr = renderer.classAttribute()
+								categoryStr = """
+			function doStyle""" + layerName + "(feature) {"
+								for r in renderer.ranges():
+									symbol = r.symbol()
+									symbol_transp_float = symbol.alpha()
+									opacity_str = str(layer_transp_float*symbol_transp_float)
+									print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+
+
+
+
+									categoryStr += """
+				if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
+					return {
+						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
-						fillColor: '""" + unicode(symbol.color().name()) + """',
-						color: '""" + unicode(symbol.symbolLayer(0).borderColor().name()) + """',
-						weight: '1',
-						dashArray: '""" + getLineStyle(symbol.symbolLayer(0).borderStyle()) + """',
+						fillColor: '""" + unicode(symbol.color().name())+ """',
+
+
+
 						opacity: '""" + opacity_str + """',
 						fillOpacity: '""" + opacity_str + """',
-					};
-					break;"""
-							categoryStr += """
-			}
-		}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style:doStyle""" + layerName + """,
-			onEachFeature : function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 0 and icon_prov != True:
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + "(feature) {"
-							for r in renderer.ranges():
-								symbol = r.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
-								categoryStr += """
-			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
-				return {
-					radius: '""" + unicode(symbol.size() * 2) + """',
-					fillColor: '""" + unicode(symbol.color().name()) + """',
-					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
-					weight: 1,
-					fillOpacity: '""" + opacity_str + """',
-				}
-			}"""
-							categoryStr += """
-		}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, doStyle""" + layerName + """(feature))"""+labeltext+"""
-			},
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag, cluster_num = buildPointWFS(layerName, i.source(), categoryStr, stylestr, cluster_set, cluster_num, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = categoryStr + """
-		var exp_""" + safeLayerName + """JSON = new L.geoJson(exp_""" + safeLayerName + """,{
-			onEachFeature: pop_""" + safeLayerName + """,
-			pointToLayer: function (feature, latlng) {  
-				return L.circleMarker(latlng, doStyle""" + safeLayerName + """(feature))"""+labeltext+"""
-			}
-		});"""
-								#add points to the cluster group
-							if cluster_set == True:
-								new_obj += """
-		var cluster_group"""+ safeLayerName + """JSON= new L.MarkerClusterGroup({showCoverageOnHover: false});				
-		cluster_group"""+ safeLayerName + """JSON.addLayer(exp_""" + safeLayerName + """JSON);"""			
-								cluster_num += 1	
-						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 1:
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + "(feature) {"
-							for r in renderer.ranges():
-								symbol = r.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
-								categoryStr += """
-			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
-				return {"""
-								categoryStr += """
-					color: '""" + unicode(symbol.symbolLayer(0).color().name())+ """',
-					weight: '""" + unicode(symbol.width() * 5) + """',
+					}
 
-					opacity: '""" + opacity_str + """',
-				}
-			}"""
-							categoryStr += """
-		}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style:doStyle""" + layerName + """,
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
-						elif rendererDump[0:9] == 'GRADUATED' and i.geometryType() == 2:
-							valueAttr = renderer.classAttribute()
-							categoryStr = """
-		function doStyle""" + layerName + "(feature) {"
-							for r in renderer.ranges():
-								symbol = r.symbol()
-								symbol_transp_float = symbol.alpha()
-								opacity_str = str(layer_transp_float*symbol_transp_float)
-								print str(layer_transp_float) + " x " + str(symbol_transp_float) + " = " + opacity_str
+
+
+
+				}"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 								categoryStr += """
-			if (feature.properties.""" + valueAttr + " >= " + unicode(r.lowerValue()) + " && feature.properties." + valueAttr + " <= " + unicode(r.upperValue()) + """) {
-				return {
-					color: '""" + unicode(symbol.symbolLayer(0).borderColor().name())+ """',
-					weight: '""" + unicode(symbol.symbolLayer(0).borderWidth() * 5) + """',
-					fillColor: '""" + unicode(symbol.color().name())+ """',
-					opacity: '""" + opacity_str + """',
-					fillOpacity: '""" + opacity_str + """',
-				}
+
+
+
+
+
+
+
+
 			}"""
-							categoryStr += """
-		}"""
-							if i.providerType() == 'WFS' and encode2JSON == False:
-								stylestr="""
-			style: doStyle""" + layerName + """,
-			onEachFeature: function (feature, layer) {"""+popFuncs+"""
-			}"""
-								new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
-								wfsLayers += """
-	<script src='""" + scriptTag + """'></script>"""
-							else:
-								new_obj = buildNonPointJSON(categoryStr, safeLayerName)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+								if i.providerType() == 'WFS' and encode2JSON == False:
+									stylestr="""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				style: doStyle""" + layerName + """,
+				onEachFeature: function (feature, layer) {"""+popFuncs+"""
+				}"""
+									new_obj, scriptTag = buildNonPointWFS(layerName, i.source(), categoryStr, stylestr, popFuncs, visible)
+									wfsLayers += """
+		<script src='""" + scriptTag + """'></script>"""
+								else:
+									new_obj = buildNonPointJSON(categoryStr, safeLayerName)
 #						elif rendererDump[0:10] == 'Rule-based':
 #							for rule in renderer.rootRule().children():
 #								try:
@@ -1116,7 +1315,8 @@ th {
 
 def buildPointWFS(layerName, layerSource, categoryStr, stylestr, cluster_set, cluster_num, visible):
 	scriptTag = re.sub('SRSNAME\=EPSG\:\d+', 'SRSNAME=EPSG:4326', layerSource)+"""&outputFormat=text%2Fjavascript&format_options=callback%3Aget"""+layerName+"""Json"""
-	new_obj="""
+	new_obj = categoryStr + """
+
 		var exp_"""+layerName+"""JSON;
 		exp_"""+layerName+"""JSON = L.geoJson(null, {"""+stylestr+"""
 		});
